@@ -1,15 +1,19 @@
-import { useContext } from "react";
-import { AuthContext } from "../../Context/AuthContext.jsx";
+import React, { useContext } from "react";
 import { Navigate } from "react-router-dom";
+import { AuthContext } from "../../Context/AuthContext";
 
-export default function ProtectedRoute({ children, role }) {
-  const { user } = useContext(AuthContext);
+export default function ProtectedRoute({ role, children }) {
+  const { token, userRole } = useContext(AuthContext);
 
-  // لو مش لوجيد
-  if (!user) return <Navigate to="/login" replace />;
+  if (!token) {
+    // مش مسجل دخول → تحويل للـ login
+    return <Navigate to="/login" replace />;
+  }
 
-  // لو اليوزر نوعه مش نفس الدور المطلوب
-  if (role && user.role !== role) return <Navigate to="/login" replace />;
+  if (role && userRole !== role) {
+    // مسجل دخول لكن مش نفس الـ role → منع الوصول
+    return <Navigate to="/login" replace />;
+  }
 
   return children;
 }

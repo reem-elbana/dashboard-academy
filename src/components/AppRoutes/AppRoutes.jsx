@@ -1,5 +1,8 @@
-import { Routes, Route } from "react-router-dom";
+// 🔹 imports فوق كل حاجة
+import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "../../components/Login/Login.jsx";
+import Layout from "../../components/Layout/Layout.jsx";
+import AdminLayout from "../../components/AdminLayout/AdminLayout.jsx";
 import UserHome from "../../components/UserHome/UserHome.jsx";
 import Profile from "../../components/Profile/Profile.jsx";
 import Offers from "../../components/Offers/Offers.jsx";
@@ -19,106 +22,30 @@ export default function AppRoutes() {
       {/* ---- Login ---- */}
       <Route path="/login" element={<Login />} />
 
-      {/* ---- User Routes ---- */}
-      <Route
-        path="/user/home"
-        element={
-          <ProtectedRoute role="user">
-            <UserHome />
-          </ProtectedRoute>
-        }
-      />
+      {/* ---- Redirect / to /login ---- */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
 
-      <Route
-        path="/user/profile"
-        element={
-          <ProtectedRoute role="user">
-            <Profile />
-          </ProtectedRoute>
-        }
-      />
+      {/* ---- User Layout ---- */}
+      <Route element={<ProtectedRoute role="user"><Layout /></ProtectedRoute>}>
+        <Route path="/user/home" element={<UserHome />} />
+        <Route path="/user/profile" element={<Profile />} />
+        <Route path="/user/offers" element={<Offers />} />
+        <Route path="/user/sports" element={<Sports />} />
+        <Route path="/user/qr" element={<QRScan />} />
+        <Route path="/user/student-id" element={<StudentID />} />
+        <Route path="/user/schedule" element={<Schedule />} />
+      </Route>
 
-      <Route
-        path="/user/offers"
-        element={
-          <ProtectedRoute role="user">
-            <Offers />
-          </ProtectedRoute>
-        }
-      />
+      {/* ---- Admin Layout ---- */}
+      <Route element={<ProtectedRoute role="admin"><AdminLayout /></ProtectedRoute>}>
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/users" element={<Users />} />
+        <Route path="/admin/users/:id" element={<EditUser />} />
+        <Route path="/admin/manage" element={<ManageContent />} />
+      </Route>
 
-      <Route
-        path="/user/sports"
-        element={
-          <ProtectedRoute role="user">
-            <Sports />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/user/qr"
-        element={
-          <ProtectedRoute role="user">
-            <QRScan />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/user/student-id"
-        element={
-          <ProtectedRoute role="user">
-            <StudentID />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/user/schedule"
-        element={
-          <ProtectedRoute role="user">
-            <Schedule />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* ---- Admin Routes ---- */}
-      <Route
-        path="/admin/dashboard"
-        element={
-          <ProtectedRoute role="admin">
-            <AdminDashboard />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/admin/users"
-        element={
-          <ProtectedRoute role="admin">
-            <Users />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/admin/users/:id"
-        element={
-          <ProtectedRoute role="admin">
-            <EditUser />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path="/admin/manage"
-        element={
-          <ProtectedRoute role="admin">
-            <ManageContent />
-          </ProtectedRoute>
-        }
-      />
+      {/* ---- 404 Page ---- */}
+      <Route path="*" element={<h1 className="text-center text-3xl mt-20">Page Not Found</h1>} />
     </Routes>
   );
 }
