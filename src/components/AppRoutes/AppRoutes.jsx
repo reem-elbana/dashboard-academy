@@ -1,4 +1,3 @@
-// 🔹 imports فوق كل حاجة
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "../../components/Login/Login.jsx";
 import Layout from "../../components/Layout/Layout.jsx";
@@ -15,11 +14,11 @@ import Users from "../../components/Users/Users.jsx";
 import EditUser from "../../components/EditUser/EditUser.jsx";
 import ManageContent from "../../components/ManageContent/ManageContent.jsx";
 import ProtectedRoute from "../../components/ProtectedRoute/ProtectedRoute.jsx";
-
+import CreateUser from "../../components/CreateUser/CreateUser.jsx";
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* ---- Login ---- */}
+     {/* ---- Login ---- */}
       <Route path="/login" element={<Login />} />
 
       {/* ---- Redirect / to /login ---- */}
@@ -37,11 +36,13 @@ export default function AppRoutes() {
       </Route>
 
       {/* ---- Admin Layout ---- */}
-      <Route element={<ProtectedRoute role="admin"><AdminLayout /></ProtectedRoute>}>
+<Route element={<ProtectedRoute role={["admin", "super_admin"]}><AdminLayout /></ProtectedRoute>}>
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/users" element={<Users />} />
-        <Route path="/admin/users/:id" element={<EditUser />} />
+        <Route path="/admin/users/edit/:id" element={<EditUser />} />
         <Route path="/admin/manage" element={<ManageContent />} />
+        <Route path="/admin/create-user" element={<CreateUser />} />
+        
       </Route>
 
       {/* ---- 404 Page ---- */}
@@ -49,3 +50,4 @@ export default function AppRoutes() {
     </Routes>
   );
 }
+

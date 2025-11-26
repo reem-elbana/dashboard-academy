@@ -18,29 +18,43 @@ export default function Login() {
   });
 
   const handleSubmit = async (values) => {
-    try {
-      setLoading(true);
-      setServerError("");
+  try {
+    setLoading(true);
+    setServerError("");
 
-      const { data } = await axios.post(
-        "https://generous-optimism-production-4492.up.railway.app/api/auth/login",
-        values
-      );
+    const response = await axios.post(
+      "https://generous-optimism-production-4492.up.railway.app/api/auth/login",
+      values
+    );
 
-      // **data.role** لازم يرجع من API (مثلاً: "user" أو "admin")
-      saveToken(data.token, data.role);
+const resData = response.data?.data;
 
-      if (data.role === "admin") navigate("/admin/dashboard");
-      else navigate("/user/home");
+const token = resData?.token;
+const role = resData?.user?.role || "user";
 
-    } catch (err) {
-      setServerError(err.response?.data?.message || "Login failed");
-    } finally {
-      setLoading(false);
+
+
+    if (!token) {
+      setServerError("Token not received from server");
+      return;
     }
-  };
 
-  return (
+    saveToken(token, role);
+
+    const normalizedRole = role.toLowerCase();
+    if (normalizedRole === "admin" || normalizedRole === "super_admin") {
+      navigate("/admin/dashboard");
+    } else {
+      navigate("/user/home");
+    }
+
+  } catch (err) {
+    setServerError(err.response?.data?.message || err.message || "Login failed");
+  } finally {
+    setLoading(false);
+  }
+};
+return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="w-full max-w-md bg-white p-8 rounded-xl shadow">
         <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
