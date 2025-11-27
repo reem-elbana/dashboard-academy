@@ -1,33 +1,39 @@
 import React, { useContext, useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export default function AdminSidebar() {
   const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
 
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [lang, setLang] = useState(i18n.language);
 
-  // detect screen size
+  // toggle language
+  const toggleLanguage = () => {
+    const newLang = lang === "en" ? "ar" : "en";
+    i18n.changeLanguage(newLang);
+    setLang(newLang);
+    document.documentElement.dir = newLang === "ar" ? "rtl" : "ltr";
+  };
+
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
       setIsOpen(!mobile);
     };
-
     window.addEventListener("resize", handleResize);
     handleResize();
-
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // lock scroll when sidebar open
   useEffect(() => {
     if (isMobile && isOpen) document.body.style.overflow = "hidden";
     else document.body.style.overflow = "auto";
-
     return () => (document.body.style.overflow = "auto");
   }, [isMobile, isOpen]);
 
@@ -36,25 +42,22 @@ export default function AdminSidebar() {
     navigate("/login");
   };
 
-  const toggleSidebar = () => setIsOpen((prev) => !prev);
-
   const menuItems = [
-    { to: "/admin/dashboard", label: "Dashboard" },
-    { to: "/admin/users", label: "Users" },
-    { to: "/admin/manage", label: "Manage Content" },
-    { to: "/admin/create-user", label: "Create User" },
-    { to: "/admin/subscribers", label: "Subscribers" },
+    { to: "/admin/dashboard", label: t("dashboard") },
+    { to: "/admin/users", label: t("users") },
+    { to: "/admin/manage", label: t("manageContent") },
+    { to: "/admin/create-user", label: t("createUser") },
+    { to: "/admin/subscribers", label: t("subscribers") },
   ];
 
   return (
     <>
-      {/* Hamburger button */}
+      {/* Hamburger button for mobile */}
       {isMobile && (
         <button
-          onClick={toggleSidebar}
+          onClick={() => setIsOpen(prev => !prev)}
           className="fixed top-4 left-4 z-[9999] p-3 rounded-xl bg-green-600 text-white shadow-lg 
           hover:bg-green-700 active:scale-95 transition"
-          aria-label="Toggle menu"
         >
           <svg
             className="w-7 h-7"
@@ -76,19 +79,31 @@ export default function AdminSidebar() {
 
       {/* Sidebar */}
       <aside
-        className={`
-          fixed top-0 left-0 h-full bg-white p-6 
-          flex flex-col justify-between z-50 border-r border-gray-200
-          transition-transform duration-300 ease-out transform
-          w-64
-          ${isMobile ? (isOpen ? "translate-x-0" : "-translate-x-full") : "translate-x-0"}
+        className={`fixed top-0 left-0 h-full bg-white p-6 
+        flex flex-col justify-between z-50 border-r border-gray-200
+        transition-transform duration-300 w-64
+        ${isMobile ? (isOpen ? "translate-x-0" : "-translate-x-full") : "translate-x-0"}
         `}
       >
         <div>
-          <h2 className="text-3xl font-extrabold mb-10 text-green-700 select-none">
-            Admin Panel
-          </h2>
+          {/* Admin Panel title + language toggle */}
+          <div className="mb-10">
+            <h2 className="text-3xl font-extrabold text-green-700 select-none mb-3">
+              {t("adminPanel")}
+            </h2>
 
+            {/* Language Toggle under title */}
+            <div className="flex gap-2">
+              <button
+                onClick={toggleLanguage}
+                className="px-3 py-1 bg-gray-200 rounded-full text-sm font-medium hover:bg-gray-300 transition"
+              >
+                {lang === "en" ? "AR" : "EN"}
+              </button>
+            </div>
+          </div>
+
+          {/* Menu items */}
           <nav className="flex flex-col space-y-4">
             {menuItems.map(({ to, label }) => (
               <NavLink
@@ -96,14 +111,14 @@ export default function AdminSidebar() {
                 to={to}
                 className={({ isActive }) =>
                   `
-                  block w-full px-5 py-3 rounded-xl text-lg font-medium tracking-wide
+                  block px-5 py-3 rounded-xl text-lg font-medium
                   transition-all duration-200 shadow-sm
                   ${
                     isActive
                       ? "bg-green-600 text-white shadow-md"
                       : "bg-gray-100 text-gray-700 hover:bg-green-100 hover:text-green-700"
                   }
-                  ${isMobile ? "text-center w-full active:bg-green-200" : ""}
+                  ${isMobile ? "text-center" : ""}
                   `
                 }
                 onClick={() => isMobile && setIsOpen(false)}
@@ -114,16 +129,17 @@ export default function AdminSidebar() {
           </nav>
         </div>
 
+        {/* Logout button */}
         <button
           onClick={handleLogout}
           className="mt-6 w-full bg-green-600 text-white py-3 rounded-xl 
           font-semibold shadow-lg hover:bg-green-700 active:scale-95 transition"
         >
-          Logout
+          {t("logout")}
         </button>
       </aside>
 
-      {/* Overlay for mobile */}
+      {/* Mobile overlay */}
       {isMobile && isOpen && (
         <div
           onClick={() => setIsOpen(false)}

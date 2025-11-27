@@ -13,56 +13,85 @@ export default function UpdateSubscriber() {
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
-  // Form fields
+  // Form states for all editable fields
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [nationalId, setNationalId] = useState("");
   const [remainingSessions, setRemainingSessions] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
   const [isActive, setIsActive] = useState(true);
 
-  // Fetch subscriber details
+  // Fetch subscriber details on component mount
   useEffect(() => {
     const fetchSubscriber = async () => {
       try {
         setLoading(true);
+        setError("");
+
         const res = await axios.get(
           `https://generous-optimism-production-4492.up.railway.app/api/admin/subscribers/${id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
+
         if (res.data.success) {
           const user = res.data.data.user;
           setSubscriber(user);
-          setRemainingSessions(user.remaining_sessions ?? "");
-          setExpiresAt(user.subscription_expires_at ?? "");
-          setIsActive(user.is_active);
+
+          // Set form fields with data from API
+          setName(user.name || "");
+console.log("Name set to:", user.name);
+
+setPhone(user.phone || "");
+console.log("Phone set to:", user.phone);
+
+setNationalId(user.national_id || "");
+console.log("National ID set to:", user.national_id);
+
+setRemainingSessions(user.remaining_sessions ?? "");
+console.log("Remaining Sessions set to:", user.remaining_sessions);
+
+setExpiresAt(user.subscription_expires_at ? user.subscription_expires_at.split("T")[0] : "");
+console.log("Expires At set to:", user.subscription_expires_at);
+
+setIsActive(user.is_active ?? true);
+console.log("Is Active set to:", user.is_active);
+
         } else {
           setError("Failed to load subscriber data.");
         }
-      } catch {
+      } catch (err) {
         setError("Error fetching subscriber data.");
       } finally {
         setLoading(false);
       }
     };
+
     fetchSubscriber();
   }, [id, token]);
 
-  // Handle form submit (PUT request)
+  // Handle form submission for updating subscriber
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccessMsg("");
 
-    if (remainingSessions === "" || expiresAt === "") {
+    // Basic validation
+    if (!name || !phone || !nationalId || remainingSessions === "" || !expiresAt) {
       setError("Please fill all fields.");
       return;
     }
 
     try {
       setLoading(true);
+
       const res = await axios.put(
         `https://generous-optimism-production-4492.up.railway.app/api/admin/subscribers/${id}`,
         {
+          name,
+          phone,
+          national_id: nationalId,
           remaining_sessions: Number(remainingSessions),
           subscription_expires_at: expiresAt,
           is_active: isActive,
@@ -74,10 +103,8 @@ export default function UpdateSubscriber() {
 
       if (res.data.success) {
         setSuccessMsg("Subscriber updated successfully!");
-        // Optionally update local state or navigate back
-        setTimeout(() => {
-          navigate("/admin/subscribers");
-        }, 1500);
+
+      
       } else {
         setError("Failed to update subscriber.");
       }
@@ -88,68 +115,113 @@ export default function UpdateSubscriber() {
     }
   };
 
-  if (loading) return <p className="p-6 text-center text-green-700">Loading...</p>;
+  if (loading)
+    return <p className="p-6 text-center text-green-700">Loading...</p>;
 
-  return (
-    <div className="min-h-screen p-6 bg-green-50 flex justify-center items-center">
-      <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-6">
-        <h1 className="text-2xl font-bold text-green-700 mb-6 text-center">
-          Update Subscriber {subscriber?.name}
-        </h1>
+return (
+  <div className="min-h-screen p-4 sm:p-6 bg-green-50 flex justify-center items-center">
+    <div className="w-full max-w-md sm:max-w-lg md:max-w-xl bg-white rounded-xl shadow-lg p-6 sm:p-8">
+      <h1 className="text-xl sm:text-2xl font-bold text-green-700 mb-6 text-center">
+        Update Subscriber {subscriber?.name}
+      </h1>
 
-        {error && <p className="text-red-600 mb-4 font-semibold">{error}</p>}
-        {successMsg && <p className="text-green-700 mb-4 font-semibold">{successMsg}</p>}
+      {error && <p className="text-red-600 mb-4 font-semibold">{error}</p>}
+      {successMsg && (
+        <p className="text-green-700 mb-4 font-semibold">{successMsg}</p>
+      )}
 
-        <form onSubmit={handleSubmit}>
-          <label className="block mb-4">
-            <span className="text-gray-700 font-medium">Remaining Sessions</span>
-            <input
-              type="number"
-              min="0"
-              value={remainingSessions}
-              onChange={(e) => setRemainingSessions(e.target.value)}
-              className="mt-1 block w-full border border-green-400 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-              required
-            />
-          </label>
+      <form onSubmit={handleSubmit}>
+        {/* Name */}
+        <label className="block mb-4">
+          <span className="text-gray-700 font-medium">Name</span>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="mt-1 block w-full border border-green-400 rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500"
+            required
+          />
+        </label>
 
-          <label className="block mb-4">
-            <span className="text-gray-700 font-medium">Subscription Expires At</span>
-            <input
-              type="date"
-              value={expiresAt ? expiresAt.split("T")[0] : ""}
-              onChange={(e) => setExpiresAt(e.target.value)}
-              className="mt-1 block w-full border border-green-400 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-              required
-            />
-          </label>
+        {/* Phone */}
+        <label className="block mb-4">
+          <span className="text-gray-700 font-medium">Phone</span>
+          <input
+            type="text"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="mt-1 block w-full border border-green-400 rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500"
+            required
+          />
+        </label>
 
-          <label className="flex items-center mb-6">
-            <input
-              type="checkbox"
-              checked={isActive}
-              onChange={() => setIsActive(!isActive)}
-              className="mr-2"
-            />
-            <span className="text-gray-700 font-medium">Active</span>
-          </label>
+        {/* National ID */}
+        <label className="block mb-4">
+          <span className="text-gray-700 font-medium">National ID</span>
+          <input
+            type="text"
+            value={nationalId}
+            onChange={(e) => setNationalId(e.target.value)}
+            className="mt-1 block w-full border border-green-400 rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500"
+            required
+          />
+        </label>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-md transition"
-          >
-            {loading ? "Updating..." : "Update Subscriber"}
-          </button>
-        </form>
+        {/* Remaining Sessions */}
+        <label className="block mb-4">
+          <span className="text-gray-700 font-medium">Remaining Sessions</span>
+          <input
+            type="number"
+            min="0"a
+            value={remainingSessions}
+            onChange={(e) => setRemainingSessions(e.target.value)}
+            className="mt-1 block w-full border border-green-400 rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500"
+            required
+          />
+        </label>
 
+        {/* Subscription Expires At */}
+        <label className="block mb-4">
+          <span className="text-gray-700 font-medium">Subscription Expires At</span>
+          <input
+            type="date"
+            value={expiresAt}
+            onChange={(e) => setExpiresAt(e.target.value)}
+            className="mt-1 block w-full border border-green-400 rounded-md px-3 py-2 focus:ring-2 focus:ring-green-500"
+            required
+          />
+        </label>
+
+        {/* Active Checkbox */}
+        <label className="flex items-center mb-6">
+          <input
+            type="checkbox"
+            checked={isActive}
+            onChange={() => setIsActive(!isActive)}
+            className="mr-2"
+          />
+          <span className="text-gray-700 font-medium">Active</span>
+        </label>
+
+        {/* Submit Button */}
         <button
-          onClick={() => navigate("/admin/subscribers")}
-          className="mt-4 text-green-600 underline"
+          type="submit"
+          disabled={loading}
+          className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-md"
         >
-          Back to Subscribers
+          {loading ? "Updating..." : "Update Subscriber"}
         </button>
-      </div>
+      </form>
+
+      {/* Back Button */}
+      <button
+        onClick={() => navigate("/admin/subscribers")}
+        className="mt-4 text-green-600 underline"
+      >
+        Back to Subscribers
+      </button>
     </div>
-  );
+  </div>
+);
+
 }

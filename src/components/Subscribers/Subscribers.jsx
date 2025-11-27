@@ -53,13 +53,10 @@ export default function Subscribers() {
       : null;
     const remaining = subscriber.remaining_sessions ?? 0;
 
-    if (filter === "active") {
-      return expiresAt && expiresAt >= today;
-    } else if (filter === "expired") {
-      return expiresAt && expiresAt < today;
-    } else if (filter === "no_sessions") {
-      return remaining === 0;
-    }
+    if (filter === "active") return expiresAt && expiresAt >= today;
+    if (filter === "expired") return expiresAt && expiresAt < today;
+    if (filter === "no_sessions") return remaining === 0;
+
     return true;
   };
 
@@ -68,7 +65,6 @@ export default function Subscribers() {
   return (
     <div className="min-h-screen p-6 bg-green-50">
       <div className="max-w-7xl mx-auto p-6 bg-white rounded-xl shadow-lg">
-
         <h1 className="text-3xl font-bold text-center mb-8 text-green-800">
           Subscribers List
         </h1>
@@ -89,118 +85,135 @@ export default function Subscribers() {
         </div>
 
         {loading && (
-          <p className="text-center text-green-600 font-semibold">Loading subscribers...</p>
+          <p className="text-center text-green-600 font-semibold">
+            Loading subscribers...
+          </p>
         )}
-        {error && (
-          <p className="text-center text-red-600 font-semibold">{error}</p>
-        )}
+        {error && <p className="text-center text-red-600 font-semibold">{error}</p>}
         {!loading && !error && filteredSubscribers.length === 0 && (
           <p className="text-center text-green-700">No subscribers found.</p>
         )}
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {!loading && !error && filteredSubscribers.map((sub) => {
-            const today = new Date();
-            const expiresAt = sub.subscription_expires_at
-              ? new Date(sub.subscription_expires_at)
-              : null;
+          {!loading &&
+            !error &&
+            filteredSubscribers.map((sub) => {
+              const today = new Date();
+              const expiresAt = sub.subscription_expires_at
+                ? new Date(sub.subscription_expires_at)
+                : null;
 
-            let statusText = "No Expiry";
-            let statusColor = "text-gray-600";
+              let statusText = "No Expiry";
+              let statusColor = "text-gray-600";
 
-            if (expiresAt) {
-              if (expiresAt >= today) {
-                statusText = "Active";
-                statusColor = "text-green-700 font-semibold";
-              } else {
-                statusText = "Expired";
-                statusColor = "text-red-600 font-semibold";
+              if (expiresAt) {
+                if (expiresAt >= today) {
+                  statusText = "Active";
+                  statusColor = "text-green-700 font-semibold";
+                } else {
+                  statusText = "Expired";
+                  statusColor = "text-red-600 font-semibold";
+                }
               }
-            }
 
-            // دالة لمنع navigate من الزرار يشتغل مع onClick للكارت
-            const onCardClick = () => navigate(`/admin/subscribers/${sub.id}`);
+              const onCardClick = () =>
+                navigate(`/admin/subscribers/${sub.id}`);
 
-            return (
-              <div
-                key={sub.id}
-                onClick={onCardClick}
-                className="bg-white border border-green-300 rounded-xl shadow-md p-5 flex flex-col items-center text-center cursor-pointer hover:shadow-lg transition relative"
-              >
-                {/* Profile image or placeholder */}
-                <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-green-500 mb-4">
-                  {sub.profile_image ? (
-                    <img
-                      src={`https://generous-optimism-production-4492.up.railway.app/storage/${sub.profile_image}`}
-                      alt={sub.name}
-                      className="object-cover w-full h-full"
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center w-full h-full bg-green-200 text-green-700 font-bold text-3xl">
-                      {sub.name.charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                </div>
+              return (
+                <div
+                  key={sub.id}
+                  onClick={onCardClick}
+                  className="bg-white border border-green-300 rounded-xl shadow-md p-5 flex flex-col items-center text-center cursor-pointer hover:shadow-lg transition relative"
+                >
+                  {/* Profile image */}
+                  <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-green-500 mb-4">
+                    {sub.profile_image ? (
+                      <img
+                        src={`https://generous-optimism-production-4492.up.railway.app/storage/${sub.profile_image}`}
+                        alt={sub.name}
+                        className="object-cover w-full h-full"
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center w-full h-full bg-green-200 text-green-700 font-bold text-3xl">
+                        {sub.name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
 
-                <h2 className="text-xl font-semibold text-green-800 mb-1">{sub.name}</h2>
-                <p className="text-green-600 mb-1">{sub.email}</p>
-                <p className="text-green-600 mb-2">{sub.phone}</p>
+                  <h2 className="text-xl font-semibold text-green-800 mb-1">
+                    {sub.name}
+                  </h2>
+                  <p className="text-green-600 mb-1">{sub.email}</p>
+                  <p className="text-green-600 mb-2">{sub.phone}</p>
 
-                <div className="w-full bg-green-100 rounded-full h-4 mb-3">
-                  <div
-                    className={`h-4 rounded-full transition-all duration-500 ${
-                      statusText === "Active"
-                        ? "bg-green-500"
-                        : statusText === "Expired"
-                        ? "bg-red-500"
-                        : "bg-gray-400"
-                    }`}
-                    style={{
-                      width:
+                  <div className="w-full bg-green-100 rounded-full h-4 mb-3">
+                    <div
+                      className={`h-4 rounded-full transition-all duration-500 ${
                         statusText === "Active"
-                          ? "100%"
+                          ? "bg-green-500"
                           : statusText === "Expired"
-                          ? "100%"
-                          : "40%",
-                    }}
-                  />
-                </div>
+                          ? "bg-red-500"
+                          : "bg-gray-400"
+                      }`}
+                      style={{
+                        width:
+                          statusText === "Active"
+                            ? "100%"
+                            : statusText === "Expired"
+                            ? "100%"
+                            : "40%",
+                      }}
+                    />
+                  </div>
 
-                <p className={`${statusColor} mb-2`}>{statusText}</p>
+                  <p className={`${statusColor} mb-2`}>{statusText}</p>
+                  <p className="text-green-700 font-medium">
+                    Remaining Sessions: {sub.remaining_sessions}
+                  </p>
 
-                <p className="text-green-700 font-medium">
-                  Remaining Sessions: {sub.remaining_sessions}
-                </p>
-                <p className="text-green-700 text-sm mt-2">
-                  Subscription Expires:{" "}
-                  {expiresAt ? expiresAt.toISOString().split("T")[0] : "N/A"}
-                </p>
+                  <p className="text-green-700 text-sm mt-2">
+                    Subscription Expires:{" "}
+                    {expiresAt ? expiresAt.toISOString().split("T")[0] : "N/A"}
+                  </p>
 
-                <p className={`mt-2 font-semibold ${
-                  sub.is_active ? "text-green-600" : "text-red-600"
-                }`}>
-                  {sub.is_active ? "Active" : "Inactive"}
-                </p>
+                  <p
+                    className={`mt-2 font-semibold ${
+                      sub.is_active ? "text-green-600" : "text-red-600"
+                    }`}
+                  >
+                    {sub.is_active ? "Active" : "Inactive"}
+                  </p>
 
-                {/* Renew Subscription Button - show only if expired */}
-                {statusText === "Expired" && (
+                  {/* =============================== */}
+                  {/* UPDATE BUTTON — Added Now */}
+                  {/* =============================== */}
                   <button
                     onClick={(e) => {
-                      e.stopPropagation(); // يمنع navigate للكارت لما اضغط على الزرار
-                      navigate(`/admin/subscribers/renew/${sub.id}`, { state: { subscriber: sub } });
+                      e.stopPropagation();
+                      navigate(`/admin/subscribers/update/${sub.id}`);
                     }}
                     className="mt-4 text-green-700 border border-green-700 hover:bg-green-700 hover:text-white transition font-semibold px-4 py-2 rounded-md w-full"
                   >
-                    Renew Subscription
+                    Update Subscriber
                   </button>
 
-                  
-                )}
-
-                
-              </div>
-            );
-          })}
+                  {/* Renew button (only if expired) */}
+                  {statusText === "Expired" && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/admin/subscribers/renew/${sub.id}`, {
+                          state: { subscriber: sub },
+                        });
+                      }}
+                      className="mt-2 text-green-700 border border-green-700 hover:bg-green-700 hover:text-white transition font-semibold px-4 py-2 rounded-md w-full"
+                    >
+                      Renew Subscription
+                    </button>
+                  )}
+                </div>
+              );
+            })}
         </div>
       </div>
     </div>

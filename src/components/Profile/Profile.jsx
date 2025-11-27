@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 export default function Profile() {
@@ -12,77 +12,63 @@ export default function Profile() {
   const [imageSuccess, setImageSuccess] = useState(null);
   const [profileImagePreview, setProfileImagePreview] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
-  const { t } = useTranslation();
 
+  const fileInputRef = useRef(null);
+  const { t } = useTranslation();
   const token = localStorage.getItem("token");
 
+  // جلب بيانات المستخدم
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const res = await fetch(
           "https://generous-optimism-production-4492.up.railway.app/api/me",
-          { headers: { "Authorization": `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         const result = await res.json();
         setUser(result.data);
         setFormData({
-          name: result.data.name,
-          email: result.data.email,
-          phone: result.data.phone,
-          national_id: result.data.national_id
+          name: result.data.name || "",
+          email: result.data.email || "",
+          phone: result.data.phone || "",
+          national_id: result.data.national_id || "",
         });
         setProfileImagePreview(result.data.profile_image || null);
       } catch (err) {
-        setError(err.message);
+        setError("Failed to load profile");
       } finally {
         setLoading(false);
       }
     };
-    fetchUser();
+    if (token) fetchUser();
   }, [token]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // اختيار الصورة (preview فقط)
   const handleImageSelect = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setSelectedImage(e.target.files[0]);
-      setProfileImagePreview(URL.createObjectURL(e.target.files[0]));
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      setProfileImagePreview(URL.createObjectURL(file));
+      setImageSuccess(null);
+      setError(null);
     }
   };
 
-  const handleSaveData = async () => {
-    setSaving(true);
-    setError(null);
-    setSuccess(null);
-    try {
-      const res = await fetch(
-        "https://generous-optimism-production-4492.up.railway.app/api/profile",
-        {
-          method: "PUT",
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(formData)
-        }
-      );
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Update failed");
-      setUser(data.data);
-      setSuccess("Profile updated successfully!");
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setSaving(false);
-    }
-  };
-
+  // رفع الصورة (الطريقة الصحيحة 100%)
   const handleUploadImage = async () => {
-    if (!selectedImage) return;
+    if (!selectedImage) {
+      setError(t("please_select_image"));
+      return;
+    }
+
     setImageSaving(true);
     setImageSuccess(null);
+    setError(null);
+
     try {
       const formPayload = new FormData();
       formPayload.append("profile_image", selectedImage);
@@ -91,142 +77,180 @@ export default function Profile() {
         "https://generous-optimism-production-4492.up.railway.app/api/profile/image",
         {
           method: "POST",
-          headers: { "Authorization": `Bearer ${token}` },
-          body: formPayload
+          headers: {
+            Authorization: `Bearer ${token}`,
+            // لا نضيف Content-Type أبدًا مع FormData
+          },
+          body: formPayload,
         }
       );
+
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Image upload failed");
-      setUser((prev) => ({ ...prev, profile_image: data.data.profile_image }));
-      setImageSuccess("Profile image updated successfully!");
+
+      if (!res.ok) {
+        throw new Error(data.message || "Upload failed");
+      }
+
+      const newImageUrl = data.data.profile_image;
+      setUser((prev) => ({ ...prev, profile_image: newImageUrl }));
+      setProfileImagePreview(newImageUrl);
+      localStorage.setItem("profile_image", newImageUrl);
+      setImageSuccess(t("profile_image_updated") || "تم رفع الصورة بنجاح");
+
+      // تنظيف الإنبوت عشان تقدر ترفع نفس الصورة تاني
+      setSelectedImage(null);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (err) {
-      setError(err.message);
+      console.error("Upload error:", err);
+      setError(err.message || "فشل رفع الصورة");
     } finally {
       setImageSaving(false);
     }
   };
 
-  if (loading) return <div className="text-center mt-20">Loading...</div>;
+  // حفظ البيانات النصية
+  const handleSaveData = async () => {
+    setSaving(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const res = await fetch(
+        "https://generous-optimism-production-4492.up.railway.app/api/profile",
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Update failed");
+
+      setUser(data.data);
+      setSuccess(t("profile_updated_success") || "تم حفظ التغييرات");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return <div className="text-center mt-20 text-lg">{t("loading") || "جاري التحميل..."}</div>;
+  }
 
   return (
-<div className=" py-10">
+<div className="min-h-screen py-6 px-4">
+  <div className="max-w-6xl mx-auto">
+    <div className="bg-gray-100 rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+      <div className="p-5 md:p-7">
 
-  <div className="max-w-7xl mx-auto px-6   ">
+        {/* Profile Image + Fields */}
+        <div className="grid lg:grid-cols-3 gap-6">
 
-    
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 md:p-10">
+          {/* Profile Image */}
+          <div className="text-center lg:text-left">
+            <div className="relative inline-block">
+              <img
+                src={profileImagePreview || "https://via.placeholder.com/100"}
+                className="w-24 h-24 rounded-full object-cover border-3 border-white shadow-md shadow-green-600 mx-auto lg:mx-0"
+              />
+              <div className="absolute inset-0 rounded-full shadow-xl blur-xl -z-10 opacity-40"></div>
+            </div>  
 
-      <div className="grid md:grid-cols-3 gap-10">
+            <div className="mt-4 space-y-2.5">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageSelect}
+                className="block w-full text-xs text-gray-600 file:mr-2 file:py-1.5 file:px-3 file:rounded file:border-0 file:bg-green-600 file:text-white hover:file:bg-green-800 cursor-pointer"
+              />
+              <button
+                onClick={handleUploadImage}
+                disabled={imageSaving}
+                className="w-52 py-2 text-sm font-medium bg-green-600 hover:bg-green-900 text-white rounded-lg disabled:opacity-50 transition"
+              >
+                {imageSaving ? t("uploading") : t("upload_image")}
+              </button>
+              {imageSuccess && (
+                <p className="text-sm text-gray-600 text-start">{imageSuccess}</p>
+              )}
+            </div>
+          </div>
 
-        {/* الصورة + رفع */}
-        <div className="text-center md:text-left">
-          <img
-            src={profileImagePreview || user?.profile_image || "https://via.placeholder.com/150"}
-            alt="Profile"
-            className="w-36 h-36 rounded-full object-cover border-4 border-gray-300 mx-auto md:mx-0"
-          />
+          {/* Editable Fields */}
+          <div className="lg:col-span-2 space-y-4">
+            <div className="grid sm:grid-cols-2 gap-3.5">
+              {["name", "email", "phone", "national_id"].map((field) => (
+                <div key={field} className="space-y-1">
+                  <label className="block text-sm font-semibold text-gray-700">
+                    {t(field)}
+                  </label>
+                  <input
+                    type={field === "email" ? "email" : "text"}
+                    name={field}
+                    value={formData[field] || ""}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-500 transition"
+                    placeholder={t(field)}
+                  />
+                </div>
+              ))}
+            </div>
 
-          <div className="mt-6 space-y-3">
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageSelect}
-              className="block w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-emerald-600 file:text-white file:text-sm hover:file:bg-emerald-700"
-            />
-            <button
-              onClick={handleUploadImage}
-              disabled={imageSaving}
-              className="w-full py-2.5 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 disabled:opacity-60 transition"
-            >
-              {imageSaving ? t("uploading") : t("upload_image")}
-            </button>
-            {imageSuccess && <p className="text-green-600 text-sm">{imageSuccess}</p>}
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                onClick={handleSaveData}
+                disabled={saving}
+                className="px-6 py-2 text-sm font-semibold bg-green-600 hover:bg-green-900 text-white rounded-lg disabled:opacity-50 transition"
+              >
+                {saving ? t("saving") : t("save_changes")}
+              </button>
+              {success && <span className="text-xs text-gray-600">{success}</span>}
+              {error && <span className="text-xs text-red-600">{error}</span>}
+            </div>
           </div>
         </div>
 
-        {/* الحقول القابلة للتعديل */}
-        <div className="md:col-span-2 space-y-6">
-          <div className="grid sm:grid-cols-2 gap-5">
-            {["name", "email", "phone", "national_id"].map((field) => (
-              <div key={field}>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                  {t(field.replace("_", " "))}
-                </label>
-                <input
-                  type={field === "email" ? "email" : "text"}
-                  name={field}
-                  value={formData[field] || ""}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100 transition"
-                />
+        {/* Account Info */}
+        <div className="mt-7 pt-6 border-t border-gray-200">
+          <h2 className="text-lg font-bold text-gray-800 mb-4">{t("account_info")}</h2>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+            {[
+              { label: t("user_id"), value: user?.id || "-" },
+              { label: t("role"), value: user?.role || "-" },
+              { label: t("remaining_sessions"), value: user?.remaining_sessions || 0 },
+              { label: t("subscription_expires"), value: user?.subscription_expires_at ? new Date(user.subscription_expires_at).toLocaleDateString("en-US") : "-" },
+              { label: t("account_status"), value: user?.is_active ? t("active") : t("inactive") },
+              { label: t("last_login"), value: user?.last_login_at ? new Date(user.last_login_at).toLocaleString("en-US") : "-" },
+              { label: t("valid_subscription"), value: user?.has_valid_subscription ? t("yes") : t("no") },
+            ].map((item, idx) => (
+              <div
+                key={idx}
+                className="p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition"
+              >
+                <p className="text-xs font-medium text-gray-600">{item.label}</p>
+                <p
+                  className={`text-sm font-semibold mt-0.5 ${
+                    item.label === t("remaining_sessions") ? "text-rose-600" : "text-gray-900"
+                  }`}
+                >
+                  {item.value}
+                </p>
               </div>
             ))}
           </div>
-
-          <div className="flex items-center gap-4 ">
-            <button
-              onClick={handleSaveData}
-              disabled={saving}
-              className="px-8 py-3 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white font-semibold rounded-lg transition"
-            >
-              {saving ? t("saving") : t("save_changes")}
-            </button>
-            {success && <span className="text-green-600 font-medium">{success}</span>}
-            {error && <span className="text-red-600 font-medium">{error}</span>}
-          </div>
         </div>
+
       </div>
-
-      {/* معلومات للقراءة فقط */}
-      <div className="mt-12 pt-8 border-t border-gray-200">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">{t("account_info")}</h2>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 text-sm">
-          <div>
-            <p className="text-gray-600">{t("role")}</p>
-            <p className="font-semibold text-gray-900">{user?.role || "-"}</p>
-          </div>
-          <div>
-            <p className="text-gray-600">{t("remaining_sessions")}</p>
-            <p className="font-bold text-emerald-600 text-xl">{user?.remaining_sessions || 0}</p>
-          </div>
-          <div>
-            <p className="text-gray-600">{t("subscription_expires")}</p>
-            <p className="font-semibold text-gray-900">
-              {user?.subscription_expires_at ? new Date(user.subscription_expires_at).toLocaleDateString("ar-EG") : "-"}
-            </p>
-          </div>
-          <div>
-            <p className="text-gray-600">{t("account_status")}</p>
-            <p className={`font-semibold ${user?.is_active ? "text-green-600" : "text-red-600"}`}>
-              {user?.is_active ? t("active") : t("inactive")}
-            </p>
-          </div>
-          <div>
-            <p className="text-gray-600">{t("last_login")}</p>
-            <p className="font-semibold text-gray-900">
-              {user?.last_login_at ? new Date(user.last_login_at).toLocaleString("ar-EG") : "-"}
-            </p>
-          </div>
-          <div>
-            <p className="text-gray-600">{t("valid_subscription")}</p>
-            <p className={`font-semibold ${user?.has_valid_subscription ? "text-green-600" : "text-gray-500"}`}>
-              {user?.has_valid_subscription ? t("yes") : t("no")}
-            </p>
-          </div>
-        </div>
-      </div>
-
     </div>
   </div>
 </div>
 
   );
 }
-
-const Info = ({ label, value, valueColor }) => (
-  <div className="p-4 bg-indigo-50 rounded-lg">
-    <h3 className="font-semibold text-indigo-700 mb-1">{label}</h3>
-    <p className={valueColor ? `font-medium text-${valueColor}-600` : ""}>{value}</p>
-  </div>
-);
