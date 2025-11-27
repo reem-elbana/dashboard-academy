@@ -1,11 +1,31 @@
 import React, { useState, useContext, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { token, userRole, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  const { i18n, t } = useTranslation();
+
+  // تغيير اللغة
+  const switchLang = () => {
+    const newLang = i18n.language === "en" ? "ar" : "en";
+    i18n.changeLanguage(newLang);
+    localStorage.setItem("lang", newLang);
+
+    // تغيير الاتجاه
+    document.documentElement.dir = newLang === "ar" ? "rtl" : "ltr";
+  };
+
+  // عند فتح الموقع — استخدم اللغة المحفوظة
+  useEffect(() => {
+    const saved = localStorage.getItem("lang") || "en";
+    i18n.changeLanguage(saved);
+    document.documentElement.dir = saved === "ar" ? "rtl" : "ltr";
+  }, [i18n]);
 
   const handleLogout = () => {
     logout();
@@ -17,31 +37,47 @@ export default function Navbar() {
       <nav className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-3 flex items-center justify-between">
 
         <p className="text-lime-600 font-bold text-xl">ALforsan Academy</p>
-
+  {/* <div className="flex items-center space-x-4">
+        <span className="text-sm text-gray-600">
+          {new Date(stats?.subscription_expires_at).toLocaleDateString("en-GB")}
+        </span>
+        <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-green-600">
+          <img src={user?.profile_image || "/default-profile.png"} alt="user" className="w-full h-full object-cover" />
+        </div>
+      </div> */}
         {/* Desktop Links */}
         <div className="hidden lg:flex lg:items-center lg:space-x-6">
-          {token && userRole === "user" && (
+          {token && userRole === "subscriber" && (
             <>
-              <NavLink to="/user/home" className="hover:text-green-600">Home</NavLink>
-              <NavLink to="/user/profile" className="hover:text-green-600">Profile</NavLink>
-              <NavLink to="/user/offers" className="hover:text-green-600">Offers</NavLink>
-              <NavLink to="/user/sports" className="hover:text-green-600">Sports</NavLink>
+              <NavLink to="/user/home" className="hover:text-green-600">{t("home")}</NavLink>
+              <NavLink to="/user/profile" className="hover:text-green-600">{t("profile")}</NavLink>
+              <NavLink to="/user/offers" className="hover:text-green-600">{t("My Sessions & Offers")}</NavLink>
+              <NavLink to="/user/sports" className="hover:text-green-600">{t("sports")}</NavLink>
             </>
           )}
         </div>
 
-        {/* Auth Links */}
+        {/* Language + Auth */}
         <div className="hidden lg:flex lg:items-center lg:space-x-4">
+
+          {/* زر اللغة */}
+          <button
+            onClick={switchLang}
+            className="px-2 py-1 border rounded text-sm hover:bg-gray-100"
+          >
+            {i18n.language === "en" ? "AR" : "EN"}
+          </button>
+
           {token ? (
             <button
               onClick={handleLogout}
               className="text-red-600 font-medium hover:text-red-700 transition"
             >
-              Logout
+              {t("logout")}
             </button>
           ) : (
             <NavLink to="/login" className="text-green-600 font-medium hover:text-green-700">
-              Login
+              {t("login")}
             </NavLink>
           )}
         </div>
@@ -59,18 +95,31 @@ export default function Navbar() {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="lg:hidden bg-white shadow-md px-6 py-4 space-y-4">
-          {token && userRole === "user" && (
+          {/* زر اللغة في الموبايل */}
+          <button
+            onClick={switchLang}
+            className="px-2 py-1 border rounded text-sm block"
+          >
+            {i18n.language === "en" ? "AR" : "EN"}
+          </button>
+
+          {token && userRole === "subscriber" && (
             <>
-              <NavLink to="/user/home" onClick={() => setIsOpen(false)}>Home</NavLink>
-              <NavLink to="/user/profile" onClick={() => setIsOpen(false)}>Profile</NavLink>
-              <NavLink to="/user/offers" onClick={() => setIsOpen(false)}>Offers</NavLink>
-              <NavLink to="/user/sports" onClick={() => setIsOpen(false)}>Sports</NavLink>
+              <NavLink to="/user/home" onClick={() => setIsOpen(false)}>{t("home")}</NavLink>
+              <NavLink to="/user/profile" onClick={() => setIsOpen(false)}>{t("profile")}</NavLink>
+              <NavLink to="/user/offers" onClick={() => setIsOpen(false)}>{t("offers")}</NavLink>
+              <NavLink to="/user/sports" onClick={() => setIsOpen(false)}>{t("sports")}</NavLink>
             </>
           )}
+
           {token ? (
-            <button onClick={handleLogout} className="text-red-600 font-medium">Logout</button>
+            <button onClick={handleLogout} className="text-red-600 font-medium">
+              {t("logout")}
+            </button>
           ) : (
-            <NavLink to="/login" onClick={() => setIsOpen(false)}>Login</NavLink>
+            <NavLink to="/login" onClick={() => setIsOpen(false)}>
+              {t("login")}
+            </NavLink>
           )}
         </div>
       )}

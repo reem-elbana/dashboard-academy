@@ -7,11 +7,9 @@ export default function EditUser() {
   const { token } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
-  const { id } = useParams(); // user id from URL params
-
+  const { id } = useParams();
 
   const user = location.state?.user;
-
 
   const [formData, setFormData] = useState({
     name: "",
@@ -30,15 +28,11 @@ export default function EditUser() {
 
   const roles = ["subscriber", "admin", "super_admin"];
 
-  // لما الصفحة تحمل، نتحقق من وجود بيانات المستخدم، لو مافيش نرجع لصفحة المستخدمين
   useEffect(() => {
     if (!user) {
-      // لو مفيش بيانات مستخدم، نرجع لقائمة المستخدمين
       navigate("/admin/users");
       return;
     }
-
-    // عبي الفورم بالبيانات اللي جت من صفحة UsersList
     setFormData({
       name: user.name || "",
       email: user.email || "",
@@ -82,149 +76,173 @@ export default function EditUser() {
         setErrorMsg("Failed to update user.");
       }
     } catch (error) {
-      setErrorMsg(
-        error.response?.data?.message || "Failed to update user."
-      );
+      setErrorMsg(error.response?.data?.message || "Failed to update user.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold mb-4 text-center">Update User</h2>
+    <div className="min-h-screen bg-gray-50 flex justify-center items-center p-6">
+      <div className="bg-white w-full max-w-xl p-6 rounded-2xl shadow-md border border-gray-200">
+        <h2 className="text-2xl font-semibold mb-6 text-center text-green-700 tracking-tight">
+          Update User
+        </h2>
 
-      {successMsg && (
-        <div className="mb-4 p-3 bg-green-100 text-green-700 rounded">
-          {successMsg}
-        </div>
-      )}
-      {errorMsg && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">{errorMsg}</div>
-      )}
+        {successMsg && (
+          <div className="mb-4 p-3 bg-green-100 text-green-800 rounded-lg text-center font-medium shadow-sm border border-green-300">
+            {successMsg}
+          </div>
+        )}
+        {errorMsg && (
+          <div className="mb-4 p-3 bg-red-100 text-red-800 rounded-lg text-center font-medium shadow-sm border border-red-300">
+            {errorMsg}
+          </div>
+        )}
 
-      <form onSubmit={handleSubmit}>
-        <label className="block mb-1 font-semibold" htmlFor="name">
-          Name
-        </label>
-        <input
-          id="name"
-          name="name"
-          type="text"
-          required
-          value={formData.name}
-          onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
-          placeholder="Name"
-        />
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label htmlFor="name" className="block mb-1 font-medium text-gray-800 text-base">
+              Name
+            </label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              required
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Name"
+              className="w-full p-3 border border-gray-300 rounded-lg text-base bg-gray-50 focus:bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
+            />
+          </div>
 
-        <label className="block mb-1 font-semibold" htmlFor="email">
-          Email
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          required
-          value={formData.email}
-          onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
-          placeholder="Email"
-        />
+          <div>
+            <label htmlFor="email" className="block mb-1 font-medium text-gray-800 text-base">
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Email"
+              className="w-full p-3 border border-gray-300 rounded-lg text-base bg-gray-50 focus:bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
+            />
+          </div>
 
-        <label className="block mb-1 font-semibold" htmlFor="phone">
-          Phone
-        </label>
-        <input
-          id="phone"
-          name="phone"
-          type="text"
-          required
-          value={formData.phone}
-          onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
-          placeholder="Phone"
-        />
+          <div>
+            <label htmlFor="phone" className="block mb-1 font-medium text-gray-800 text-base">
+              Phone
+            </label>
+            <input
+              id="phone"
+              name="phone"
+              type="text"
+              required
+              value={formData.phone}
+              onChange={handleChange}
+              placeholder="Phone"
+              className="w-full p-3 border border-gray-300 rounded-lg text-base bg-gray-50 focus:bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
+            />
+          </div>
 
-        <label className="block mb-1 font-semibold" htmlFor="national_id">
-          National ID
-        </label>
-        <input
-          id="national_id"
-          name="national_id"
-          type="text"
-          required
-          value={formData.national_id}
-          onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
-          placeholder="National ID"
-        />
+          <div>
+            <label htmlFor="national_id" className="block mb-1 font-medium text-gray-800 text-base">
+              National ID
+            </label>
+            <input
+              id="national_id"
+              name="national_id"
+              type="text"
+              required
+              value={formData.national_id}
+              onChange={handleChange}
+              placeholder="National ID"
+              className="w-full p-3 border border-gray-300 rounded-lg text-base bg-gray-50 focus:bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
+            />
+          </div>
 
-        <label className="block mb-1 font-semibold" htmlFor="role">
-          Role
-        </label>
-        <select
-          id="role"
-          name="role"
-          value={formData.role}
-          onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
-        >
-          {roles.map((r) => (
-            <option key={r} value={r}>
-              {r === "subscriber"
-                ? "Subscriber"
-                : r === "admin"
-                ? "Admin"
-                : "Super Admin"}
-            </option>
-          ))}
-        </select>
+          <div>
+            <label htmlFor="role" className="block mb-1 font-medium text-gray-800 text-base">
+              Role
+            </label>
+            <select
+              id="role"
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-lg text-base bg-gray-50 focus:bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
+            >
+              {roles.map((r) => (
+                <option key={r} value={r}>
+                  {r === "subscriber"
+                    ? "Subscriber"
+                    : r === "admin"
+                    ? "Admin"
+                    : "Super Admin"}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <label className="block mb-1 font-semibold" htmlFor="remaining_sessions">
-          Remaining Sessions
-        </label>
-        <input
-          id="remaining_sessions"
-          name="remaining_sessions"
-          type="number"
-          min="0"
-          value={formData.remaining_sessions}
-          onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
-        />
+          <div>
+            <label
+              htmlFor="remaining_sessions"
+              className="block mb-1 font-medium text-gray-800 text-base"
+            >
+              Remaining Sessions
+            </label>
+            <input
+              id="remaining_sessions"
+              name="remaining_sessions"
+              type="number"
+              min="0"
+              value={formData.remaining_sessions}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-lg text-base bg-gray-50 focus:bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
+            />
+          </div>
 
-        <label className="block mb-1 font-semibold" htmlFor="subscription_expires_at">
-          Subscription Expires At
-        </label>
-        <input
-          id="subscription_expires_at"
-          name="subscription_expires_at"
-          type="date"
-          value={formData.subscription_expires_at}
-          onChange={handleChange}
-          className="w-full mb-4 p-2 border rounded"
-        />
+          <div>
+            <label
+              htmlFor="subscription_expires_at"
+              className="block mb-1 font-medium text-gray-800 text-base"
+            >
+              Subscription Expires At
+            </label>
+            <input
+              id="subscription_expires_at"
+              name="subscription_expires_at"
+              type="date"
+              value={formData.subscription_expires_at}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-lg text-base bg-gray-50 focus:bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
+            />
+          </div>
 
-        <label className="inline-flex items-center mb-6">
-          <input
-            type="checkbox"
-            name="is_active"
-            checked={formData.is_active}
-            onChange={handleChange}
-            className="mr-2"
-          />
-          Active User
-        </label>
+          <label className="inline-flex items-center mb-6 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              name="is_active"
+              checked={formData.is_active}
+              onChange={handleChange}
+              className="mr-2 w-5 h-5 text-green-600 focus:ring-green-400 border-gray-300 rounded"
+            />
+            <span className="text-gray-800 font-medium">Active User</span>
+          </label>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded transition disabled:opacity-60"
-        >
-          {loading ? "Updating..." : "Update User"}
-        </button>
-      </form>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition disabled:opacity-50 shadow"
+          >
+            {loading ? "Updating..." : "Update User"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

@@ -14,9 +14,7 @@ export default function AdminDashboard() {
       const res = await axios.get(
         "https://generous-optimism-production-4492.up.railway.app/api/admin/dashboard",
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
@@ -40,9 +38,15 @@ export default function AdminDashboard() {
     return <p className="p-4 text-red-600 text-center">Failed to load dashboard.</p>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 p-4 sm:p-10 ml-0 md:ml-64">
+    <div className="
+      w-full min-h-screen
+      bg-gradient-to-br from-gray-100 to-gray-200
+      px-4 sm:px-10 py-6
+      max-w-[1400px] mx-auto       /* يخليه متسنتر وشكله حلو على الشاشات الكبيرة */
+    ">
+      
       {/* Page Title */}
-      <h1 className="text-3xl sm:text-4xl font-extrabold text-green-700 mb-10 tracking-wide text-center md:text-left">
+      <h1 className="text-3xl sm:text-4xl font-extrabold text-green-700 mb-10 text-center md:text-left">
         Admin Dashboard
       </h1>
 
@@ -57,8 +61,8 @@ export default function AdminDashboard() {
       </div>
 
       {/* Month Stats */}
-      <div className="mt-12 bg-white/80 backdrop-blur-sm p-6 sm:p-8 rounded-3xl shadow-xl border border-white/40 max-w-7xl mx-auto">
-        <h2 className="text-2xl font-bold text-green-700 mb-6 text-center md:text-left">
+      <div className="mt-12 bg-white rounded-3xl shadow-lg p-6 sm:p-8 max-w-7xl mx-auto">
+        <h2 className="text-2xl font-bold text-green-700 mb-6">
           Monthly Activity
         </h2>
 
@@ -70,13 +74,15 @@ export default function AdminDashboard() {
       </div>
 
       {/* Recent Attendance */}
-      <div className="mt-12 bg-white p-6 sm:p-8 rounded-3xl shadow-xl border border-gray-200 max-w-7xl mx-auto overflow-x-auto">
-        <h2 className="text-2xl font-bold text-green-700 mb-4 text-center md:text-left">
+      <div className="mt-12 bg-white rounded-3xl shadow-lg p-6 sm:p-8 max-w-7xl mx-auto overflow-x-auto">
+        <h2 className="text-2xl font-bold text-green-700 mb-4">
           Recent Attendance
         </h2>
 
         {attendances.length === 0 ? (
-          <p className="text-gray-500 text-lg text-center">No attendance records yet.</p>
+          <p className="text-gray-500 text-lg text-center">
+            No attendance records yet.
+          </p>
         ) : (
           <table className="w-full min-w-[600px] border-collapse">
             <thead>
@@ -102,6 +108,7 @@ export default function AdminDashboard() {
           </table>
         )}
       </div>
+
     </div>
   );
 }
@@ -110,12 +117,14 @@ export default function AdminDashboard() {
 function StatCard({ title, value, small }) {
   return (
     <div
-      className={`bg-white/90 backdrop-blur-sm rounded-3xl shadow-lg border border-gray-200 p-6
-        hover:shadow-2xl transition-transform hover:-translate-y-1 
-        ${small ? "py-5" : "py-7"}`}
+      className={`
+        bg-white rounded-3xl shadow-lg p-6 border border-gray-200
+        hover:shadow-xl transition-transform hover:-translate-y-1 
+        ${small ? "py-5" : "py-7"}
+      `}
     >
-      <h3 className="text-gray-600 font-semibold text-center md:text-left">{title}</h3>
-      <p className="text-3xl font-extrabold text-green-600 mt-2 text-center md:text-left">{value}</p>
+      <h3 className="text-gray-600 font-semibold">{title}</h3>
+      <p className="text-3xl font-extrabold text-green-600 mt-2">{value}</p>
     </div>
   );
 }

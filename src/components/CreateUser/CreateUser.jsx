@@ -37,9 +37,7 @@ export default function CreateUser() {
         "https://generous-optimism-production-4492.up.railway.app/api/admin/users",
         formData,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
@@ -65,101 +63,112 @@ export default function CreateUser() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-6">
-      <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Create New User</h2>
+    <div className="min-h-screen bg-gray-20 p-6 flex justify-center items-center">
+      <div className="bg-white w-full max-w-xl p-6 rounded-2xl shadow-md border border-gray-200">
+        {/* Title */}
+        <h2 className="text-2xl font-semibold mb-6 text-center text-green-700 tracking-tight">
+          Create New User
+        </h2>
 
+        {/* Success Message */}
         {successMsg && (
-          <div className="mb-4 p-3 bg-green-100 text-green-700 rounded">{successMsg}</div>
+          <div className="mb-4 p-3 bg-green-100 text-green-800 rounded-lg text-center font-medium shadow-sm border border-green-300">
+            {successMsg}
+          </div>
         )}
 
+        {/* Error Message */}
         {errorMsg && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">{errorMsg}</div>
+          <div className="mb-4 p-3 bg-red-100 text-red-800 rounded-lg text-center font-medium shadow-sm border border-red-300">
+            {errorMsg}
+          </div>
         )}
 
-        <form onSubmit={handleSubmit}>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
 
-          <label className="block mb-2 font-semibold" htmlFor="name">
-            Name
-          </label>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            required
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full mb-4 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
-            placeholder="Enter name"
-          />
+          {/* Name */}
+          <div>
+            <label className="block mb-1 font-medium text-gray-800 text-base">Name</label>
+            <input
+              name="name"
+              type="text"
+              required
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-lg text-base bg-gray-50 focus:bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
+              placeholder="Enter name"
+            />
+          </div>
 
-          <label className="block mb-2 font-semibold" htmlFor="email">
-            Email
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            required
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full mb-4 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
-            placeholder="Enter email"
-          />
+          {/* Email */}
+          <div>
+            <label className="block mb-1 font-medium text-gray-800 text-base">Email</label>
+            <input
+              name="email"
+              type="email"
+              required
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-lg text-base bg-gray-50 focus:bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
+              placeholder="Enter email"
+            />
+          </div>
 
-          <label className="block mb-2 font-semibold" htmlFor="phone">
-            Phone Number
-          </label>
-          <input
-            id="phone"
-            name="phone"
-            type="text"
-            required
-            value={formData.phone}
-            onChange={handleChange}
-            className="w-full mb-4 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
-            placeholder="Enter phone number"
-          />
+          {/* Phone */}
+          <div>
+            <label className="block mb-1 font-medium text-gray-800 text-base">Phone Number</label>
+            <input
+              name="phone"
+              type="text"
+              required
+              value={formData.phone}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-lg text-base bg-gray-50 focus:bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
+              placeholder="Enter phone number"
+            />
+          </div>
 
-          <label className="block mb-2 font-semibold" htmlFor="national_id">
-            National ID
-          </label>
-          <input
-            id="national_id"
-            name="national_id"
-            type="text"
-            required
-            value={formData.national_id}
-            onChange={handleChange}
-            className="w-full mb-4 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
-            placeholder="Enter national ID"
-          />
+          {/* National ID */}
+          <div>
+            <label className="block mb-1 font-medium text-gray-800 text-base">National ID</label>
+            <input
+              name="national_id"
+              type="text"
+              required
+              value={formData.national_id}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-lg text-base bg-gray-50 focus:bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
+              placeholder="Enter national ID"
+            />
+          </div>
 
-          <label className="block mb-2 font-semibold" htmlFor="role">
-            Role
-          </label>
-          <select
-            id="role"
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-            className="w-full mb-6 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
-          >
-            {roles.map((r) => (
-              <option key={r} value={r}>
-                {r === "subscriber"
-                  ? "Subscriber"
-                  : r === "admin"
-                  ? "Admin"
-                  : "Super Admin"}
-              </option>
-            ))}
-          </select>
+          {/* Role */}
+          <div>
+            <label className="block mb-1 font-medium text-gray-800 text-base">Role</label>
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-lg text-base bg-gray-50 focus:bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
+            >
+              {roles.map((r) => (
+                <option key={r} value={r}>
+                  {r === "subscriber"
+                    ? "Subscriber"
+                    : r === "admin"
+                    ? "Admin"
+                    : "Super Admin"}
+                </option>
+              ))}
+            </select>
+          </div>
 
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-md transition disabled:opacity-60"
+            className="w-full bg-green-600 hover:bg-green-700 text-white text-base font-semibold py-3 rounded-lg transition disabled:opacity-50 shadow"
           >
             {loading ? "Creating..." : "Create User"}
           </button>

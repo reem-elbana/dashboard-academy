@@ -15,17 +15,27 @@ import EditUser from "../../components/EditUser/EditUser.jsx";
 import ManageContent from "../../components/ManageContent/ManageContent.jsx";
 import ProtectedRoute from "../../components/ProtectedRoute/ProtectedRoute.jsx";
 import CreateUser from "../../components/CreateUser/CreateUser.jsx";
+import Subscribers from  "../../components/Subscribers/Subscribers.jsx";
+import RenewSubscriptionPage from "../../components/RenewSubscription/RenewSubscription.jsx";
+import SubscriberDetails from "../../components/SubscriberDetails/SubscriberDetails.jsx";
+import UpdateSubscriber from "../../components/UpdateSubscriber/UpdateSubscriber.jsx";
+import ForgotPassword from "../ForgotPassword/ForgotPassword.jsx";
+import ResetPassword from "../../components/ResetPassword/ResetPassword.jsx";
 export default function AppRoutes() {
   return (
     <Routes>
      {/* ---- Login ---- */}
       <Route path="/login" element={<Login />} />
 
+           {/* ---- Forgot / Reset Password ---- */}
+   <Route path="/forgot-password" element={<ForgotPassword />} />
+<Route path="/reset-password" element={<ResetPassword />} />
+
       {/* ---- Redirect / to /login ---- */}
       <Route path="/" element={<Navigate to="/login" replace />} />
 
       {/* ---- User Layout ---- */}
-      <Route element={<ProtectedRoute role="user"><Layout /></ProtectedRoute>}>
+  <Route element={<ProtectedRoute role={["user","subscriber"]}><Layout /></ProtectedRoute>}>
         <Route path="/user/home" element={<UserHome />} />
         <Route path="/user/profile" element={<Profile />} />
         <Route path="/user/offers" element={<Offers />} />
@@ -33,6 +43,7 @@ export default function AppRoutes() {
         <Route path="/user/qr" element={<QRScan />} />
         <Route path="/user/student-id" element={<StudentID />} />
         <Route path="/user/schedule" element={<Schedule />} />
+
       </Route>
 
       {/* ---- Admin Layout ---- */}
@@ -42,6 +53,10 @@ export default function AppRoutes() {
         <Route path="/admin/users/edit/:id" element={<EditUser />} />
         <Route path="/admin/manage" element={<ManageContent />} />
         <Route path="/admin/create-user" element={<CreateUser />} />
+        <Route path="/admin/subscribers" element={<Subscribers />} />
+        <Route path="/admin/subscribers/renew/:id" element={<RenewSubscriptionPage />} />
+        <Route path="/admin/subscribers/:id" element={<SubscriberDetails />} />
+        <Route path="/admin/subscribers/update/:id" element={<UpdateSubscriber />} />
         
       </Route>
 
