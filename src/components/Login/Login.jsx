@@ -27,7 +27,7 @@ export default function Login() {
 
      
      const response = await axios.post(
-       "https:generous-optimism-production-4492.up.railway.app/api/auth/login",
+       "https://generous-optimism-production-4492.up.railway.app/api/auth/login",
        values
      );
 // console.log(response);
