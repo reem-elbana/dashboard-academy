@@ -21,6 +21,9 @@ import SubscriberDetails from "../../components/SubscriberDetails/SubscriberDeta
 import UpdateSubscriber from "../../components/UpdateSubscriber/UpdateSubscriber.jsx";
 import ForgotPassword from "../ForgotPassword/ForgotPassword.jsx";
 import ResetPassword from "../../components/ResetPassword/ResetPassword.jsx";
+import BannersDashboard from "../../components/BannersDashboard/BannerDashboard.jsx";
+import CategoriesDashboard from "../../components/CatrgoriesDashboard/CategoriesDashboard.jsx";
+import AddCategory from "../../components/CatrgoriesDashboard/AddCategory.jsx";
 export default function AppRoutes() {
   return (
     <Routes>
@@ -57,6 +60,9 @@ export default function AppRoutes() {
         <Route path="/admin/subscribers/renew/:id" element={<RenewSubscriptionPage />} />
         <Route path="/admin/subscribers/:id" element={<SubscriberDetails />} />
         <Route path="/admin/subscribers/update/:id" element={<UpdateSubscriber />} />
+        <Route path="/admin/banners" element={<BannersDashboard />} />
+        <Route path="/admin/categories" element={<CategoriesDashboard />} />
+        <Route path="/admin/categories/add" element={<AddCategory />} />
         
       </Route>
 

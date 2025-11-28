@@ -8,6 +8,7 @@ export default function CategorySlider() {
   const [loading, setLoading] = useState(true);
   const [selectedCat, setSelectedCat] = useState(null); // الفئة المختارة
   const { t } = useTranslation();
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -58,7 +59,7 @@ export default function CategorySlider() {
             >
               <div className="aspect-square relative overflow-hidden bg-gradient-to-br from-indigo-50 to-purple-50">
                 <img
-                  src={cat.icon_url.replace(/w=64&h=64/, "w=800&h=800")}
+                  src={(cat.icon_url || "").replace(/w=64&h=64/, "w=800&h=800")}
                   alt={cat.name}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   loading="lazy"
@@ -108,7 +109,7 @@ export default function CategorySlider() {
               {/* Large Image */}
               <div className="relative h-96 md:h-full">
                 <img
-                  src={selectedCat.icon_url.replace(/w=64&h=64/, "w=1200&h=800")}
+                  src={(selectedCat.icon_url || "").replace(/w=64&h=64/, "w=1200&h=800")}
                   alt={selectedCat.name}
                   className="w-full h-full object-cover"
                 />
@@ -171,6 +172,5 @@ export default function CategorySlider() {
         }
       `}</style>
     </>
-
   );
 }

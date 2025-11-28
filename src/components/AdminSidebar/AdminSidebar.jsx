@@ -48,6 +48,8 @@ export default function AdminSidebar() {
     { to: "/admin/manage", label: t("manageContent") },
     { to: "/admin/create-user", label: t("createUser") },
     { to: "/admin/subscribers", label: t("subscribers") },
+    { to: "/admin/banners", label: t("banners") },
+    { to: "/admin/categories", label: t("categories") },
   ];
 
   return (
