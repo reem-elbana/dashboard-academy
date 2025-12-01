@@ -126,17 +126,18 @@ export default function BannerSlider() {
       </SwiperSlide>
     ))}
 
-    <style jsx>{`
-      @keyframes slideUp {
-        to { transform: translateY(0); opacity: 1; }
-      }
-      @keyframes fadeIn {
-        to { opacity: 1; }
-      }
-      .swiper-pagination {
-        bottom: 1rem !important;
-      }
-    `}</style>
+   <style>{`
+  @keyframes slideUp {
+    to { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+  .swiper-pagination {
+    bottom: 1rem !important;
+  }
+`}</style>
+
   </Swiper>
 </div>
   );
