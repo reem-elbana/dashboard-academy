@@ -51,7 +51,7 @@ export default function BannerSlider() {
     );
 
   return (
-    <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div className="max-w-screen-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
   <Swiper
     modules={[Autoplay, Pagination, EffectFade]}
     spaceBetween={0}
@@ -59,15 +59,16 @@ export default function BannerSlider() {
     loop={true}
     effect="fade"
     autoplay={{
-      delay: 5000,
+      delay: 3000,
       disableOnInteraction: false,
       pauseOnMouseEnter: true,
     }}
     pagination={{
-      clickable: true,
-      bulletClass: "swiper-pagination-bullet !bg-white/60 !w-2 !h-2",
-      bulletActiveClass: "!bg-white !scale-125",
-    }}
+  clickable: true,
+  bulletClass: "swiper-pagination-bullet !bg-white/100 !w-4 !h-4", // أكبر وأكثر وضوح
+  bulletActiveClass: "!bg-white !scale-125",
+}}
+
     speed={1000}
     className="rounded-2xl overflow-hidden shadow-lg"
   >

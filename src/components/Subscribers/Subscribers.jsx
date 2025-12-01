@@ -18,6 +18,7 @@ export default function Subscribers() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("");
+  const [search, setSearch] = useState("");
 
   const fetchSubscribers = async () => {
     setLoading(true);
@@ -46,6 +47,7 @@ export default function Subscribers() {
     fetchSubscribers();
   }, []);
 
+  // ---------- Filtering ----------
   const checkSubscriptionStatus = (subscriber) => {
     const today = new Date();
     const expiresAt = subscriber.subscription_expires_at
@@ -60,21 +62,44 @@ export default function Subscribers() {
     return true;
   };
 
-  const filteredSubscribers = subscribers.filter(checkSubscriptionStatus);
+  // ---------- Search By Name or Email ----------
+  const matchesSearch = (subscriber) => {
+    const s = search.toLowerCase();
+    return (
+      subscriber.name.toLowerCase().includes(s) ||
+      subscriber.email.toLowerCase().includes(s)
+    );
+  };
+
+  const filteredSubscribers = subscribers
+    .filter(checkSubscriptionStatus)
+    .filter(matchesSearch);
 
   return (
     <div className="min-h-screen p-6 bg-green-50">
-      <div className="max-w-7xl mx-auto p-6 bg-white rounded-xl shadow-lg">
+      <div className="max-w-7xl mx-auto p-6 bg-white rounded-2xl shadow-xl">
         <h1 className="text-3xl font-bold text-center mb-8 text-green-800">
           Subscribers List
         </h1>
 
-        {/* Filter */}
-        <div className="flex justify-center mb-6">
+        {/* Search & Filter Row */}
+        <div className="flex flex-col md:flex-row gap-4 mb-6 justify-between">
+          {/* Search Input */}
+          <input
+            type="text"
+            placeholder="Search by name or email..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full md:w-1/2 border border-green-400 rounded-md px-4 py-2
+            text-green-700 focus:outline-none focus:ring-2 focus:ring-green-600"
+          />
+
+          {/* Filter */}
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="border border-green-400 rounded-md px-4 py-2 text-green-700 focus:outline-none focus:ring-2 focus:ring-green-600"
+            className="w-full md:w-1/3 border border-green-400 rounded-md px-4 py-2
+            text-green-700 focus:outline-none focus:ring-2 focus:ring-green-600"
           >
             {subscriptionStatusOptions.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -84,6 +109,7 @@ export default function Subscribers() {
           </select>
         </div>
 
+        {/* Status */}
         {loading && (
           <p className="text-center text-green-600 font-semibold">
             Loading subscribers...
@@ -94,6 +120,7 @@ export default function Subscribers() {
           <p className="text-center text-green-700">No subscribers found.</p>
         )}
 
+        {/* Cards */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {!loading &&
             !error &&
@@ -123,7 +150,9 @@ export default function Subscribers() {
                 <div
                   key={sub.id}
                   onClick={onCardClick}
-                  className="bg-white border border-green-300 rounded-xl shadow-md p-5 flex flex-col items-center text-center cursor-pointer hover:shadow-lg transition relative"
+                  className="bg-white border border-green-300 rounded-xl shadow-md p-6
+                  flex flex-col items-center text-center cursor-pointer hover:shadow-2xl
+                  transition transform hover:-translate-y-1 relative"
                 >
                   {/* Profile image */}
                   <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-green-500 mb-4">
@@ -140,13 +169,12 @@ export default function Subscribers() {
                     )}
                   </div>
 
-                  <h2 className="text-xl font-semibold text-green-800 mb-1">
-                    {sub.name}
-                  </h2>
-                  <p className="text-green-600 mb-1">{sub.email}</p>
-                  <p className="text-green-600 mb-2">{sub.phone}</p>
+                  <h2 className="text-xl font-semibold text-green-800">{sub.name}</h2>
+                  <p className="text-green-600">{sub.email}</p>
+                  <p className="text-green-600 mb-3">{sub.phone}</p>
 
-                  <div className="w-full bg-green-100 rounded-full h-4 mb-3">
+                  {/* Status Bar */}
+                  <div className="w-full bg-green-100 rounded-full h-4 mb-2">
                     <div
                       className={`h-4 rounded-full transition-all duration-500 ${
                         statusText === "Active"
@@ -155,18 +183,12 @@ export default function Subscribers() {
                           ? "bg-red-500"
                           : "bg-gray-400"
                       }`}
-                      style={{
-                        width:
-                          statusText === "Active"
-                            ? "100%"
-                            : statusText === "Expired"
-                            ? "100%"
-                            : "40%",
-                      }}
+                      style={{ width: "100%" }}
                     />
                   </div>
 
                   <p className={`${statusColor} mb-2`}>{statusText}</p>
+
                   <p className="text-green-700 font-medium">
                     Remaining Sessions: {sub.remaining_sessions}
                   </p>
@@ -184,33 +206,31 @@ export default function Subscribers() {
                     {sub.is_active ? "Active" : "Inactive"}
                   </p>
 
-                  {/* =============================== */}
-                  {/* UPDATE BUTTON — Added Now */}
-                  {/* =============================== */}
+                  {/* Update Button */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       navigate(`/admin/subscribers/update/${sub.id}`);
                     }}
-                    className="mt-4 text-green-700 border border-green-700 hover:bg-green-700 hover:text-white transition font-semibold px-4 py-2 rounded-md w-full"
+                    className="mt-4 text-green-700 border border-green-700 hover:bg-green-700 hover:text-white 
+                    transition font-semibold px-4 py-2 rounded-md w-full"
                   >
                     Update Subscriber
                   </button>
 
-                  {/* Renew button (only if expired) */}
-                  {statusText === "Expired" && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/admin/subscribers/renew/${sub.id}`, {
-                          state: { subscriber: sub },
-                        });
-                      }}
-                      className="mt-2 text-green-700 border border-green-700 hover:bg-green-700 hover:text-white transition font-semibold px-4 py-2 rounded-md w-full"
-                    >
-                      Renew Subscription
-                    </button>
-                  )}
+                  {/* Renew ALWAYS Visible for All */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/admin/subscribers/renew/${sub.id}`, {
+                        state: { subscriber: sub },
+                      });
+                    }}
+                    className="mt-2 text-green-700 border border-green-700 hover:bg-green-700 hover:text-white 
+                    transition font-semibold px-4 py-2 rounded-md w-full"
+                  >
+                    Renew Subscription
+                  </button>
                 </div>
               );
             })}

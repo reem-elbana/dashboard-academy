@@ -5,8 +5,7 @@ import AdminLayout from "../../components/AdminLayout/AdminLayout.jsx";
 import UserHome from "../../components/UserHome/UserHome.jsx";
 import Profile from "../../components/Profile/Profile.jsx";
 import Offers from "../../components/Offers/Offers.jsx";
-import Sports from "../../components/Sports/Sports.jsx";
-import QRScan from "../../components/QRScan/QRScan.jsx";
+import QrScan from "../../components/QrScan/QRScan.jsx";
 import StudentID from "../../components/StudentID/StudentID.jsx";
 import Schedule from "../../components/Schedule/Schedule.jsx";
 import AdminDashboard from "../../components/AdminDashboard/AdminDashboard.jsx";
@@ -24,29 +23,46 @@ import ResetPassword from "../../components/ResetPassword/ResetPassword.jsx";
 import BannersDashboard from "../../components/BannersDashboard/BannerDashboard.jsx";
 import CategoriesDashboard from "../../components/CatrgoriesDashboard/CategoriesDashboard.jsx";
 import AddCategory from "../../components/CatrgoriesDashboard/AddCategory.jsx";
+import CreateBanner from "../../components/BannersDashboard/CreateBanner.jsx"
+import OffersDashboard from "../../components/OffersDashboard/OffersDashboard.jsx";
+import CreateOffer from "../../components/OffersDashboard/CreateOffer.jsx";
+import TrainingSessionDashboard from "../../components/TrainingSessionDashboard/TrainingSessionDashboard.jsx";
+import CreateTrainingSession from "../../components/TrainingSessionDashboard/CreateTrainingSession.jsx";
+import SubscribersReport from "../../components/SubscribersReport/SubscribersReport.jsx";
+import AttendenceReport from "../../components/AttendenceReport/AttendenceReport.jsx";
+import CreateAdmin from "../../components/CreateAdmin/CreateAdmin.jsx";
+import QRDashboard from "../../components/QRDashboard/QRDashboard.jsx";
+import SetInitialPassword from "../../components/SetInitialPassword/SetInitialPassword.jsx";
+
 export default function AppRoutes() {
   return (
-    <Routes>
-     {/* ---- Login ---- */}
-      <Route path="/login" element={<Login />} />
-
-           {/* ---- Forgot / Reset Password ---- */}
-   <Route path="/forgot-password" element={<ForgotPassword />} />
-<Route path="/reset-password" element={<ResetPassword />} />
-
-      {/* ---- Redirect / to /login ---- */}
-      <Route path="/" element={<Navigate to="/login" replace />} />
-
-      {/* ---- User Layout ---- */}
-  <Route element={<ProtectedRoute role={["user","subscriber"]}><Layout /></ProtectedRoute>}>
+     <Routes>
+      {/* ---- Public Home ---- */}
+      <Route element={<Layout showNavbar={true} />}>
+        <Route path="/" element={<UserHome />} />
         <Route path="/user/home" element={<UserHome />} />
+      </Route>
+
+      {/* ---- Auth Pages (No Navbar) ---- */}
+    <Route path="/login" element={<Login />} />
+  <Route path="/forgot-password" element={<ForgotPassword />} />
+ <Route path="/reset-password" element={<ResetPassword />} />
+
+ <Route path="/set-initial-password" element={<SetInitialPassword />} />
+
+      {/* <Route path="/login" element={<Layout showNavbar={false}><Login /></Layout>} /> */}
+      {/* <Route path="/forgot-password" element={<Layout showNavbar={false}><ForgotPassword /></Layout>} />
+      <Route path="/reset-password" element={<Layout showNavbar={false}><ResetPassword /></Layout>} />
+      <Route path="/set-initial-password" element={<Layout showNavbar={false}><SetInitialPassword /></Layout>} /> */}
+
+      {/* ---- User Pages (Protected) ---- */}
+      <Route element={<ProtectedRoute role={["user","subscriber"]}><Layout showNavbar={true} /></ProtectedRoute>}>
         <Route path="/user/profile" element={<Profile />} />
         <Route path="/user/offers" element={<Offers />} />
-        <Route path="/user/sports" element={<Sports />} />
-        <Route path="/user/qr" element={<QRScan />} />
+        <Route path="/user/QrScan" element={<QrScan />} />
         <Route path="/user/student-id" element={<StudentID />} />
         <Route path="/user/schedule" element={<Schedule />} />
-
+        {/* <Route path="/category/:id" element={<CategoryDetails />} /> */}
       </Route>
 
       {/* ---- Admin Layout ---- */}
@@ -63,6 +79,15 @@ export default function AppRoutes() {
         <Route path="/admin/banners" element={<BannersDashboard />} />
         <Route path="/admin/categories" element={<CategoriesDashboard />} />
         <Route path="/admin/categories/add" element={<AddCategory />} />
+        <Route path="/admin/banners/add" element={<CreateBanner />} />
+        <Route path="/admin/offers" element={<OffersDashboard />} />
+        <Route path="/admin/offers/add" element={<CreateOffer />} />
+        <Route path="/admin/training-sessions" element={<TrainingSessionDashboard />} />
+        <Route path="/admin/training-sessions/add" element={<CreateTrainingSession />} />
+        <Route path="/admin/reports/subscribers" element={<SubscribersReport />} />
+        <Route path="/admin/reports/attendance" element={<AttendenceReport />} />
+        <Route path="/admin/create-admin" element={<CreateAdmin />} />
+        <Route path="/admin/qr-dashboard" element={<QRDashboard />} />
         
       </Route>
 

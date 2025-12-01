@@ -1,31 +1,558 @@
+// import { useEffect, useState, useContext } from "react";
+// import axios from "axios";
+// import { AuthContext } from "../../Context/AuthContext";
+// import { Link, useNavigate } from "react-router-dom";
+// import { Pencil, Trash2, X, Plus } from "lucide-react"; // updated icons
+
+// export default function UsersList() {
+//   const { token } = useContext(AuthContext);
+//   const navigate = useNavigate();
+
+//   const [users, setUsers] = useState([]);
+//   const [filteredUsers, setFilteredUsers] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState("");
+//   const [search, setSearch] = useState("");
+//   const [deletingIds, setDeletingIds] = useState({});
+
+//   const fetchUsers = async () => {
+//     try {
+//       const { data } = await axios.get(
+//         "https://generous-optimism-production-4492.up.railway.app/api/admin/users",
+//         { headers: { Authorization: `Bearer ${token}` } }
+//       );
+//       setUsers(data.data.data);
+//       setFilteredUsers(data.data.data);
+//       setLoading(false);
+//     } catch (err) {
+//       setError("An error occurred while loading users.");
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchUsers();
+//   }, []);
+
+//   useEffect(() => {
+//   const result = users.filter((u) =>
+//     u.name.toLowerCase().includes(search.toLowerCase()) ||
+//     u.email.toLowerCase().includes(search.toLowerCase())
+//   );
+//   setFilteredUsers(result);
+// }, [search, users]);
+
+
+//   const handleDelete = async (userId) => {
+//     if (!window.confirm("Are you sure you want to delete this user?")) return;
+
+//     setDeletingIds((prev) => ({ ...prev, [userId]: true }));
+
+//     try {
+//       const response = await axios.delete(
+//         `https://generous-optimism-production-4492.up.railway.app/api/admin/users/${userId}`,
+//         { headers: { Authorization: `Bearer ${token}` } }
+//       );
+
+//       if (response.data.success) {
+//         setUsers((prev) => prev.filter((user) => user.id !== userId));
+//       } else {
+//         setError("Failed to delete the user.");
+//       }
+//     } catch {
+//       setError("An error occurred while deleting the user.");
+//     } finally {
+//       setDeletingIds((prev) => ({ ...prev, [userId]: false }));
+//     }
+//   };
+
+//   return (
+
+//   <div className="min-h-screen bg-gray-100 p-4 sm:p-6 md:p-10">
+//     <div className="max-w-7xl mx-auto bg-white rounded-3xl shadow-lg p-6 sm:p-8">
+
+//       {/* Header */}
+//       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+//         <div>
+//           <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
+//             Users Management
+//           </h2>
+//           <p className="text-gray-500 text-sm sm:text-base">
+//             View and manage all users
+//           </p>
+//         </div>
+//       </div>
+
+//       {/* Search + Create */}
+//       <div className="flex flex-col sm:flex-row  items-center gap-4 mb-6 justify-end">
+//         <input
+//           type="text"
+//           placeholder="Search for a user..."
+//           value={search}
+//           onChange={(e) => setSearch(e.target.value)}
+//           className="w-full sm:w-80 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+//         />
+
+//         <button
+//           onClick={() => navigate("/admin/create-user")}
+//           className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto px-5 py-2.5 rounded-lg shadow transition"
+//         >
+//           <Plus className="w-5 h-5" />
+//           Create User
+//         </button>
+//       </div>
+
+//       {/* Loading / Error */}
+//       {loading && <p className="text-center text-gray-600">Loading...</p>}
+//       {error && <p className="text-center text-red-500">{error}</p>}
+
+//       {/* Desktop TABLE */}
+//       <div className="hidden md:block overflow-x-auto">
+//         <table className="w-full text-center border-collapse">
+//           <thead>
+//             <tr className="bg-gray-200 text-gray-700">
+//               <th className="p-3">Name</th>
+//               <th className="p-3">Email</th>
+//               <th className="p-3">Role</th>
+//               <th className="p-3">Status</th>
+//               <th className="p-3">Joined At</th>
+//               <th className="p-3">Actions</th>
+//             </tr>
+//           </thead>
+
+//           <tbody>
+//             {filteredUsers.map((user) => (
+//               <tr key={user.id} className="border-b hover:bg-gray-50">
+//                 <td className="p-3">{user.name}</td>
+//                 <td className="p-3">{user.email}</td>
+
+//                 <td className="p-3">
+//                   <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full">
+//                     {user.role}
+//                   </span>
+//                 </td>
+
+//                 <td className="p-3">
+//                   {user.is_active ? (
+//                     <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full">
+//                       Active
+//                     </span>
+//                   ) : (
+//                     <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full">
+//                       Inactive
+//                     </span>
+//                   )}
+//                 </td>
+
+//                 <td className="p-3">{user.created_at.split("T")[0]}</td>
+
+//                 <td className="p-3 flex items-center justify-center gap-4">
+//                   <Link
+//                     to={`/admin/users/edit/${user.id}`}
+//                     state={{ user }}
+//                     className="text-blue-600 hover:text-blue-800 transition"
+//                   >
+//                     <Pencil className="w-5 h-5" />
+//                   </Link>
+
+//                   <button
+//                     onClick={() => handleDelete(user.id)}
+//                     disabled={deletingIds[user.id]}
+//                     className="text-red-600 hover:text-red-800 transition"
+//                   >
+//                     {deletingIds[user.id] ? "..." : <Trash2 className="w-5 h-5" />}
+//                   </button>
+//                 </td>
+//               </tr>
+//             ))}
+//           </tbody>
+//         </table>
+//       </div>
+
+//       {/* Mobile Cards */}
+//       <div className="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+//         {filteredUsers.map((user) => (
+//           <div
+//             key={user.id}
+//             className="border rounded-xl p-4 shadow-sm bg-gray-50"
+//           >
+//             <p className="font-bold text-lg">{user.name}</p>
+//             <p className="text-gray-600 text-sm">{user.email}</p>
+
+//             <div className="mt-2 flex flex-wrap gap-2">
+//               <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">
+//                 {user.role}
+//               </span>
+
+//               {user.is_active ? (
+//                 <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs">
+//                   Active
+//                 </span>
+//               ) : (
+//                 <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs">
+//                   Inactive
+//                 </span>
+//               )}
+//             </div>
+
+//             <p className="text-gray-500 text-xs mt-1">
+//               Joined: {user.created_at.split("T")[0]}
+//             </p>
+
+//             {/* Actions */}
+//             <div className="flex justify-end gap-4 mt-4">
+//               <Link
+//                 to={`/admin/users/edit/${user.id}`}
+//                 state={{ user }}
+//                 className="text-blue-600 hover:text-blue-800 transition"
+//               >
+//                 <Pencil className="w-5 h-5" />
+//               </Link>
+
+//               <button
+//                 onClick={() => handleDelete(user.id)}
+//                 disabled={deletingIds[user.id]}
+//                 className="text-red-600 hover:text-red-800 transition"
+//               >
+//                 {deletingIds[user.id] ? "..." : <Trash2 className="w-5 h-5" />}
+//               </button>
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+
+//     </div>
+//   </div>
+// );
+
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// // import { useEffect, useState, useContext } from "react";
+// // import axios from "axios";
+// // import { AuthContext } from "../../Context/AuthContext";
+// // import { Link, useNavigate } from "react-router-dom";
+// // import { Pencil, Trash2, Plus } from "lucide-react";
+
+// // export default function UsersList() {
+// //   const { token, role: loggedInRole } = useContext(AuthContext);
+// //   const navigate = useNavigate();
+
+// //   const [users, setUsers] = useState([]);
+// //   const [filteredUsers, setFilteredUsers] = useState([]);
+// //   const [loading, setLoading] = useState(true);
+// //   const [error, setError] = useState("");
+// //   const [search, setSearch] = useState("");
+// //   const [roleFilter, setRoleFilter] = useState("");
+// //   const [deletingIds, setDeletingIds] = useState({});
+
+// //   // Dynamic roles (based on logged-in user)
+// //   const availableRoles =
+// //     loggedInRole === "super-admin"
+// //       ? ["admin", "subscriber", "super-admin"]
+// //       : ["admin", "subscriber"];
+
+// //   const fetchUsers = async () => {
+
+// //     const roleParam = roleFilter ? `&role=${roleFilter}` : "";
+
+// //     try {
+// //       const url = `https://generous-optimism-production-4492.up.railway.app/api/admin/users?per_page=15${roleParam}`;
+
+// //       const { data } = await axios.get(url, {
+// //         headers: { Authorization: `Bearer ${token}` },
+// //       });
+
+// //       setUsers(data.data.data);
+// //       setFilteredUsers(data.data.data);
+// //       setLoading(false);
+// //     } catch (err) {
+// //       setError("An error occurred while loading users.");
+// //       setLoading(false);
+// //     }
+// //   };
+
+// //   useEffect(() => {
+// //     fetchUsers();
+// //   }, []);
+
+// //   useEffect(() => {
+// //     fetchUsers();
+// //   }, [roleFilter]);
+
+// //   useEffect(() => {
+// //     const result = users.filter(
+// //       (u) =>
+// //         u.name.toLowerCase().includes(search.toLowerCase()) ||
+// //         u.email.toLowerCase().includes(search.toLowerCase())
+// //     );
+// //     setFilteredUsers(result);
+// //   }, [search, users]);
+
+// //   const handleDelete = async (userId) => {
+// //     if (!window.confirm("Are you sure you want to delete this user?")) return;
+
+// //     setDeletingIds((prev) => ({ ...prev, [userId]: true }));
+
+// //     try {
+// //       const response = await axios.delete(
+// //         `https://generous-optimism-production-4492.up.railway.app/api/admin/users/${userId}`,
+// //         { headers: { Authorization: `Bearer ${token}` } }
+// //       );
+
+// //       if (response.data.success) {
+// //         setUsers((prev) => prev.filter((u) => u.id !== userId));
+// //       } else {
+// //         setError("Failed to delete the user.");
+// //       }
+// //     } catch {
+// //       setError("An error occurred while deleting the user.");
+// //     } finally {
+// //       setDeletingIds((prev) => ({ ...prev, [userId]: false }));
+// //     }
+// //   };
+
+// //   return (
+// //     <div className="min-h-screen bg-gray-100 p-4 sm:p-6 md:p-10">
+// //       <div className="max-w-7xl mx-auto bg-white rounded-3xl shadow-lg p-6 sm:p-8">
+
+// //         {/* Header */}
+// //         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+// //           <div>
+// //             <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
+// //               Users Management
+// //             </h2>
+// //             <p className="text-gray-500 text-sm sm:text-base">
+// //               View and manage all users
+// //             </p>
+// //           </div>
+// //         </div>
+
+// //         {/* Search + Role Filter + Create */}
+// //         <div className="flex flex-col sm:flex-row items-center gap-4 mb-6 justify-end">
+
+// //           {/* Role Filter */}
+// //           <select
+// //             value={roleFilter}
+// //             onChange={(e) => setRoleFilter(e.target.value)}
+// //             className="w-full sm:w-52 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+// //           >
+// //             <option value="">All roles</option>
+
+// //             {availableRoles.map((r) => (
+// //               <option key={r} value={r}>
+// //                 {r}
+// //               </option>
+// //             ))}
+// //           </select>
+
+// //           {/* Search */}
+// //           <input
+// //             type="text"
+// //             placeholder="Search for a user..."
+// //             value={search}
+// //             onChange={(e) => setSearch(e.target.value)}
+// //             className="w-full sm:w-80 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+// //           />
+
+// //           {/* Create User */}
+// //           <button
+// //             onClick={() => navigate("/admin/create-user")}
+// //             className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto px-5 py-2.5 rounded-lg shadow transition"
+// //           >
+// //             <Plus className="w-5 h-5" />
+// //             Create User
+// //           </button>
+// //         </div>
+
+// //         {/* Loading / Error */}
+// //         {loading && <p className="text-center text-gray-600">Loading...</p>}
+// //         {error && <p className="text-center text-red-500">{error}</p>}
+
+// //         {/* Desktop TABLE */}
+// //         <div className="hidden md:block overflow-x-auto">
+// //           <table className="w-full text-center border-collapse">
+// //             <thead>
+// //               <tr className="bg-gray-200 text-gray-700">
+// //                 <th className="p-3">Name</th>
+// //                 <th className="p-3">Email</th>
+// //                 <th className="p-3">Role</th>
+// //                 <th className="p-3">Status</th>
+// //                 <th className="p-3">Joined At</th>
+// //                 <th className="p-3">Actions</th>
+// //               </tr>
+// //             </thead>
+
+// //             <tbody>
+// //               {filteredUsers.map((user) => (
+// //                 <tr key={user.id} className="border-b hover:bg-gray-50">
+// //                   <td className="p-3">{user.name}</td>
+// //                   <td className="p-3">{user.email}</td>
+
+// //                   <td className="p-3">
+// //                     <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full">
+// //                       {user.role}
+// //                     </span>
+// //                   </td>
+
+// //                   <td className="p-3">
+// //                     {user.is_active ? (
+// //                       <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full">
+// //                         Active
+// //                       </span>
+// //                     ) : (
+// //                       <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full">
+// //                         Inactive
+// //                       </span>
+// //                     )}
+// //                   </td>
+
+// //                   <td className="p-3">{user.created_at.split("T")[0]}</td>
+
+// //                   <td className="p-3 flex items-center justify-center gap-4">
+// //                     <Link
+// //                       to={`/admin/users/edit/${user.id}`}
+// //                       state={{ user }}
+// //                       className="text-blue-600 hover:text-blue-800 transition"
+// //                     >
+// //                       <Pencil className="w-5 h-5" />
+// //                     </Link>
+
+// //                     <button
+// //                       onClick={() => handleDelete(user.id)}
+// //                       disabled={deletingIds[user.id]}
+// //                       className="text-red-600 hover:text-red-800 transition"
+// //                     >
+// //                       {deletingIds[user.id] ? "..." : <Trash2 className="w-5 h-5" />}
+// //                     </button>
+// //                   </td>
+// //                 </tr>
+// //               ))}
+// //             </tbody>
+// //           </table>
+// //         </div>
+
+// //         {/* Mobile Cards */}
+// //         <div className="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+// //           {filteredUsers.map((user) => (
+// //             <div key={user.id} className="border rounded-xl p-4 shadow-sm bg-gray-50">
+// //               <p className="font-bold text-lg">{user.name}</p>
+// //               <p className="text-gray-600 text-sm">{user.email}</p>
+
+// //               <div className="mt-2 flex flex-wrap gap-2">
+// //                 <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">
+// //                   {user.role}
+// //                 </span>
+
+// //                 {user.is_active ? (
+// //                   <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs">
+// //                     Active
+// //                   </span>
+// //                 ) : (
+// //                   <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs">
+// //                     Inactive
+// //                   </span>
+// //                 )}
+// //               </div>
+
+// //               <p className="text-gray-500 text-xs mt-1">
+// //                 Joined: {user.created_at.split("T")[0]}
+// //               </p>
+
+// //               <div className="flex justify-end gap-4 mt-4">
+// //                 <Link
+// //                   to={`/admin/users/edit/${user.id}`}
+// //                   state={{ user }}
+// //                   className="text-blue-600 hover:text-blue-800 transition"
+// //                 >
+// //                   <Pencil className="w-5 h-5" />
+// //                 </Link>
+
+// //                 <button
+// //                   onClick={() => handleDelete(user.id)}
+// //                   disabled={deletingIds[user.id]}
+// //                   className="text-red-600 hover:text-red-800 transition"
+// //                 >
+// //                   {deletingIds[user.id] ? "..." : <Trash2 className="w-5 h-5" />}
+// //                 </button>
+// //               </div>
+// //             </div>
+// //           ))}
+// //         </div>
+
+// //       </div>
+// //     </div>
+// //   );
+// // }
+
+
+
+
+
+
+
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../../Context/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Pencil, Trash2, X, Plus } from "lucide-react";
 
 export default function UsersList() {
-  const { token } = useContext(AuthContext);
+  const { token, userRole } = useContext(AuthContext); // ⬅ تمت إضافة userRole
+  const navigate = useNavigate();
 
   const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
   const [deletingIds, setDeletingIds] = useState({});
 
   const fetchUsers = async () => {
     try {
       const { data } = await axios.get(
         "https://generous-optimism-production-4492.up.railway.app/api/admin/users",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setUsers(data.data.data);
+      let result = data.data.data;
+
+      // 🔒 فلترة حسب role — لو مش super-admin ممنوع يشوف admins
+      if (userRole !== "super-admin") {
+        result = result.filter((u) => u.role !== "super-admin");
+      }
+
+      setUsers(result);
+      setFilteredUsers(result);
       setLoading(false);
     } catch (err) {
-      setError("An error occurred while loading users");
+      setError("An error occurred while loading users.");
       setLoading(false);
     }
   };
@@ -34,148 +561,151 @@ export default function UsersList() {
     fetchUsers();
   }, []);
 
+  useEffect(() => {
+    const result = users.filter(
+      (u) =>
+        u.name.toLowerCase().includes(search.toLowerCase()) ||
+        u.email.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilteredUsers(result);
+  }, [search, users]);
+
   const handleDelete = async (userId) => {
-    if (!window.confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
+    const userToDelete = users.find((u) => u.id === userId);
+
+    // ⛔ منع Admin من حذف Super Admin
+    if (userRole !== "super-admin" && userToDelete.role === "super-admin") {
+      alert("You are not allowed to delete a Super Admin.");
       return;
     }
 
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
+
     setDeletingIds((prev) => ({ ...prev, [userId]: true }));
-    setError("");
 
     try {
       const response = await axios.delete(
         `https://generous-optimism-production-4492.up.railway.app/api/admin/users/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (response.data.success) {
-        setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+        setUsers((prev) => prev.filter((user) => user.id !== userId));
       } else {
         setError("Failed to delete the user.");
       }
-    } catch (err) {
-      setError(err.response?.data?.message || "An error occurred while deleting the user.");
+    } catch {
+      setError("An error occurred while deleting the user.");
     } finally {
       setDeletingIds((prev) => ({ ...prev, [userId]: false }));
     }
   };
 
   return (
-    <div className="min-h-screen p-4 md:p-10 bg-gray-100">
-      <div className="max-w-7xl mx-auto bg-white rounded-3xl shadow-xl p-6 md:p-10">
-
-        {/* Title */}
-        <h2 className="text-3xl font-bold text-center mb-8 text-green-700">
-          Users List
-        </h2>
-
-        {/* Loading */}
-        {loading && <p className="text-center text-gray-600">Loading...</p>}
-
-        {/* Error */}
-        {error && <p className="text-center text-red-500">{error}</p>}
-
-        {/* MOBILE VERSION — CARDS */}
-        <div className="grid gap-6 md:hidden">
-          {users.map((user) => (
-            <div key={user.id} className="p-4 bg-gray-50 rounded-2xl shadow border">
-              <p><span className="font-semibold">Name:</span> {user.name}</p>
-              <p><span className="font-semibold">Email:</span> {user.email}</p>
-              <p><span className="font-semibold">Phone:</span> {user.phone}</p>
-              <p><span className="font-semibold">Role:</span> {user.role}</p>
-              <p>
-                <span className="font-semibold">Status:</span>{" "}
-                {user.is_active ? "Active" : "Inactive"}
-              </p>
-              <p>
-                <span className="font-semibold">Remaining Sessions:</span>{" "}
-                {user.remaining_sessions}
-              </p>
-              <p>
-                <span className="font-semibold">Created:</span>{" "}
-                {user.created_at.split("T")[0]}
-              </p>
-
-             {/* For mobile cards buttons container */}
-<div className="mt-4 flex justify-center gap-4">
-  <Link
-    to={`/admin/users/edit/${user.id}`}
-    state={{ user }}
-    className="flex-1 text-center text-green-700 border border-green-700 hover:bg-green-700 hover:text-white transition px-4 py-2 rounded-md font-semibold text-sm"
-  >
-    Edit
-  </Link>
-  <button
-    onClick={() => handleDelete(user.id)}
-    disabled={deletingIds[user.id]}
-    className="flex-1 text-center text-red-700 border border-red-700 hover:bg-red-700 hover:text-white transition px-4 py-2 rounded-md font-semibold text-sm"
-  >
-    {deletingIds[user.id] ? "Deleting..." : "Delete"}
-  </button>
-</div>
-
-            </div>
-          ))}
+    <div className="min-h-screen bg-gray-100 p-4 sm:p-6 md:p-10">
+      <div className="max-w-7xl mx-auto bg-white rounded-3xl shadow-lg p-6 sm:p-8">
+        
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
+              Users Management
+            </h2>
+            <p className="text-gray-500 text-sm sm:text-base">
+              View and manage all users
+            </p>
+          </div>
         </div>
 
-        {/* DESKTOP VERSION — TABLE */}
-        <div className="hidden md:block overflow-x-auto mt-5">
-          <table className="w-full border-collapse text-sm">
+        {/* Search + Create */}
+        <div className="flex flex-col sm:flex-row items-center gap-4 mb-6 justify-end">
+          <input
+            type="text"
+            placeholder="Search for a user..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full sm:w-80 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          />
+
+          {/* ⛔ زر Create User يظهر فقط لـ super-admin */}
+          {userRole === "super-admin" && (
+            <button
+              onClick={() => navigate("/admin/create-user")}
+              className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto px-5 py-2.5 rounded-lg shadow transition"
+            >
+              <Plus className="w-5 h-5" />
+              Create User
+            </button>
+          )}
+        </div>
+
+        {loading && <p className="text-center text-gray-600">Loading...</p>}
+        {error && <p className="text-center text-red-500">{error}</p>}
+
+        {/* TABLE - Desktop */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-center border-collapse">
             <thead>
               <tr className="bg-gray-200 text-gray-700">
-                <th className="p-2 text-centert">Name</th>
-                <th className="p-2 text-left">Email</th>
-                <th className="p-2 text-left">Role</th>
-                <th className="p-2 text-left">Phone</th>
-                <th className="p-2 text-left">Status</th>
-                <th className="text-center">Remaining Sessions</th>
-                <th className="p-2 text-left">Created At</th>
-                <th className="p-2 text-left">Actions</th>
+                <th className="p-3">Name</th>
+                <th className="p-3">Email</th>
+                <th className="p-3">Role</th>
+                <th className="p-3">Status</th>
+                <th className="p-3">Joined At</th>
+                <th className="p-3">Actions</th>
               </tr>
             </thead>
 
             <tbody>
-              {users.map((user) => (
+              {filteredUsers.map((user) => (
                 <tr key={user.id} className="border-b hover:bg-gray-50">
-                  <td className="p-2">{user.name}</td>
-                  <td className="p-2">{user.email}</td>
-                  <td className="p-2">
-                    <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                  <td className="p-3">{user.name}</td>
+                  <td className="p-3">{user.email}</td>
+
+                  <td className="p-3">
+                    <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full">
                       {user.role}
                     </span>
                   </td>
-                  <td className="p-2">{user.phone}</td>
-                  <td className="p-2">
+
+                  <td className="p-3">
                     {user.is_active ? (
-                      <span className="text-green-600 font-semibold">Active</span>
+                      <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full">
+                        Active
+                      </span>
                     ) : (
-                      <span className="text-red-600 font-semibold">Inactive</span>
+                      <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full">
+                        Inactive
+                      </span>
                     )}
                   </td>
-                  <td className="p-2 text-center">{user.remaining_sessions}</td>
-                  <td className="p-2">{user.created_at.split("T")[0]}</td>
-{/* For desktop table buttons cell */}
-<td className="p-2 flex justify-center gap-3 max-w-[160px]">
-  <Link
-    to={`/admin/users/edit/${user.id}`}
-    state={{ user }}
-    className="flex-1 text-center text-green-700 border border-green-700 hover:bg-green-700 hover:text-white transition px-3 py-1.5 rounded-md font-semibold text-xs"
-  >
-    Edit
-  </Link>
-  <button
-    onClick={() => handleDelete(user.id)}
-    disabled={deletingIds[user.id]}
-    className="flex-1 text-center text-red-700 border border-red-700 hover:bg-red-700 hover:text-white transition px-3 py-1.5 rounded-md font-semibold text-xs"
-  >
-    {deletingIds[user.id] ? "Deleting..." : "Delete"}
-  </button>
-</td>
 
+                  <td className="p-3">{user.created_at.split("T")[0]}</td>
+
+                  <td className="p-3 flex items-center justify-center gap-4">
+
+                    {/* Edit ممنوع لو المستخدم أعلى صلاحية منك */}
+                    {(userRole === "super-admin" || user.role !== "super-admin") && (
+                      <Link
+                        to={`/admin/users/edit/${user.id}`}
+                        state={{ user }}
+                        className="text-blue-600 hover:text-blue-800 transition"
+                      >
+                        <Pencil className="w-5 h-5" />
+                      </Link>
+                    )}
+
+                    {/* Delete ممنوع إلا على الأقل منك */}
+                    {(userRole === "super-admin" || user.role !== "super-admin") && (
+                      <button
+                        onClick={() => handleDelete(user.id)}
+                        disabled={deletingIds[user.id]}
+                        className="text-red-600 hover:text-red-800 transition"
+                      >
+                        {deletingIds[user.id] ? "..." : <Trash2 className="w-5 h-5" />}
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

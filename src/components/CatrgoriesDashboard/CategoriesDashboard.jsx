@@ -1,13 +1,17 @@
 import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext";
 import { Pencil, Trash2, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function CategoriesManager() {
   const { token } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const [searchTerm, setSearchTerm] = useState(""); // <-- search term state
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editCategory, setEditCategory] = useState(null);
@@ -45,6 +49,15 @@ export default function CategoriesManager() {
       setLoading(false);
     }
   }
+
+  // Filter categories by searchTerm (case-insensitive, search in name & description)
+  const filteredCategories = categories.filter((cat) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      cat.name.toLowerCase().includes(term) ||
+      (cat.description && cat.description.toLowerCase().includes(term))
+    );
+  });
 
   async function handleDelete(id) {
     if (!window.confirm("Are you sure you want to delete this category?")) return;
@@ -141,65 +154,92 @@ export default function CategoriesManager() {
 
   return (
     <div className="p-6 md:p-10 bg-white rounded-xl shadow-lg max-w-7xl mx-auto relative">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
+      {/* Header with Add Category Button and Search */}
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
         <h1 className="text-3xl font-extrabold text-gray-900">
           Categories Management
         </h1>
+
+      
+      </div>
+
+      {/* Search input */}
+      <div className="mb-6 flex flex-col md:flex-row gap-4 justify-end">
+          <button
+          onClick={() => navigate("/admin/categories/add")}
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg shadow-md transition font-medium"
+        >
+          <span className="text-lg font-bold">+</span>
+          Add Category
+        </button>
+        <input
+          type="text"
+          placeholder="Search categories by name or description..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full md:max-w-md border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition"
+          aria-label="Search categories"
+        />
       </div>
 
       {/* MOBILE & TABLET: Cards view */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:hidden gap-6">
-        {categories.map((cat) => (
-          <div
-            key={cat.id}
-            className="bg-gray-50 rounded-lg shadow p-4 flex flex-col gap-3"
-          >
-            <div className="flex items-center gap-4">
-              <img
-                src={cat.icon_url || "/default-category.png"}
-                alt={cat.name}
-                className="w-14 h-14 rounded-full object-cover border border-gray-300"
-              />
-              <div>
-                <h2 className="text-lg font-semibold text-gray-900">{cat.name}</h2>
-                <p className="text-gray-700 text-sm line-clamp-3">{cat.description}</p>
+        {filteredCategories.length > 0 ? (
+          filteredCategories.map((cat) => (
+            <div
+              key={cat.id}
+              className="bg-gray-50 rounded-lg shadow p-4 flex flex-col gap-3"
+            >
+              <div className="flex items-center gap-4">
+                <img
+                  src={cat.icon_url || "/default-category.png"}
+                  alt={cat.name}
+                  className="w-14 h-14 rounded-full object-cover border border-gray-300"
+                />
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900">{cat.name}</h2>
+                  <p className="text-gray-700 text-sm line-clamp-3">{cat.description}</p>
+                </div>
+              </div>
+
+              <div className="flex justify-between text-sm text-gray-700 font-semibold">
+                <div>Offers: {cat.offers?.length || 0}</div>
+                <div>Sessions: {cat.training_sessions?.length || 0}</div>
+                <div>
+                  {cat.is_active ? (
+                    <span className="text-green-600">Active</span>
+                  ) : (
+                    <span className="text-red-600">Inactive</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-4 pt-2 border-t border-gray-300">
+                <button
+                  onClick={() => handleDelete(cat.id)}
+                  className="text-red-600 hover:text-red-800 transition"
+                  aria-label={`Delete category ${cat.name}`}
+                  title="Delete"
+                >
+                  <Trash2 size={20} />
+                </button>
+
+                <button
+                  onClick={() => openEditModal(cat)}
+                  className="text-blue-600 hover:text-blue-800 transition"
+                  aria-label={`Edit category ${cat.name}`}
+                  title="Edit"
+                >
+                  <Pencil size={20} />
+                </button>
               </div>
             </div>
-
-            <div className="flex justify-between text-sm text-gray-700 font-semibold">
-              <div>Offers: {cat.offers?.length || 0}</div>
-              <div>Sessions: {cat.training_sessions?.length || 0}</div>
-              <div>
-                {cat.is_active ? (
-                  <span className="text-green-600">Active</span>
-                ) : (
-                  <span className="text-red-600">Inactive</span>
-                )}
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-4 pt-2 border-t border-gray-300">
-              <button
-                onClick={() => handleDelete(cat.id)}
-                className="text-red-600 hover:text-red-800 transition"
-                aria-label={`Delete category ${cat.name}`}
-                title="Delete"
-              >
-                <Trash2 size={20} />
-              </button>
-
-              <button
-                onClick={() => openEditModal(cat)}
-                className="text-blue-600 hover:text-blue-800 transition"
-                aria-label={`Edit category ${cat.name}`}
-                title="Edit"
-              >
-                <Pencil size={20} />
-              </button>
-            </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p className="text-center col-span-full text-gray-500 font-medium">
+            No categories found.
+          </p>
+        )}
       </div>
 
       {/* DESKTOP: Table view */}
@@ -247,60 +287,68 @@ export default function CategoriesManager() {
           </thead>
 
           <tbody className="bg-white divide-y divide-gray-200">
-            {categories.map((cat) => (
-              <tr
-                key={cat.id}
-                className="hover:bg-gray-50 transition-colors duration-150"
-              >
-                <td className="px-6 py-4 whitespace-nowrap flex items-center gap-4">
-                  <img
-                    src={cat.icon_url || "/default-category.png"}
-                    alt={cat.name}
-                    className="w-12 h-12 rounded-full object-cover border border-gray-300"
-                  />
-                  <span className="text-gray-900 font-medium">{cat.name}</span>
-                </td>
-                <td className="px-6 py-4 max-w-xs text-gray-700 text-sm truncate">
-                  {cat.description}
-                </td>
-                <td className="px-6 py-4 text-center text-gray-700 font-semibold">
-                  {cat.offers?.length || 0}
-                </td>
-                <td className="px-6 py-4 text-center text-gray-700 font-semibold">
-                  {cat.training_sessions?.length || 0}
-                </td>
-                <td className="px-6 py-4 text-center">
-                  {cat.is_active ? (
-                    <span className="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">
-                      Active
-                    </span>
-                  ) : (
-                    <span className="inline-block bg-red-100 text-red-800 text-xs font-semibold px-3 py-1 rounded-full">
-                      Inactive
-                    </span>
-                  )}
-                </td>
-                <td className="px-6 py-4 text-center flex justify-center gap-4">
-                  <button
-                    onClick={() => handleDelete(cat.id)}
-                    className="text-red-600 hover:text-red-800 transition"
-                    title="Delete category"
-                    aria-label={`Delete category ${cat.name}`}
-                  >
-                    <Trash2 size={22} />
-                  </button>
+            {filteredCategories.length > 0 ? (
+              filteredCategories.map((cat) => (
+                <tr
+                  key={cat.id}
+                  className="hover:bg-gray-50 transition-colors duration-150"
+                >
+                  <td className="px-6 py-4 whitespace-nowrap flex items-center gap-4">
+                    <img
+                      src={cat.icon_url || "/default-category.png"}
+                      alt={cat.name}
+                      className="w-12 h-12 rounded-full object-cover border border-gray-300"
+                    />
+                    <span className="text-gray-900 font-medium">{cat.name}</span>
+                  </td>
+                  <td className="px-6 py-4 max-w-xs text-gray-700 text-sm truncate">
+                    {cat.description}
+                  </td>
+                  <td className="px-6 py-4 text-center text-gray-700 font-semibold">
+                    {cat.offers?.length || 0}
+                  </td>
+                  <td className="px-6 py-4 text-center text-gray-700 font-semibold">
+                    {cat.training_sessions?.length || 0}
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    {cat.is_active ? (
+                      <span className="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">
+                        Active
+                      </span>
+                    ) : (
+                      <span className="inline-block bg-red-100 text-red-800 text-xs font-semibold px-3 py-1 rounded-full">
+                        Inactive
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-center flex justify-center gap-4">
+                    <button
+                      onClick={() => handleDelete(cat.id)}
+                      className="text-red-600 hover:text-red-800 transition"
+                      title="Delete category"
+                      aria-label={`Delete category ${cat.name}`}
+                    >
+                      <Trash2 size={22} />
+                    </button>
 
-                  <button
-                    onClick={() => openEditModal(cat)}
-                    className="text-blue-600 hover:text-blue-800 transition"
-                    title="Edit category"
-                    aria-label={`Edit category ${cat.name}`}
-                  >
-                    <Pencil size={22} />
-                  </button>
+                    <button
+                      onClick={() => openEditModal(cat)}
+                      className="text-blue-600 hover:text-blue-800 transition"
+                      title="Edit category"
+                      aria-label={`Edit category ${cat.name}`}
+                    >
+                      <Pencil size={22} />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={6} className="text-center py-8 text-gray-500 font-medium">
+                  No categories found.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
