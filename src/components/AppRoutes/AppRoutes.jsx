@@ -5,7 +5,7 @@ import AdminLayout from "../../components/AdminLayout/AdminLayout.jsx";
 import UserHome from "../../components/UserHome/UserHome.jsx";
 import Profile from "../../components/Profile/Profile.jsx";
 import Offers from "../../components/Offers/Offers.jsx";
-import QrScan from "../../components/QrScan/QRScan.jsx";
+import QrScan from "../../components/QrScan/QrScan.jsx";
 import StudentID from "../../components/StudentID/StudentID.jsx";
 import Schedule from "../../components/Schedule/Schedule.jsx";
 import AdminDashboard from "../../components/AdminDashboard/AdminDashboard.jsx";

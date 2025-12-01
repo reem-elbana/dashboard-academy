@@ -35,7 +35,7 @@ export default function Navbar() {
 
   // جلب التنبيهات
   useEffect(() => {
-    if (!token) return;
+    if (!token || userRole !== "subscriber") return;
     axios
       .get(
         "https://generous-optimism-production-4492.up.railway.app/api/subscriber/dashboard",
