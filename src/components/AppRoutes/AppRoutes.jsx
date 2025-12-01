@@ -5,7 +5,7 @@ import AdminLayout from "../../components/AdminLayout/AdminLayout.jsx";
 import UserHome from "../../components/UserHome/UserHome.jsx";
 import Profile from "../../components/Profile/Profile.jsx";
 import Offers from "../../components/Offers/Offers.jsx";
-import QrScan from "../../components/QrScan/QrScan.jsx";
+import Qrscanner from "../qrscanner/qrscanner.jsx";
 import StudentID from "../../components/StudentID/StudentID.jsx";
 import Schedule from "../../components/Schedule/Schedule.jsx";
 import AdminDashboard from "../../components/AdminDashboard/AdminDashboard.jsx";
@@ -59,7 +59,7 @@ export default function AppRoutes() {
       <Route element={<ProtectedRoute role={["user","subscriber"]}><Layout showNavbar={true} /></ProtectedRoute>}>
         <Route path="/user/profile" element={<Profile />} />
         <Route path="/user/offers" element={<Offers />} />
-        <Route path="/user/QrScan" element={<QrScan />} />
+        <Route path="/user/Qrscanner" element={< Qrscanner />} />
         <Route path="/user/student-id" element={<StudentID />} />
         <Route path="/user/schedule" element={<Schedule />} />
         {/* <Route path="/category/:id" element={<CategoryDetails />} /> */}
