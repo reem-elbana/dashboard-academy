@@ -521,10 +521,10 @@ import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../../Context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
-import { Pencil, Trash2, X, Plus } from "lucide-react";
+import { Pencil, Trash2, Plus } from "lucide-react";
 
 export default function UsersList() {
-  const { token, userRole } = useContext(AuthContext); // ⬅ تمت إضافة userRole
+  const { token, userRole } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [users, setUsers] = useState([]);
@@ -541,9 +541,10 @@ export default function UsersList() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      let result = data.data.data;
+      // تأكد إن data.data.data مصفوفة
+      let result = Array.isArray(data.data.data) ? data.data.data : [];
 
-      // 🔒 فلترة حسب role — لو مش super-admin ممنوع يشوف admins
+      // فلترة حسب الدور لو مش super-admin
       if (userRole !== "super-admin") {
         result = result.filter((u) => u.role !== "super-admin");
       }
@@ -573,7 +574,6 @@ export default function UsersList() {
   const handleDelete = async (userId) => {
     const userToDelete = users.find((u) => u.id === userId);
 
-    // ⛔ منع Admin من حذف Super Admin
     if (userRole !== "super-admin" && userToDelete.role === "super-admin") {
       alert("You are not allowed to delete a Super Admin.");
       return;
@@ -604,7 +604,7 @@ export default function UsersList() {
   return (
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6 md:p-10">
       <div className="max-w-7xl mx-auto bg-white rounded-3xl shadow-lg p-6 sm:p-8">
-        
+
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
           <div>
@@ -627,8 +627,7 @@ export default function UsersList() {
             className="w-full sm:w-80 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
           />
 
-          {/* ⛔ زر Create User يظهر فقط لـ super-admin */}
-          {userRole === "super-admin" && (
+          
             <button
               onClick={() => navigate("/admin/create-user")}
               className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto px-5 py-2.5 rounded-lg shadow transition"
@@ -636,7 +635,7 @@ export default function UsersList() {
               <Plus className="w-5 h-5" />
               Create User
             </button>
-          )}
+          
         </div>
 
         {loading && <p className="text-center text-gray-600">Loading...</p>}
@@ -684,7 +683,6 @@ export default function UsersList() {
 
                   <td className="p-3 flex items-center justify-center gap-4">
 
-                    {/* Edit ممنوع لو المستخدم أعلى صلاحية منك */}
                     {(userRole === "super-admin" || user.role !== "super-admin") && (
                       <Link
                         to={`/admin/users/edit/${user.id}`}
@@ -695,7 +693,6 @@ export default function UsersList() {
                       </Link>
                     )}
 
-                    {/* Delete ممنوع إلا على الأقل منك */}
                     {(userRole === "super-admin" || user.role !== "super-admin") && (
                       <button
                         onClick={() => handleDelete(user.id)}
@@ -712,6 +709,61 @@ export default function UsersList() {
           </table>
         </div>
 
+        {/* MOBILE View */}
+        <div className="md:hidden">
+          {filteredUsers.length === 0 ? (
+            <p className="text-center text-gray-500">No users found.</p>
+          ) : (
+            <div className="space-y-4">
+              {filteredUsers.map((user) => (
+                <div
+                  key={user.id}
+                  className="bg-white p-4 rounded-xl shadow border border-gray-200"
+                >
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="text-lg font-semibold text-gray-800">{user.name}</h3>
+                    {(userRole === "super-admin" || user.role !== "super-admin") && (
+                      <div className="flex items-center gap-3">
+                        <Link
+                          to={`/admin/users/edit/${user.id}`}
+                          state={{ user }}
+                          className="text-blue-600 hover:text-blue-800 transition"
+                        >
+                          <Pencil className="w-5 h-5" />
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(user.id)}
+                          disabled={deletingIds[user.id]}
+                          className="text-red-600 hover:text-red-800 transition"
+                        >
+                          {deletingIds[user.id] ? "..." : <Trash2 className="w-5 h-5" />}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <p className="text-gray-600 text-sm">{user.email}</p>
+                  <p className="mt-1">
+                    <span className="inline-block px-3 py-1 rounded-full text-sm font-semibold text-blue-700 bg-blue-100">
+                      {user.role}
+                    </span>
+                  </p>
+                  <p className="mt-1">
+                    Status:{" "}
+                    {user.is_active ? (
+                      <span className="text-green-600 font-semibold">Active</span>
+                    ) : (
+                      <span className="text-red-600 font-semibold">Inactive</span>
+                    )}
+                  </p>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Joined: {user.created_at.split("T")[0]}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -82,24 +82,23 @@ export default function AdminDashboard() {
         Admin Dashboard
       </h1>
 
-      {/* Stats Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+{/* Stats Section */}
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
 
-        <StatCard title="Total Users" value={stats.total_users} />
-        <StatCard title="Active Users" value={stats.active_users} />
-        <StatCard title="Total Subscribers" value={stats.total_subscribers} />
-        <StatCard title="Expired Subscriptions" value={stats.expired_subscriptions} />
+  {/* --- Row 1 (User Stats) --- */}
+  <StatCard title="Total Users" value={stats.total_users} />
+  <StatCard title="Active Users" value={stats.active_users} />
+  <StatCard title="Total Subscribers" value={stats.total_subscribers} />
+  <StatCard title="Expired Subscriptions" value={stats.expired_subscriptions} />
 
-        {/* Last two cards 50% - 50% on desktop */}
-        <div className="lg:col-span-2">
-          <StatCard title="Total Sessions" value={stats.total_sessions} />
-        </div>
+  {/* --- Row 2 (Content + Sessions) --- */}
+  <StatCard title="Active Banners" value={stats.active_banners} />
+  <StatCard title="Active Categories" value={stats.active_categories} />
+  <StatCard title="Total Sessions" value={stats.total_sessions} />
+  <StatCard title="Total Offers" value={stats.total_offers} />
 
-        <div className="lg:col-span-2">
-          <StatCard title="Total Offers" value={stats.total_offers} />
-        </div>
+</div>
 
-      </div>
 
       {/* Current Month Summary */}
       {month && (
