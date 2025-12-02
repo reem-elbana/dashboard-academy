@@ -1,4 +1,4 @@
-{
+  {
   "home": "Home",
   "profile": "Profile",
   "offers": "Offers",
@@ -36,5 +36,7 @@
   "no_attendance_records": "No attendance records yet",
   "notifications": "Notifications",
   "no_notifications": "No new notifications",
+  "student_id": "Student ID",
+  "view_card": "View Card",
   "Mohamed":"Mohamed"
 }

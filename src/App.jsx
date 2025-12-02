@@ -1,6 +1,6 @@
 // import React from "react";
 // import { BrowserRouter } from "react-router-dom";
-// import { AuthProvider } from "../src/Context/AuthContext";
+// import { AuthProvider } from "../src/Context/AuthProvider";
 // import AppRoutes from "../src/components/AppRoutes/AppRoutes.jsx";
 
 // export default function App() {
@@ -16,7 +16,7 @@
 
 import React, { useContext, useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
-import { AuthProvider } from "../src/Context/AuthContext";
+import { AuthProvider } from "../src/Context/AuthProvider";
 import AppRoutes from "../src/components/AppRoutes/AppRoutes.jsx";
 import { LoadingProvider, LoadingContext } from "../src/Context/LoadingContext.jsx";
 import GlobalSkeleton from "../src/components/GlobalSkeleton/GlobalSkeleton.jsx";

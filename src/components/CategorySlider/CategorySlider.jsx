@@ -11,6 +11,8 @@ export default function CategorySlider() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  const placeholder = 'data:image/svg+xml,%3csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="2"%3e%3crect x="3" y="3" width="18" height="18" rx="2" ry="2"/%3e%3ccircle cx="9" cy="9" r="2"/%3e%3cpath d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/%3e%3cline x1="21" y1="3" x2="3" y2="21"/%3e%3c/svg%3e';
+
   // جلب الفئات
   useEffect(() => {
     const fetchCategories = async () => {
@@ -64,10 +66,11 @@ export default function CategorySlider() {
 >
               <div className="aspect-square relative overflow-hidden bg-gradient-to-br from-indigo-50 to-purple-50">
                 <img
-                  src={cat.icon_url || "/placeholder.jpg"}
+                  src={cat.icon_url || placeholder}
                   alt={cat.name}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   loading="lazy"
+                  onError={(e) => e.target.src = placeholder}
                 />
               </div>
 
@@ -102,7 +105,7 @@ export default function CategorySlider() {
 
             <div className="grid md:grid-cols-2">
               <div className="relative h-96 md:h-full">
-                <img src={selectedCat.icon_url} alt={selectedCat.name} className="w-full h-full object-cover" />
+                <img src={selectedCat.icon_url || placeholder} alt={selectedCat.name} className="w-full h-full object-cover" onError={(e) => e.target.src = placeholder} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
               </div>
 

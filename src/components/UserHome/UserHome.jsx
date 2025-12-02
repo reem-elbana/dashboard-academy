@@ -147,13 +147,11 @@ export default function HomePage() {
   }, []);
 
   // دالة آمنة لتحويل الصور إلى دقة عالية
-  const getHighResImage = (url, w = 800, h = 800) => {
-    if (!url) return "/placeholder.jpg";
-    return url
-      .replace(/w=\d+/g, `w=${w}`)
-      .replace(/h=\d+/g, `h=${h}`)
-      .replace(/&crop=[^&]*/g, "")
-      .replace(/\?.*/, (match) => match + `&w=${w}&h=${h}`);
+  const placeholder = 'data:image/svg+xml,%3csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="2"%3e%3crect x="3" y="3" width="18" height="18" rx="2" ry="2"/%3e%3ccircle cx="9" cy="9" r="2"/%3e%3cpath d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/%3e%3cline x1="21" y1="3" x2="3" y2="21"/%3e%3c/svg%3e';
+  const getHighResImage = (url) => {
+    if (!url) return placeholder;
+    // بما أن الصور من Laravel storage، نرجع الـ URL كما هو
+    return url;
   };
 
   // استخراج أفضل الفئات حسب العروض أو الجلسات
@@ -193,10 +191,11 @@ export default function HomePage() {
     >
       <div className="aspect-square relative overflow-hidden bg-gradient-to-br from-indigo-50 to-purple-50">
         <img
-          src={getHighResImage(cat.icon_url, 400, 400)} // قللت دقة الصورة
+          src={getHighResImage(cat.icon_url)} // قللت دقة الصورة
           alt={cat.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" // قللت السكيل عند hover
           loading="lazy"
+          onError={(e) => e.target.src = placeholder}
         />
         {cat.has_active_offers && (
           <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-pulse">
@@ -268,10 +267,11 @@ export default function HomePage() {
               >
                 <div className="aspect-square relative overflow-hidden bg-gradient-to-br from-indigo-50 to-purple-50">
                   <img
-                    src={getHighResImage(cat.icon_url, 800, 800)}
+                    src={getHighResImage(cat.icon_url)}
                     alt={cat.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
+                    onError={(e) => e.target.src = placeholder}
                   />
                   {cat.has_active_offers && (
                     <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">

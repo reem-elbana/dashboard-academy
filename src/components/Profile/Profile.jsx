@@ -1,14 +1,15 @@
-
-
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
-  const [user, setUser] = useState(null); // البيانات الأصلية من /api/me
-  const [dashboardData, setDashboardData] = useState(null); // بيانات الdashboard
-  const [formData, setFormData] = useState({}); // نسخة مستقلة للفورم
-  const [profileImagePreview, setProfileImagePreview] = useState(null); // نسخة مستقلة للصورة
-  const [selectedImage, setSelectedImage] = useState(null); // الصورة الجديدة قبل الرفع
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [dashboardData, setDashboardData] = useState(null);
+  const [formData, setFormData] = useState({});
+  const [profileImagePreview, setProfileImagePreview] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [qrLoginSuccess, setQrLoginSuccess] = useState(null); // إضافة متغير جديد
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -20,6 +21,43 @@ export default function Profile() {
   const fileInputRef = useRef(null);
   const { t } = useTranslation();
   const token = localStorage.getItem("token");
+
+  // QR Login Logic - أضف هذا في البداية
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const qrToken = urlParams.get('token');
+    const login = urlParams.get('login');
+
+    if (qrToken && login === 'qr') {
+      fetch("https://generous-optimism-production-4492.up.railway.app/api/verify-qr-token?token=" + qrToken)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            localStorage.setItem("token", data.data.token);
+            localStorage.setItem("user", JSON.stringify(data.data.user));
+            localStorage.setItem("role", data.data.user.role || "subscriber");
+
+            // Dispatch custom event to update AuthContext
+            window.dispatchEvent(new Event("authChange"));
+
+            window.history.replaceState({}, document.title, window.location.pathname);
+            
+            setUser(data.data.user);
+            setFormData({
+              name: data.data.user.name || "",
+              email: data.data.user.email || "",
+              phone: data.data.user.phone || "",
+              national_id: data.data.user.national_id || "",
+            });
+            setProfileImagePreview(data.data.user.profile_image || null);
+            
+            setQrLoginSuccess("تم تسجيل الدخول بنجاح عبر QR Code!");
+            setTimeout(() => setQrLoginSuccess(null), 5000);
+          }
+        })
+        .catch(error => console.error('QR login error:', error));
+    }
+  }, []);
 
   // جلب بيانات المستخدم
   useEffect(() => {
@@ -149,7 +187,21 @@ export default function Profile() {
   if (loading) return <div className="text-center mt-20 text-lg">{t("loading") || "جاري التحميل..."}</div>;
 
   return (
+    
+    
+      
     <div className="min-h-screen py-6 px-4">
+
+{qrLoginSuccess && (
+        <div className="max-w-6xl mx-auto mb-4">
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+            <div className="flex items-center">
+              <i className="fas fa-check-circle mr-2"></i>
+              {qrLoginSuccess}
+            </div>
+          </div>
+        </div>
+      )}
       <div className="max-w-6xl mx-auto">
         <div className="bg-gray-100 rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
           <div className="p-5 md:p-7">
@@ -217,7 +269,19 @@ export default function Profile() {
             {user && (
               <div className="mt-7 pt-6 border-t border-gray-200">
                 <h2 className="text-lg font-bold text-gray-800 mb-4">{t("account_info")}</h2>
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                  <div
+                    onClick={() => navigate('/user/student-id')}
+                    className="p-4 bg-blue-50 rounded-lg border shadow-md border-blue-200 hover:bg-blue-100 transition cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2">
+                      <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                      </svg>
+                      <p className="text-xs font-medium text-blue-600">{t("student_id")}</p>
+                    </div>
+                    <p className="text-sm font-semibold mt-0.5 text-blue-900">{t("view_card")}</p>
+                  </div>
                   {[
                     { label: t("subscription_expires"), value: user.stats?.subscription_expires_at ? new Date(user.stats.subscription_expires_at).toLocaleDateString("en-US") : "-" },
                     { label: t("account_status"), value: user.is_active ? t("active") : t("inactive") },
