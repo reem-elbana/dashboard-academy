@@ -298,7 +298,7 @@ export default function HomePage() {
       )}
 
       {/* أنيميشن المودال */}
-      <style jsx global>{`
+      <style>{`
         @keyframes scaleIn {
           from {
             opacity: 0;
