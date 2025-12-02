@@ -90,18 +90,20 @@ export default function AdminSidebar() {
       )}
 
       {/* Sidebar */}
-      <aside
-        className={`fixed top-0 left-0 h-full bg-white p-6
-          flex flex-col justify-between z-50 border-r border-gray-300
-          transition-transform duration-300 w-64
-          ${isMobile ? (isOpen ? "translate-x-0" : "-translate-x-full") : "translate-x-0"}
-          overflow-y-auto max-h-screen
-        `}
-      >
+    <aside
+  className={`fixed top-0 h-full bg-white p-6
+    flex flex-col justify-between z-50 border-r border-gray-300
+    transition-transform duration-300 w-64
+    ${lang === "ar" ? "right-0 border-l" : "left-0 border-r"}
+    ${isMobile ? (isOpen ? "translate-x-0" : lang === "ar" ? "translate-x-full" : "-translate-x-full") : "translate-x-0"}
+    overflow-y-auto max-h-screen
+  `}
+>
+
         <div>
           {/* Admin Panel title + language toggle */}
           <div className="mb-8 flex flex-col items-start">
-            <h2 className="text-3xl font-extrabold text-green-700 select-none mb-3 tracking-wide">
+            <h2 className="text-2xl font-extrabold text-green-700 select-none mb-3 tracking-wide">
               {t("adminPanel")}
             </h2>
 
@@ -116,7 +118,7 @@ export default function AdminSidebar() {
           </div>
 
           {/* Menu items */}
-          <nav className="flex flex-col space-y-3">
+          <nav className="flex flex-col space-y-2">
             {menuItems.map(({ to, label, icon }) => (
               <NavLink
                 key={to}

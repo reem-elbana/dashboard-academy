@@ -1,9 +1,12 @@
 import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { AuthContext } from "../../Context/AuthContext";
+import { useTranslation } from "react-i18next";
+import "../../i18n";
 
 export default function CreateOffer() {
   const { token } = useContext(AuthContext);
+  const { t } = useTranslation();
 
   const [categories, setCategories] = useState([]);
 
@@ -26,7 +29,6 @@ export default function CreateOffer() {
   const [error, setError] = useState(null);
   const [successMsg, setSuccessMsg] = useState(null);
 
-  // Load categories
   useEffect(() => {
     axios
       .get(
@@ -34,8 +36,8 @@ export default function CreateOffer() {
         { headers: { Authorization: `Bearer ${token}` } }
       )
       .then((res) => setCategories(res.data.categories || []))
-      .catch(() => setError("Failed to load categories"));
-  }, [token]);
+      .catch(() => setError(t("failed_load_categories")));
+  }, [token, t]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -49,7 +51,7 @@ export default function CreateOffer() {
     e.preventDefault();
 
     if (!image) {
-      setError("Please upload offer image");
+      setError(t("please_upload_image"));
       return;
     }
 
@@ -81,7 +83,7 @@ export default function CreateOffer() {
         }
       );
 
-      setSuccessMsg("Offer created successfully!");
+      setSuccessMsg(t("offer_created_success"));
       setFormData({
         title: "",
         description: "",
@@ -97,7 +99,7 @@ export default function CreateOffer() {
       setImage(null);
     } catch (err) {
       console.log(err.response?.data);
-      const msg = err.response?.data?.message || "An unexpected error occurred";
+      const msg = err.response?.data?.message || t("unexpected_error");
       setError(msg);
     } finally {
       setLoading(false);
@@ -107,7 +109,7 @@ export default function CreateOffer() {
   return (
     <div className="max-w-xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
       <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">
-        Create New Offer
+        {t("create_new_offer")}
       </h2>
 
       {error && (
@@ -125,7 +127,7 @@ export default function CreateOffer() {
         <input
           name="title"
           type="text"
-          placeholder="Offer Title"
+          placeholder={t("offer_title")}
           value={formData.title}
           onChange={handleChange}
           required
@@ -134,7 +136,7 @@ export default function CreateOffer() {
 
         <textarea
           name="description"
-          placeholder="Description"
+          placeholder={t("description")}
           value={formData.description}
           onChange={handleChange}
           required
@@ -146,7 +148,7 @@ export default function CreateOffer() {
           <input
             name="original_price"
             type="number"
-            placeholder="Original Price"
+            placeholder={t("original_price")}
             value={formData.original_price}
             onChange={handleChange}
             required
@@ -155,7 +157,7 @@ export default function CreateOffer() {
           <input
             name="discounted_price"
             type="number"
-            placeholder="Discounted Price"
+            placeholder={t("discounted_price")}
             value={formData.discounted_price}
             onChange={handleChange}
             required
@@ -166,7 +168,7 @@ export default function CreateOffer() {
         <input
           name="discount_percentage"
           type="number"
-          placeholder="Discount Percentage"
+          placeholder={t("discount_percentage")}
           value={formData.discount_percentage}
           onChange={handleChange}
           required
@@ -195,7 +197,7 @@ export default function CreateOffer() {
         <input
           name="max_uses"
           type="number"
-          placeholder="Max Uses"
+          placeholder={t("max_uses")}
           value={formData.max_uses}
           onChange={handleChange}
           required
@@ -209,7 +211,7 @@ export default function CreateOffer() {
           required
           className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
         >
-          <option value="">Select Category</option>
+          <option value="">{t("select_category")}</option>
           {categories.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name}
@@ -217,7 +219,6 @@ export default function CreateOffer() {
           ))}
         </select>
 
-        {/* Active checkbox */}
         <label className="flex items-center gap-2">
           <input
             type="checkbox"
@@ -226,11 +227,11 @@ export default function CreateOffer() {
             onChange={handleChange}
             className="w-4 h-4"
           />
-          <span className="select-none">Activate Offer</span>
+          <span className="select-none">{t("activate_offer")}</span>
         </label>
 
         <div>
-          <label className="font-semibold block mb-1">Offer Image</label>
+          <label className="font-semibold block mb-1">{t("offer_image")}</label>
           <input
             type="file"
             accept="image/*"
@@ -245,7 +246,7 @@ export default function CreateOffer() {
           disabled={loading}
           className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
         >
-          {loading ? "Submitting..." : "Create Offer"}
+          {loading ? t("submitting") : t("create_offer")}
         </button>
       </form>
     </div>

@@ -2,8 +2,10 @@ import React, { useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function CreateTrainingSession() {
+  const { t } = useTranslation();
   const { token } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -58,7 +60,7 @@ export default function CreateTrainingSession() {
       });
 
       if (res.data.success) {
-        setSuccessMessage(res.data.message || "Session created successfully!");
+        setSuccessMessage(res.data.message || t("session_created_success"));
         setFormData({
           title: "",
           description: "",
@@ -71,27 +73,26 @@ export default function CreateTrainingSession() {
           category_id: "",
           qr_duration_minutes: "",
         });
-        // ممكن تروح للصفحة الرئيسية أو تفاصيل الجلسة الجديدة لو حبيت:
         // navigate(`/training-sessions/${res.data.data.id}`);
       } else {
-        setError("Failed to create the session.");
+        setError(t("failed_create_session"));
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Error creating session.");
+      setError(err.response?.data?.message || t("error_create_session"));
     }
     setLoading(false);
   };
 
   return (
     <div className="max-w-xl mx-auto p-6 bg-white rounded shadow-md">
-      <h2 className="text-2xl font-semibold mb-4 text-gray-800">Create Training Session</h2>
+      <h2 className="text-2xl font-semibold mb-4 text-gray-800">{t("create_training_session")}</h2>
 
       {error && <p className="mb-4 text-red-600 font-semibold">{error}</p>}
       {successMessage && <p className="mb-4 text-green-600 font-semibold">{successMessage}</p>}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block font-medium mb-1" htmlFor="title">Title *</label>
+          <label className="block font-medium mb-1" htmlFor="title">{t("title")} *</label>
           <input
             type="text"
             id="title"
@@ -104,7 +105,7 @@ export default function CreateTrainingSession() {
         </div>
 
         <div>
-          <label className="block font-medium mb-1" htmlFor="description">Description</label>
+          <label className="block font-medium mb-1" htmlFor="description">{t("description")}</label>
           <textarea
             id="description"
             name="description"
@@ -117,7 +118,7 @@ export default function CreateTrainingSession() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block font-medium mb-1" htmlFor="duration_minutes">Duration (minutes) *</label>
+            <label className="block font-medium mb-1" htmlFor="duration_minutes">{t("duration_minutes")} *</label>
             <input
               type="number"
               id="duration_minutes"
@@ -131,7 +132,7 @@ export default function CreateTrainingSession() {
           </div>
 
           <div>
-            <label className="block font-medium mb-1" htmlFor="qr_duration_minutes">QR Duration (minutes)</label>
+            <label className="block font-medium mb-1" htmlFor="qr_duration_minutes">{t("qr_duration_minutes")}</label>
             <input
               type="number"
               id="qr_duration_minutes"
@@ -146,7 +147,7 @@ export default function CreateTrainingSession() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block font-medium mb-1" htmlFor="session_date">Session Date *</label>
+            <label className="block font-medium mb-1" htmlFor="session_date">{t("session_date")} *</label>
             <input
               type="date"
               id="session_date"
@@ -159,7 +160,7 @@ export default function CreateTrainingSession() {
           </div>
 
           <div>
-            <label className="block font-medium mb-1" htmlFor="location">Location</label>
+            <label className="block font-medium mb-1" htmlFor="location">{t("location")}</label>
             <input
               type="text"
               id="location"
@@ -173,7 +174,7 @@ export default function CreateTrainingSession() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block font-medium mb-1" htmlFor="start_time">Start Time *</label>
+            <label className="block font-medium mb-1" htmlFor="start_time">{t("start_time")} *</label>
             <input
               type="time"
               id="start_time"
@@ -186,7 +187,7 @@ export default function CreateTrainingSession() {
           </div>
 
           <div>
-            <label className="block font-medium mb-1" htmlFor="end_time">End Time *</label>
+            <label className="block font-medium mb-1" htmlFor="end_time">{t("end_time")} *</label>
             <input
               type="time"
               id="end_time"
@@ -201,7 +202,7 @@ export default function CreateTrainingSession() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block font-medium mb-1" htmlFor="max_participants">Max Participants</label>
+            <label className="block font-medium mb-1" htmlFor="max_participants">{t("max_participants")}</label>
             <input
               type="number"
               id="max_participants"
@@ -214,7 +215,7 @@ export default function CreateTrainingSession() {
           </div>
 
           <div>
-            <label className="block font-medium mb-1" htmlFor="category_id">Category ID *</label>
+            <label className="block font-medium mb-1" htmlFor="category_id">{t("category_id")} *</label>
             <input
               type="number"
               id="category_id"
@@ -235,7 +236,7 @@ export default function CreateTrainingSession() {
             loading ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700 text-white"
           }`}
         >
-          {loading ? "Creating..." : "Create Session"}
+          {loading ? t("creating") : t("create_session")}
         </button>
       </form>
     </div>

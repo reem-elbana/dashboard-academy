@@ -18,6 +18,7 @@ export default function Navbar() {
   const { token, userRole, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const { i18n, t } = useTranslation();
+    const isRTL = i18n.dir() === "rtl";
 
   // تغيير اللغة
   const switchLang = () => {
@@ -86,7 +87,11 @@ export default function Navbar() {
       </div>
 
           {/* Desktop Links */}
-          <div className="hidden lg:flex lg:items-center lg:space-x-8">
+            <div
+      className={`hidden lg:flex lg:items-center lg:space-x-8 ${
+        isRTL ? "lg:flex-row-reverse" : "lg:flex-row"
+      }`}
+    >
             <NavLink
               to={token ? "/user/home" : "#"}
               onClick={handleProtectedLink}
@@ -102,7 +107,7 @@ export default function Navbar() {
               {t("profile")}
             </NavLink>
             <NavLink
-              to={token ? "/user/student-id" : "#"}
+              to={token ? "/user/sessions" : "#"}
               onClick={handleProtectedLink}
               className="text-gray-700 hover:text-lime-600 font-medium transition"
             >
@@ -116,7 +121,7 @@ export default function Navbar() {
               {t("My Sessions & Offers")}
             </NavLink> */}
             <NavLink
-              to={token ? "/user/QrScan" : "#"}
+              to={token ? "/user/Qrscanner" : "#"}
               onClick={handleProtectedLink}
               className="text-gray-700 hover:text-lime-600 font-medium transition"
             >

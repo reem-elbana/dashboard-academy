@@ -1,10 +1,12 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";  // <-- استيراد useTranslation
 
 export default function AddCategory() {
   const { token } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { t } = useTranslation();  // <-- الحصول على دالة الترجمة
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -39,13 +41,13 @@ export default function AddCategory() {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        alert("تم إنشاء القسم بنجاح.");
-        navigate("/admin/categories"); // رجوع لصفحة الأقسام
+        alert(t("category_created_successfully"));  // ترجمة رسالة النجاح
+        navigate("/admin/categories");
       } else {
-        setError(data.message || "فشل في إنشاء القسم.");
+        setError(data.message || t("failed_to_create_category")); // ترجمة رسالة الخطأ
       }
     } catch (err) {
-      setError("حدث خطأ أثناء إنشاء القسم.");
+      setError(t("error_occurred_while_creating_category")); // ترجمة رسالة الخطأ
     } finally {
       setLoading(false);
     }
@@ -53,12 +55,13 @@ export default function AddCategory() {
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
-      <h2 className="text-xl font-bold mb-4"> Create new Category </h2>
+      <h2 className="text-xl font-bold mb-4">{t("create_new_category")}</h2>
+
       {error && <p className="text-red-600 mb-2">{error}</p>}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block mb-1 font-medium">Category Name </label>
+          <label className="block mb-1 font-medium">{t("category_name")}</label>
           <input
             type="text"
             value={name}
@@ -69,7 +72,7 @@ export default function AddCategory() {
         </div>
 
         <div>
-          <label className="block mb-1 font-medium">Description</label>
+          <label className="block mb-1 font-medium">{t("description")}</label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -79,12 +82,12 @@ export default function AddCategory() {
         </div>
 
         <div>
-          <label className="block mb-1 font-medium">رابط الصورة (image)</label>
+          <label className="block mb-1 font-medium">{t("image_url")}</label>
           <input
             type="text"
             value={image}
             onChange={(e) => setImage(e.target.value)}
-            placeholder="programming.jpg أو رابط مباشر للصورة"
+            placeholder={t("image_placeholder")}
             className="w-full border px-3 py-2 rounded"
           />
         </div>
@@ -96,7 +99,7 @@ export default function AddCategory() {
             onChange={() => setIsActive(!isActive)}
             id="active"
           />
-          <label htmlFor="active">Active</label>
+          <label htmlFor="active">{t("active")}</label>
         </div>
 
         <button
@@ -104,7 +107,7 @@ export default function AddCategory() {
           disabled={loading}
           className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
         >
-          {loading ? "جارٍ الإضافة..." : "إضافة القسم"}
+          {loading ? t("adding") : t("add_category")}
         </button>
       </form>
     </div>

@@ -1,12 +1,17 @@
+// src/components/OffersList.jsx
+
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../../Context/AuthContext";
 import { Pencil, Trash2, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import "../../i18n"; // تأكد من استيراد إعداد i18n في مكان مناسب
 
 export default function OffersList() {
   const { token } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +20,6 @@ export default function OffersList() {
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState(null);
 
-  // New state for editing
   const [editingOffer, setEditingOffer] = useState(null);
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState(null);
@@ -30,7 +34,7 @@ export default function OffersList() {
       );
       setOffers(res.data.data.offers.data || []);
     } catch {
-      setError("Error loading offers");
+      setError(t("error_loading_offers"));
     }
     setLoading(false);
   };
@@ -40,9 +44,7 @@ export default function OffersList() {
   }, []);
 
   const handleDelete = async (offerId) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this offer?"
-    );
+    const confirmDelete = window.confirm(t("are_you_sure_delete"));
     if (!confirmDelete) return;
 
     try {
@@ -53,9 +55,9 @@ export default function OffersList() {
       );
       setOffers((prev) => prev.filter((offer) => offer.id !== offerId));
       if (selectedOffer?.id === offerId) setSelectedOffer(null);
-      alert("The offer has been deleted successfully.");
+      alert(t("offer_deleted_success"));
     } catch (err) {
-      alert("An error occurred while deleting. Please try again.");
+      alert(t("error_deleting_offer"));
     } finally {
       setDeletingId(null);
     }
@@ -65,7 +67,6 @@ export default function OffersList() {
     o.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Handle input changes in edit form
   const handleEditChange = (e) => {
     const { name, value, type, checked } = e.target;
     setEditingOffer((prev) => ({
@@ -74,14 +75,12 @@ export default function OffersList() {
     }));
   };
 
-  // Submit edit form
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     setEditLoading(true);
     setEditError(null);
 
     try {
-      // Prepare body - only allowed fields from your edit form
       const body = {
         title: editingOffer.title,
         discount_percentage: Number(editingOffer.discount_percentage),
@@ -95,7 +94,6 @@ export default function OffersList() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // Update the offers state locally
       setOffers((prev) =>
         prev.map((offer) =>
           offer.id === editingOffer.id
@@ -114,41 +112,41 @@ export default function OffersList() {
                   ...offer.status,
                   is_active: body.is_active,
                   current_status: body.is_active ? "active" : "inactive",
-                  status_label: body.is_active ? "نشط" : "غير نشط",
+                  status_label: body.is_active ? t("active") : t("inactive"),
                 },
               }
             : offer
         )
       );
 
-      alert("Offer updated successfully.");
+      alert(t("offer_updated_success") || "Offer updated successfully.");
       setEditingOffer(null);
     } catch (err) {
-      setEditError("Failed to update offer. Please try again.");
+      setEditError(t("failed_update"));
     } finally {
       setEditLoading(false);
     }
   };
 
-  if (loading) return <p className="text-center mt-6">Loading...</p>;
+  if (loading) return <p className="text-center mt-6">{t("loading")}</p>;
   if (error) return <p className="text-center mt-6 text-red-500">{error}</p>;
 
   return (
     <div className="p-4 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-        <h1 className="text-3xl font-bold text-gray-900">Offers</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t("offers")}</h1>
 
         <div className="flex gap-3 w-full sm:w-auto">
           <button
             className="px-5 py-2 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 transition"
             onClick={() => navigate("/admin/offers/add")}
           >
-            Add Offer
+            {t("add_offer")}
           </button>
           <input
             type="text"
-            placeholder="Search offers..."
+            placeholder={t("search_offers")}
             className="w-full sm:w-64 px-4 py-2 rounded-xl border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -176,22 +174,22 @@ export default function OffersList() {
               <div className="flex justify-between items-center text-sm text-gray-700 font-medium">
                 <div>
                   <p>
-                    <span className="font-semibold">Start Date:</span>{" "}
+                    <span className="font-semibold">{t("start_date")}:</span>{" "}
                     {new Date(offer.validity.starts_at).toLocaleDateString()}
                   </p>
                   <p>
-                    <span className="font-semibold">Expires At:</span>{" "}
+                    <span className="font-semibold">{t("expires_at")}:</span>{" "}
                     {new Date(offer.validity.expires_at).toLocaleDateString()}
                   </p>
                 </div>
 
                 <div className="text-right">
                   <p>
-                    <span className="font-semibold">Discount %:</span>{" "}
+                    <span className="font-semibold">{t("discount_percentage")}:</span>{" "}
                     {offer.pricing.discount_percentage || "N/A"}
                   </p>
                   <p>
-                    <span className="font-semibold">Category:</span>{" "}
+                    <span className="font-semibold">{t("category")}:</span>{" "}
                     {offer.category?.name || "N/A"}
                   </p>
                 </div>
@@ -209,8 +207,8 @@ export default function OffersList() {
                 }`}
               >
                 {offer.status.is_active
-                  ? offer.status.status_label
-                  : "Inactive"}
+                  ? t("active")
+                  : t("inactive")}
               </span>
 
               {/* Icons */}
@@ -218,7 +216,6 @@ export default function OffersList() {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    // Open edit popup and prefill
                     setEditingOffer({
                       id: offer.id,
                       title: offer.title,
@@ -279,23 +276,23 @@ export default function OffersList() {
 
             <div className="space-y-3 text-gray-800 text-lg">
               <p>
-                <span className="font-semibold">Start Date:</span>{" "}
+                <span className="font-semibold">{t("start_date")}:</span>{" "}
                 {new Date(selectedOffer.validity.starts_at).toLocaleDateString()}
               </p>
               <p>
-                <span className="font-semibold">Expires At:</span>{" "}
+                <span className="font-semibold">{t("expires_at")}:</span>{" "}
                 {new Date(selectedOffer.validity.expires_at).toLocaleDateString()}
               </p>
               <p>
-                <span className="font-semibold">Discount %:</span>{" "}
+                <span className="font-semibold">{t("discount_percentage")}:</span>{" "}
                 {selectedOffer.pricing.discount_percentage || "N/A"}
               </p>
               <p>
-                <span className="font-semibold">Category:</span>{" "}
+                <span className="font-semibold">{t("category")}:</span>{" "}
                 {selectedOffer.category?.name || "N/A"}
               </p>
               <p>
-                <span className="font-semibold">Created At:</span>{" "}
+                <span className="font-semibold">{t("created_at")}:</span>{" "}
                 {new Date(selectedOffer.timestamps.created_at).toLocaleDateString()}
               </p>
             </div>
@@ -322,7 +319,7 @@ export default function OffersList() {
               <X size={26} />
             </button>
 
-            <h2 className="text-2xl font-bold mb-6 text-blue-700">Edit Offer</h2>
+            <h2 className="text-2xl font-bold mb-6 text-blue-700">{t("edit_offer")}</h2>
 
             {editError && (
               <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
@@ -331,7 +328,7 @@ export default function OffersList() {
             )}
 
             <label className="block mb-2 font-semibold">
-              Title
+              {t("title")}
               <input
                 type="text"
                 name="title"
@@ -343,7 +340,7 @@ export default function OffersList() {
             </label>
 
             <label className="block mb-2 font-semibold">
-              Discount Percentage (%)
+              {t("discount_percentage_label")}
               <input
                 type="number"
                 name="discount_percentage"
@@ -357,7 +354,7 @@ export default function OffersList() {
             </label>
 
             <label className="block mb-2 font-semibold">
-              End Date
+              {t("end_date")}
               <input
                 type="date"
                 name="end_date"
@@ -376,7 +373,7 @@ export default function OffersList() {
                 onChange={handleEditChange}
                 className="w-5 h-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
               />
-              Activate Offer
+              {t("activate_offer")}
             </label>
 
             <button
@@ -384,7 +381,7 @@ export default function OffersList() {
               disabled={editLoading}
               className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold py-3 rounded-lg transition-colors duration-300"
             >
-              {editLoading ? "Saving..." : "Save Changes"}
+              {editLoading ? t("saving") : t("save_changes")}
             </button>
           </form>
         </div>

@@ -2,10 +2,12 @@ import React, { useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";  // استيراد
 
 export default function CreateBanner() {
   const { token } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { t } = useTranslation(); // hook الترجمة
 
   const [formData, setFormData] = useState({
     title: "",
@@ -56,7 +58,7 @@ export default function CreateBanner() {
       );
 
       if (response.data.success) {
-        setMessage("Banner created successfully.");
+        setMessage(t("bannerCreatedSuccess"));
         setFormData({
           title: "",
           description: "",
@@ -67,10 +69,10 @@ export default function CreateBanner() {
           end_date: "",
         });
       } else {
-        setError("Failed to create banner.");
+        setError(t("failedToCreateBanner"));
       }
     } catch (err) {
-      setError(err.response?.data?.message || "An error occurred.");
+      setError(err.response?.data?.message || t("anErrorOccurred"));
     } finally {
       setLoading(false);
     }
@@ -78,10 +80,8 @@ export default function CreateBanner() {
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md font-sans">
-  
-
       <h2 className="text-center text-2xl font-semibold mb-6 text-gray-800">
-        Create New Banner
+        {t("createNewBanner")}
       </h2>
 
       {message && (
@@ -97,14 +97,14 @@ export default function CreateBanner() {
             htmlFor="title"
             className="block mb-1 font-semibold text-gray-700"
           >
-            Title:
+            {t("title")}:
           </label>
           <input
             id="title"
             name="title"
             type="text"
             required
-            placeholder="Enter banner title"
+            placeholder={t("enterBannerTitle")}
             value={formData.title}
             onChange={handleChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -116,13 +116,13 @@ export default function CreateBanner() {
             htmlFor="description"
             className="block mb-1 font-semibold text-gray-700"
           >
-            Description:
+            {t("description")}:
           </label>
           <textarea
             id="description"
             name="description"
             required
-            placeholder="Enter description"
+            placeholder={t("enterDescription")}
             value={formData.description}
             onChange={handleChange}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 resize-y min-h-[80px]"
@@ -134,7 +134,7 @@ export default function CreateBanner() {
             htmlFor="image_url"
             className="block mb-1 font-semibold text-gray-700"
           >
-            Image URL:
+            {t("imageUrl")}:
           </label>
           <input
             id="image_url"
@@ -153,7 +153,7 @@ export default function CreateBanner() {
             htmlFor="link"
             className="block mb-1 font-semibold text-gray-700"
           >
-            Link (optional):
+            {t("linkOptional")}:
           </label>
           <input
             id="link"
@@ -176,7 +176,7 @@ export default function CreateBanner() {
             className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
           />
           <label htmlFor="is_active" className="font-semibold text-gray-700">
-            Is Active
+            {t("isActive")}
           </label>
         </div>
 
@@ -185,7 +185,7 @@ export default function CreateBanner() {
             htmlFor="start_date"
             className="block mb-1 font-semibold text-gray-700"
           >
-            Start Date:
+            {t("startDate")}:
           </label>
           <input
             id="start_date"
@@ -202,7 +202,7 @@ export default function CreateBanner() {
             htmlFor="end_date"
             className="block mb-1 font-semibold text-gray-700"
           >
-            End Date:
+            {t("endDate")}:
           </label>
           <input
             id="end_date"
@@ -219,18 +219,16 @@ export default function CreateBanner() {
           disabled={loading}
           className="w-full mt-4 bg-green-600 text-white py-3 rounded-md font-semibold hover:bg-green-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-          {loading ? "Creating..." : "Create Banner"}
+          {loading ? t("creating") : t("createBanner")}
         </button>
-
-        
       </form>
 
-       <button
+      <button
         type="button"
         onClick={() => navigate("/admin/banners")}
         className="mb-6 px-4 py-2  text-green-700 rounded-md transition mt-4 text-right"
       >
-        &larr; Back to Banners
+        &larr; {t("backToBanners")}
       </button>
     </div>
   );

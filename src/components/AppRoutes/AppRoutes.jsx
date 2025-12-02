@@ -136,6 +136,8 @@ const AttendenceReport = lazy(() => import("../../components/AttendenceReport/At
 const CreateAdmin = lazy(() => import("../../components/CreateAdmin/CreateAdmin.jsx"));
 const QRDashboard = lazy(() => import("../../components/QRDashboard/QRDashboard.jsx"));
 const SetInitialPassword = lazy(() => import("../../components/SetInitialPassword/SetInitialPassword.jsx"));
+const Sessions = lazy(() => import("../../components/Sessions/Sessions.jsx"));
+
 
 export default function AppRoutes() {
   return (
@@ -155,6 +157,7 @@ export default function AppRoutes() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/set-initial-password" element={<SetInitialPassword />} />
 
+
         {/* ---- User Pages (Protected) ---- */}
         <Route
           element={
@@ -168,6 +171,7 @@ export default function AppRoutes() {
           <Route path="/user/Qrscanner" element={<Qrscanner />} />
           <Route path="/user/student-id" element={<StudentID />} />
           <Route path="/user/schedule" element={<Schedule />} />
+          <Route path="/user/sessions" element={<Sessions />} />
         </Route>
 
         {/* ---- Admin Layout ---- */}
@@ -199,6 +203,7 @@ export default function AppRoutes() {
           <Route path="/admin/reports/attendance" element={<AttendenceReport />} />
           <Route path="/admin/create-admin" element={<CreateAdmin />} />
           <Route path="/admin/qr-dashboard" element={<QRDashboard />} />
+          
         </Route>
 
         {/* ---- 404 ---- */}

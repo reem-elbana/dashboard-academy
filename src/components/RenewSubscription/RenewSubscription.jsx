@@ -2,12 +2,14 @@ import { useState, useContext } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../../Context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export default function RenewSubscriptionPage() {
   const { token } = useContext(AuthContext);
- const { id } = useParams();
+  const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const subscriber = location.state?.subscriber;
 
@@ -25,11 +27,11 @@ export default function RenewSubscriptionPage() {
     setNewSubscription(null);
 
     if (!months || !sessions) {
-      setError("Please enter both months and sessions");
+      setError(t("enter_months_sessions"));
       return;
     }
     if (isNaN(months) || isNaN(sessions)) {
-      setError("Months and sessions must be numbers");
+      setError(t("months_sessions_numbers"));
       return;
     }
 
@@ -44,15 +46,15 @@ export default function RenewSubscriptionPage() {
       );
 
       if (res.data.success) {
-        setSuccessMsg(res.data.message || "Subscription renewed successfully!");
+        setSuccessMsg(res.data.message || t("renew_success"));
         setNewSubscription(res.data.data);
         setMonths("");
         setSessions("");
       } else {
-        setError("Failed to renew subscription");
+        setError(t("renew_failed"));
       }
     } catch (err) {
-      setError("Error occurred while renewing subscription");
+      setError(t("renew_error"));
     } finally {
       setLoading(false);
     }
@@ -62,7 +64,7 @@ export default function RenewSubscriptionPage() {
     <div className="min-h-screen bg-green-50 p-6 flex flex-col items-center">
       <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-6">
         <h1 className="text-2xl font-bold text-green-700 mb-6 text-center">
-          Renew Subscription {subscriber ? `for ${subscriber.name}` : ""}
+          {t("renew_subscription")} {subscriber ? `${t("for")} ${subscriber.name}` : ""}
         </h1>
 
         <form onSubmit={handleSubmit}>
@@ -72,27 +74,27 @@ export default function RenewSubscriptionPage() {
           )}
 
           <label className="block mb-4">
-            <span className="text-gray-700 font-medium">Months to add</span>
+            <span className="text-gray-700 font-medium">{t("months_to_add")}</span>
             <input
               type="number"
               min="1"
               value={months}
               onChange={(e) => setMonths(e.target.value)}
               className="mt-1 block w-full border border-green-400 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-              placeholder="e.g. 3"
+              placeholder={t("example_months")}
               required
             />
           </label>
 
           <label className="block mb-6">
-            <span className="text-gray-700 font-medium">Sessions to add</span>
+            <span className="text-gray-700 font-medium">{t("sessions_to_add")}</span>
             <input
               type="number"
               min="1"
               value={sessions}
               onChange={(e) => setSessions(e.target.value)}
               className="mt-1 block w-full border border-green-400 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-              placeholder="e.g. 15"
+              placeholder={t("example_sessions")}
               required
             />
           </label>
@@ -102,14 +104,14 @@ export default function RenewSubscriptionPage() {
             disabled={loading}
             className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-md transition"
           >
-            {loading ? "Renewing..." : "Renew Subscription"}
+            {loading ? t("renewing") : t("renew_subscription")}
           </button>
         </form>
 
         {newSubscription && (
           <div className="mt-6 p-4 bg-green-100 rounded-md text-green-800 font-semibold text-center">
-            <p>New Expiration Date: {newSubscription.subscription_expires_at.split("T")[0]}</p>
-            <p>Remaining Sessions: {newSubscription.remaining_sessions}</p>
+            <p>{t("new_expiration_date")}: {newSubscription.subscription_expires_at.split("T")[0]}</p>
+            <p>{t("remaining_sessions")}: {newSubscription.remaining_sessions}</p>
           </div>
         )}
 
@@ -117,7 +119,7 @@ export default function RenewSubscriptionPage() {
           onClick={() => navigate(-1)}
           className="mt-4 text-green-600 underline"
         >
-          Back to Subscribers
+          {t("back_to_subscribers")}
         </button>
       </div>
     </div>

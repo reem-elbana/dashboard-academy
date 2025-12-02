@@ -2,9 +2,11 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../Context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export default function EditUser() {
   const { token } = useContext(AuthContext);
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const { id } = useParams();
@@ -33,6 +35,7 @@ export default function EditUser() {
       navigate("/admin/users");
       return;
     }
+
     setFormData({
       name: user.name || "",
       email: user.email || "",
@@ -65,18 +68,16 @@ export default function EditUser() {
       const res = await axios.put(
         `https://generous-optimism-production-4492.up.railway.app/api/admin/users/${id}`,
         formData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (res.data.success) {
-        setSuccessMsg("User updated successfully.");
+        setSuccessMsg(t("user_updated_successfully"));
       } else {
-        setErrorMsg("Failed to update user.");
+        setErrorMsg(t("failed_to_update_user"));
       }
     } catch (error) {
-      setErrorMsg(error.response?.data?.message || "Failed to update user.");
+      setErrorMsg(error.response?.data?.message || t("failed_to_update_user"));
     } finally {
       setLoading(false);
     }
@@ -86,7 +87,7 @@ export default function EditUser() {
     <div className="min-h-screen bg-gray-50 flex justify-center items-center p-6">
       <div className="bg-white w-full max-w-xl p-6 rounded-2xl shadow-md border border-gray-200">
         <h2 className="text-2xl font-semibold mb-6 text-center text-green-700 tracking-tight">
-          Update User
+          {t("update_user")}
         </h2>
 
         {successMsg && (
@@ -103,7 +104,7 @@ export default function EditUser() {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label htmlFor="name" className="block mb-1 font-medium text-gray-800 text-base">
-              Name
+              {t("name")}
             </label>
             <input
               id="name"
@@ -112,14 +113,14 @@ export default function EditUser() {
               required
               value={formData.name}
               onChange={handleChange}
-              placeholder="Name"
+              placeholder={t("name")}
               className="w-full p-3 border border-gray-300 rounded-lg text-base bg-gray-50 focus:bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
             />
           </div>
 
           <div>
             <label htmlFor="email" className="block mb-1 font-medium text-gray-800 text-base">
-              Email
+              {t("email")}
             </label>
             <input
               id="email"
@@ -128,14 +129,14 @@ export default function EditUser() {
               required
               value={formData.email}
               onChange={handleChange}
-              placeholder="Email"
+              placeholder={t("email")}
               className="w-full p-3 border border-gray-300 rounded-lg text-base bg-gray-50 focus:bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
             />
           </div>
 
           <div>
             <label htmlFor="phone" className="block mb-1 font-medium text-gray-800 text-base">
-              Phone
+              {t("phone")}
             </label>
             <input
               id="phone"
@@ -144,14 +145,14 @@ export default function EditUser() {
               required
               value={formData.phone}
               onChange={handleChange}
-              placeholder="Phone"
+              placeholder={t("phone")}
               className="w-full p-3 border border-gray-300 rounded-lg text-base bg-gray-50 focus:bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
             />
           </div>
 
           <div>
             <label htmlFor="national_id" className="block mb-1 font-medium text-gray-800 text-base">
-              National ID
+              {t("national_id")}
             </label>
             <input
               id="national_id"
@@ -160,14 +161,14 @@ export default function EditUser() {
               required
               value={formData.national_id}
               onChange={handleChange}
-              placeholder="National ID"
+              placeholder={t("national_id")}
               className="w-full p-3 border border-gray-300 rounded-lg text-base bg-gray-50 focus:bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
             />
           </div>
 
           <div>
             <label htmlFor="role" className="block mb-1 font-medium text-gray-800 text-base">
-              Role
+              {t("role")}
             </label>
             <select
               id="role"
@@ -178,11 +179,7 @@ export default function EditUser() {
             >
               {roles.map((r) => (
                 <option key={r} value={r}>
-                  {r === "subscriber"
-                    ? "Subscriber"
-                    : r === "admin"
-                    ? "Admin"
-                    : "Super Admin"}
+                  {t(r)}
                 </option>
               ))}
             </select>
@@ -193,7 +190,7 @@ export default function EditUser() {
               htmlFor="remaining_sessions"
               className="block mb-1 font-medium text-gray-800 text-base"
             >
-              Remaining Sessions
+              {t("remaining_sessions")}
             </label>
             <input
               id="remaining_sessions"
@@ -211,7 +208,7 @@ export default function EditUser() {
               htmlFor="subscription_expires_at"
               className="block mb-1 font-medium text-gray-800 text-base"
             >
-              Subscription Expires At
+              {t("subscription_expires_at")}
             </label>
             <input
               id="subscription_expires_at"
@@ -231,7 +228,7 @@ export default function EditUser() {
               onChange={handleChange}
               className="mr-2 w-5 h-5 text-green-600 focus:ring-green-400 border-gray-300 rounded"
             />
-            <span className="text-gray-800 font-medium">Active User</span>
+            <span className="text-gray-800 font-medium">{t("active_user")}</span>
           </label>
 
           <button
@@ -239,7 +236,7 @@ export default function EditUser() {
             disabled={loading}
             className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition disabled:opacity-50 shadow"
           >
-            {loading ? "Updating..." : "Update User"}
+            {loading ? t("updating") : t("update_user")}
           </button>
         </form>
       </div>

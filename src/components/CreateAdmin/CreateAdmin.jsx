@@ -1,9 +1,11 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../../Context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export default function CreateAdmin() {
   const { token, role } = useContext(AuthContext);
+  const { t } = useTranslation();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -25,7 +27,7 @@ export default function CreateAdmin() {
     e.preventDefault();
 
     if (role !== "super-admin") {
-      setErrorMsg("You are not authorized to create a new admin.");
+      setErrorMsg(t("not_authorized_create_admin"));
       setResponseMsg("");
       return;
     }
@@ -56,7 +58,7 @@ export default function CreateAdmin() {
       }
     } catch (error) {
       setErrorMsg(
-        error.response?.data?.message || "Error occurred while creating admin."
+        error.response?.data?.message || t("error_creating_admin")
       );
       setResponseMsg("");
     }
@@ -65,7 +67,7 @@ export default function CreateAdmin() {
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md font-sans">
       <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">
-        Create New Admin
+        {t("create_new_admin")}
       </h2>
 
       {responseMsg && (
@@ -79,7 +81,7 @@ export default function CreateAdmin() {
         <input
           type="text"
           name="name"
-          placeholder="Full Name"
+          placeholder={t("full_name")}
           value={formData.name}
           onChange={handleChange}
           required
@@ -89,7 +91,7 @@ export default function CreateAdmin() {
         <input
           type="email"
           name="email"
-          placeholder="Email Address"
+          placeholder={t("email_address")}
           value={formData.email}
           onChange={handleChange}
           required
@@ -99,7 +101,7 @@ export default function CreateAdmin() {
         <input
           type="tel"
           name="phone"
-          placeholder="Phone Number"
+          placeholder={t("phone_number")}
           value={formData.phone}
           onChange={handleChange}
           required
@@ -112,7 +114,7 @@ export default function CreateAdmin() {
         <input
           type="password"
           name="password"
-          placeholder="Password"
+          placeholder={t("password")}
           value={formData.password}
           onChange={handleChange}
           required
@@ -122,7 +124,7 @@ export default function CreateAdmin() {
         <input
           type="password"
           name="password_confirmation"
-          placeholder="Confirm Password"
+          placeholder={t("confirm_password")}
           value={formData.password_confirmation}
           onChange={handleChange}
           required
@@ -133,7 +135,7 @@ export default function CreateAdmin() {
           type="submit"
           className="mt-2 bg-green-600 hover:bg-green-700 transition-colors text-white font-semibold py-3 rounded-md shadow"
         >
-          Create Admin
+          {t("create_admin")}
         </button>
       </form>
     </div>

@@ -3,8 +3,10 @@ import axios from "axios";
 import { AuthContext } from "../../Context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { Pencil, Trash2, Plus } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function UsersList() {
+  const { t, i18n } = useTranslation();
   const { token, userRole } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -19,10 +21,19 @@ export default function UsersList() {
   const [loadingMore, setLoadingMore] = useState(false);
   const pageRef = useRef(1);
 
+  // ضبط الاتجاه تلقائيًا حسب اللغة (RTL للعربية)
+  useEffect(() => {
+    if (i18n.language === "ar") {
+      document.documentElement.dir = "rtl";
+    } else {
+      document.documentElement.dir = "ltr";
+    }
+  }, [i18n.language]);
+
   const availableRoles =
     userRole === "super-admin"
       ? ["subscriber", "admin", "super-admin"]
-      : ["subscriber", "admin", "super-admin"];
+      : ["subscriber", "admin"];
 
   const fetchUsers = async (role = "", page = 1, append = false, searchQuery = "") => {
     try {
@@ -46,18 +57,13 @@ export default function UsersList() {
         setUsers(result);
       }
 
-      setFilteredUsers((prev) => append ? [...prev, ...result] : result);
+      setFilteredUsers((prev) => (append ? [...prev, ...result] : result));
 
-      if (result.length < 5) {
-        setHasMore(false);
-      } else {
-        setHasMore(true);
-      }
-
+      setHasMore(result.length === 5);
       setLoading(false);
       setLoadingMore(false);
     } catch {
-      setError("An error occurred while loading users.");
+      setError(t("errorLoadingUsers"));
       setLoading(false);
       setLoadingMore(false);
     }
@@ -82,7 +88,7 @@ export default function UsersList() {
       setUsers([]);
       setFilteredUsers([]);
       fetchUsers(roleFilter, 1, false, search);
-    }, 500); 
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [search]);
@@ -102,19 +108,19 @@ export default function UsersList() {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [loadingMore, hasMore, roleFilter, search]);
 
   const handleDelete = async (userId) => {
     const userToDelete = users.find((u) => u.id === userId);
 
     if (userRole !== "super-admin" && userToDelete.role === "super-admin") {
-      alert("You are not allowed to delete a Super Admin.");
+      alert(t("notAllowedDeleteSuperAdmin"));
       return;
     }
 
-    if (!window.confirm("Are you sure you want to delete this user?")) return;
+    if (!window.confirm(t("deleteConfirmation"))) return;
 
     setDeletingIds((prev) => ({ ...prev, [userId]: true }));
 
@@ -127,10 +133,10 @@ export default function UsersList() {
       if (response.data.success) {
         setUsers((prev) => prev.filter((user) => user.id !== userId));
       } else {
-        setError("Failed to delete the user.");
+        setError(t("failedDeleteUser"));
       }
     } catch {
-      setError("An error occurred while deleting the user.");
+      setError(t("errorDeleteUser"));
     } finally {
       setDeletingIds((prev) => ({ ...prev, [userId]: false }));
     }
@@ -139,37 +145,32 @@ export default function UsersList() {
   return (
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6 md:p-10">
       <div className="max-w-7xl mx-auto bg-white rounded-3xl shadow-lg p-6 sm:p-8">
-
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
-              Users Management
-            </h2>
-            <p className="text-gray-500 text-sm sm:text-base">
-              View and manage all users
-            </p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">{t("usersManagement")}</h2>
+            <p className="text-gray-500 text-sm sm:text-base">{t("viewManageUsers")}</p>
           </div>
         </div>
 
         {/* Role Filter + Search + Create */}
-        <div className="flex flex-col sm:flex-row items-center gap-4 mb-6 justify-end">
+        <div className="flex flex-col sm:flex-row items-center gap-4 mb-6 justify-start">
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
             className="w-full sm:w-52 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
           >
-            <option value="">All roles</option>
+            <option value="">{t("All roles")}</option>
             {availableRoles.map((r) => (
               <option key={r} value={r}>
-                {r}
+                {t(r)}
               </option>
             ))}
           </select>
 
           <input
             type="text"
-            placeholder="Search for a user..."
+            placeholder={t("searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
@@ -180,24 +181,24 @@ export default function UsersList() {
             className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto px-5 py-2.5 rounded-lg shadow transition"
           >
             <Plus className="w-5 h-5" />
-            Create User
+            {t("createUser")}
           </button>
         </div>
 
-        {loading && <p className="text-center text-gray-600">Loading...</p>}
+        {loading && <p className="text-center text-gray-600">{t("loading")}</p>}
         {error && <p className="text-center text-red-500">{error}</p>}
 
         {/* TABLE - Desktop */}
         <div className="hidden md:block overflow-x-auto">
-          <table className="w-full text-center border-collapse">
+          <table className="w-full text-right border-collapse">
             <thead>
               <tr className="bg-gray-200 text-gray-700">
-                <th className="p-3">Name</th>
+                <th className="p-3">{t("usersManagement")}</th>
                 <th className="p-3">Email</th>
-                <th className="p-3">Role</th>
+                <th className="p-3">{t("allRoles")}</th>
                 <th className="p-3">Status</th>
-                <th className="p-3">Joined At</th>
-                <th className="p-3">Actions</th>
+                <th className="p-3">{t("joinedAt")}</th>
+                <th className="p-3">{t("actions")}</th>
               </tr>
             </thead>
 
@@ -209,18 +210,18 @@ export default function UsersList() {
 
                   <td className="p-3">
                     <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full">
-                      {user.role}
+                      {t(user.role)}
                     </span>
                   </td>
 
                   <td className="p-3">
                     {user.is_active ? (
                       <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full">
-                        Active
+                        {t("active")}
                       </span>
                     ) : (
                       <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full">
-                        Inactive
+                        {t("inactive")}
                       </span>
                     )}
                   </td>
@@ -228,7 +229,6 @@ export default function UsersList() {
                   <td className="p-3">{user.created_at.split("T")[0]}</td>
 
                   <td className="p-3 flex items-center justify-center gap-4">
-
                     {(userRole === "super-admin" || user.role !== "super-admin") && (
                       <Link
                         to={`/admin/users/edit/${user.id}`}
@@ -255,12 +255,12 @@ export default function UsersList() {
           </table>
         </div>
 
-        {loadingMore && <p className="text-center text-gray-600 mt-4">Loading more...</p>}
+        {loadingMore && <p className="text-center text-gray-600 mt-4">{t("loadingMore")}</p>}
 
         {/* MOBILE View */}
         <div className="md:hidden">
           {filteredUsers.length === 0 ? (
-            <p className="text-center text-gray-500">No users found.</p>
+            <p className="text-center text-gray-500">{t("noUsersFound")}</p>
           ) : (
             <div className="space-y-4">
               {filteredUsers.map((user) => (
@@ -293,19 +293,19 @@ export default function UsersList() {
                   <p className="text-gray-600 text-sm">{user.email}</p>
                   <p className="mt-1">
                     <span className="inline-block px-3 py-1 rounded-full text-sm font-semibold text-blue-700 bg-blue-100">
-                      {user.role}
+                      {t(user.role)}
                     </span>
                   </p>
                   <p className="mt-1">
-                    Status:{" "}
+                    {t("status")}:{" "}
                     {user.is_active ? (
-                      <span className="text-green-600 font-semibold">Active</span>
+                      <span className="text-green-600 font-semibold">{t("active")}</span>
                     ) : (
-                      <span className="text-red-600 font-semibold">Inactive</span>
+                      <span className="text-red-600 font-semibold">{t("inactive")}</span>
                     )}
                   </p>
                   <p className="mt-1 text-sm text-gray-500">
-                    Joined: {user.created_at.split("T")[0]}
+                    {t("joinedAt")}: {user.created_at.split("T")[0]}
                   </p>
                 </div>
               ))}
@@ -313,7 +313,7 @@ export default function UsersList() {
           )}
         </div>
 
-        {loadingMore && <p className="text-center text-gray-600 mt-4">Loading more...</p>}
+        {loadingMore && <p className="text-center text-gray-600 mt-4">{t("loadingMore")}</p>}
       </div>
     </div>
   );

@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../../Context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export default function SubscribersReport() {
   const { token } = useContext(AuthContext);
+  const { t } = useTranslation();
 
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -23,40 +25,46 @@ export default function SubscribersReport() {
         if (res.data.success) {
           setReport(res.data.data.report);
         } else {
-          setError("Failed to load report");
+          setError(t("failed_to_load_report"));
         }
       } catch (err) {
-        setError(err.message || "Error fetching data");
+        setError(err.message || t("error_fetching_data"));
       }
       setLoading(false);
     }
     fetchReport();
-  }, [token]);
+  }, [token, t]);
 
-  if (loading) return <div className="text-center mt-20 text-lg">Loading...</div>;
-  if (error) return <div className="text-center mt-20 text-red-600">Error: {error}</div>;
+  if (loading)
+    return <div className="text-center mt-20 text-lg">{t("loading")}...</div>;
+  if (error)
+    return (
+      <div className="text-center mt-20 text-red-600">
+        {t("error")}: {error}
+      </div>
+    );
 
   const stats = {
     total_subscribers: {
-      label: "Total Subscribers",
+      label: t("total_subscribers"),
       icon: "💰",
       color: "purple-500",
       value: report.total_subscribers,
     },
     active_subscribers: {
-      label: "Active Subscribers",
+      label: t("active_subscribers"),
       icon: "✅",
       color: "green-500",
       value: report.active_subscribers,
     },
     expired_subscriptions: {
-      label: "Expired Subscriptions",
+      label: t("expired_subscriptions"),
       icon: "⏳",
       color: "red-500",
       value: report.expired_subscriptions,
     },
     new_subscribers_this_month: {
-      label: "New Subscribers This Month",
+      label: t("new_subscribers_this_month"),
       icon: "📅",
       color: "blue-500",
       value: report.new_subscribers_this_month,
@@ -65,7 +73,9 @@ export default function SubscribersReport() {
 
   return (
     <div className="p-6 font-sans max-w-7xl mx-auto">
-      <h1 className="text-4xl font-bold text-gray-900 mb-10">Subscriber Report</h1>
+      <h1 className="text-4xl font-bold text-gray-900 mb-10">
+        {t("subscriber_report")}
+      </h1>
 
       {/* flex container للكاردز و progress bars الرئيسية جنب بعض */}
       <div className="flex flex-col md:flex-row gap-10 mb-12">
@@ -85,10 +95,11 @@ export default function SubscribersReport() {
 
         {/* progress bars لنفس الإحصائيات مع عرض متغير حسب قيمة العدد */}
         <div className="md:w-1/2 bg-white rounded shadow p-6">
-          <h2 className="text-lg font-bold mb-6 text-center md:text-left">Main Subscriber Statistics (Progress Bars)</h2>
+          <h2 className="text-lg font-bold mb-6 text-center md:text-left">
+            {t("main_subscriber_statistics")}
+          </h2>
           <div className="space-y-6">
             {Object.entries(stats).map(([key, stat]) => {
-              // عرض البار حسب قيمة العدد نفسها (مثال thresholds)
               let widthPercent = 0;
               if (stat.value < 50) {
                 widthPercent = 20;
@@ -119,14 +130,16 @@ export default function SubscribersReport() {
 
       {/* Subscribers by Session Count تحت الاتنين */}
       <div className="bg-white rounded shadow p-6 max-w-xl mx-auto md:mx-0">
-        <h2 className="text-lg font-bold mb-6 text-center md:text-left">Subscribers by Session Count</h2>
+        <h2 className="text-lg font-bold mb-6 text-center md:text-left">
+          {t("subscribers_by_session_count")}
+        </h2>
         <div className="space-y-4">
           {["zero_sessions", "low_sessions", "high_sessions"].map((key, idx) => {
             const colors = ["blue-600", "green-600", "red-600"];
             const labels = {
-              zero_sessions: "Zero Sessions",
-              low_sessions: "Low Sessions",
-              high_sessions: "High Sessions",
+              zero_sessions: t("zero_sessions"),
+              low_sessions: t("low_sessions"),
+              high_sessions: t("high_sessions"),
             };
             const value = report.subscribers_by_session_count[key];
             const widthPercent = (value / report.total_subscribers) * 100;

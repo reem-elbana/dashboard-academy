@@ -2,11 +2,13 @@ import { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../../Context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export default function SubscriberDetails() {
   const { id } = useParams();
   const { token } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [subscriber, setSubscriber] = useState(null);
   const [stats, setStats] = useState(null);
@@ -29,22 +31,22 @@ export default function SubscriberDetails() {
           setSubscriber(res.data.data.user);
           setStats(res.data.data.stats);
         } else {
-          setError("Failed to load subscriber details");
+          setError(t("error_loading_details"));
         }
       } catch (err) {
-        setError("An error occurred while fetching subscriber details");
+        setError(t("error_fetching_details"));
       } finally {
         setLoading(false);
       }
     };
 
     fetchSubscriberDetails();
-  }, [id, token]);
+  }, [id, token, t]);
 
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center text-green-700 font-semibold">
-        Loading subscriber details...
+        {t("loading_details")}
       </div>
     );
 
@@ -58,7 +60,7 @@ export default function SubscriberDetails() {
   if (!subscriber)
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-600 font-semibold">
-        No subscriber data found.
+        {t("no_data_found")}
       </div>
     );
 
@@ -69,11 +71,11 @@ export default function SubscriberDetails() {
           onClick={() => navigate(-1)}
           className="mb-4 text-green-600 underline"
         >
-          ← Back to Subscribers
+          ← {t("back_to_subscribers")}
         </button>
 
         <h1 className="text-3xl font-bold text-green-800 mb-6">
-          تفاصيل المشترك: {subscriber.name}
+          {t("subscriber_details")}: {subscriber.name}
         </h1>
 
         <div className="flex flex-col md:flex-row gap-6">
@@ -92,39 +94,59 @@ export default function SubscriberDetails() {
                 </div>
               )}
             </div>
-            <p className={`font-semibold ${subscriber.is_active ? "text-green-600" : "text-red-600"}`}>
-              {subscriber.is_active ? "Active" : "Inactive"}
+            <p
+              className={`font-semibold ${
+                subscriber.is_active ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              {subscriber.is_active ? t("active") : t("inactive")}
             </p>
           </div>
 
           {/* Right: Details and stats */}
           <div className="md:w-2/3 space-y-4">
             <div>
-              <p><span className="font-semibold">Email:</span> {subscriber.email}</p>
-              <p><span className="font-semibold">Phone:</span> {subscriber.phone}</p>
-              <p><span className="font-semibold">National ID:</span> {subscriber.national_id}</p>
-              <p><span className="font-semibold">Role:</span> {subscriber.role}</p>
               <p>
-                <span className="font-semibold">Subscription Expires At:</span>{" "}
+                <span className="font-semibold">{t("email")}:</span> {subscriber.email}
+              </p>
+              <p>
+                <span className="font-semibold">{t("phone")}:</span> {subscriber.phone}
+              </p>
+              <p>
+                <span className="font-semibold">{t("national_id")}:</span> {subscriber.national_id}
+              </p>
+              <p>
+                <span className="font-semibold">{t("role")}:</span> {subscriber.role}
+              </p>
+              <p>
+                <span className="font-semibold">{t("subscription_expires_at")}:</span>{" "}
                 {subscriber.subscription_expires_at
                   ? new Date(subscriber.subscription_expires_at).toLocaleDateString()
-                  : "N/A"}
+                  : t("not_available")}
               </p>
-              <p><span className="font-semibold">Remaining Sessions:</span> {subscriber.remaining_sessions}</p>
+              <p>
+                <span className="font-semibold">{t("remaining_sessions")}:</span> {subscriber.remaining_sessions}
+              </p>
             </div>
 
             <div className="border-t border-green-300 pt-4">
               <h2 className="text-xl font-semibold text-green-800 mb-2">
-                إحصائيات الحضور
+                {t("attendance_stats")}
               </h2>
-              <p><span className="font-semibold">Total Attendances:</span> {stats?.total_attendances ?? 0}</p>
-              <p><span className="font-semibold">Attended Sessions:</span> {stats?.attended_sessions ?? 0}</p>
-              <p><span className="font-semibold">Remaining Sessions:</span> {stats?.remaining_sessions ?? 0}</p>
               <p>
-                <span className="font-semibold">Last Attendance:</span>{" "}
+                <span className="font-semibold">{t("total_attendances")}:</span> {stats?.total_attendances ?? 0}
+              </p>
+              <p>
+                <span className="font-semibold">{t("attended_sessions")}:</span> {stats?.attended_sessions ?? 0}
+              </p>
+              <p>
+                <span className="font-semibold">{t("remaining_sessions")}:</span> {stats?.remaining_sessions ?? 0}
+              </p>
+              <p>
+                <span className="font-semibold">{t("last_attendance")}:</span>{" "}
                 {stats?.last_attendance
                   ? new Date(stats.last_attendance).toLocaleDateString()
-                  : "N/A"}
+                  : t("not_available")}
               </p>
             </div>
           </div>

@@ -1,9 +1,13 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../../Context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export default function AdminDashboard() {
   const { token } = useContext(AuthContext);
+    const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+
   const [stats, setStats] = useState(null);
   const [month, setMonth] = useState(null);
   const [attendances, setAttendances] = useState([]);
@@ -33,18 +37,18 @@ export default function AdminDashboard() {
   }, []);
 
   if (loading)
-    return <p className="p-4 text-gray-600 text-center">Loading...</p>;
+    return <p className="p-4 text-gray-600 text-center">{t("loading")}</p>;
+
   if (!stats)
     return (
       <p className="p-4 text-red-600 text-center">
-        Failed to load dashboard.
+        {t("failed_to_load")}
       </p>
     );
 
-  // --------- Quick Progress Data ----------
   const progressData = [
     {
-      label: "Subscription Rate",
+      label: t("subscription_rate"),
       percent: Math.min(
         (stats.total_subscribers / stats.total_users) * 100,
         100
@@ -52,7 +56,7 @@ export default function AdminDashboard() {
       color: "bg-blue-500",
     },
     {
-      label: "Active Users",
+      label: t("active_users"),
       percent: Math.min(
         (stats.active_users / stats.total_users) * 100,
         100
@@ -60,7 +64,7 @@ export default function AdminDashboard() {
       color: "bg-green-500",
     },
     {
-      label: "Expired Subscriptions",
+      label: t("expired_subscriptions"),
       percent: Math.min(
         (stats.expired_subscriptions / stats.total_subscribers) * 100,
         100
@@ -68,7 +72,7 @@ export default function AdminDashboard() {
       color: "bg-red-500",
     },
     {
-      label: "Sessions Activity",
+      label: t("sessions_activity"),
       percent: Math.min((stats.total_sessions / 100) * 100, 100),
       color: "bg-purple-500",
     },
@@ -76,57 +80,65 @@ export default function AdminDashboard() {
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 px-4 sm:px-6 md:px-10 py-6 max-w-[1400px] mx-auto">
+      
+     <h1
+      className={`
+        text-3xl sm:text-4xl font-extrabold text-green-700 mb-10
+        ${isRTL ? "text-right" : "text-left"}
+      `}
+    >
+      {t("admin_dashboard")}
+    </h1>
 
-      {/* Page Title */}
-      <h1 className="text-3xl sm:text-4xl font-extrabold text-green-700 mb-10 text-center md:text-left">
-        Admin Dashboard
-      </h1>
+      {/* Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <StatCard title={t("total_users")} value={stats.total_users} />
+        <StatCard title={t("active_users")} value={stats.active_users} />
+        <StatCard
+          title={t("total_subscribers")}
+          value={stats.total_subscribers}
+        />
+        <StatCard
+          title={t("expired_subscriptions")}
+          value={stats.expired_subscriptions}
+        />
 
-{/* Stats Section */}
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <StatCard title={t("active_banners")} value={stats.active_banners} />
+        <StatCard title={t("active_categories")} value={stats.active_categories} />
+        <StatCard title={t("total_sessions")} value={stats.total_sessions} />
+        <StatCard title={t("total_offers")} value={stats.total_offers} />
+      </div>
 
-  {/* --- Row 1 (User Stats) --- */}
-  <StatCard title="Total Users" value={stats.total_users} />
-  <StatCard title="Active Users" value={stats.active_users} />
-  <StatCard title="Total Subscribers" value={stats.total_subscribers} />
-  <StatCard title="Expired Subscriptions" value={stats.expired_subscriptions} />
-
-  {/* --- Row 2 (Content + Sessions) --- */}
-  <StatCard title="Active Banners" value={stats.active_banners} />
-  <StatCard title="Active Categories" value={stats.active_categories} />
-  <StatCard title="Total Sessions" value={stats.total_sessions} />
-  <StatCard title="Total Offers" value={stats.total_offers} />
-
-</div>
-
-
-      {/* Current Month Summary */}
+      {/* Month Summary */}
       {month && (
-        <div className="mt-10 bg-white rounded-3xl shadow-lg p-5 sm:p-7 md:p-8 max-w-7xl mx-auto text-center sm:text-left">
-          <h2 className="text-xl sm:text-2xl font-bold text-green-700 mb-6">
-            Current Month Summary
+        <div className="mt-10 bg-white rounded-3xl shadow-lg p-7 max-w-7xl mx-auto">
+          <h2 className="text-2xl font-bold text-green-700 mb-6">
+            {t("current_month_summary")}
           </h2>
+
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-gray-700 font-semibold text-lg">
             <div className="bg-green-50 rounded-xl p-5 shadow-inner">
               <p className="text-green-600 text-3xl">{month.new_subscribers}</p>
-              <p>New Subscribers</p>
+              <p>{t("new_subscribers")}</p>
             </div>
+
             <div className="bg-green-50 rounded-xl p-5 shadow-inner">
               <p className="text-green-600 text-3xl">{month.total_attendances_this_month}</p>
-              <p>Total Attendances This Month</p>
+              <p>{t("total_attendances_this_month")}</p>
             </div>
+
             <div className="bg-green-50 rounded-xl p-5 shadow-inner">
               <p className="text-green-600 text-3xl">{month.active_users_this_month}</p>
-              <p>Active Users This Month</p>
+              <p>{t("active_users_this_month")}</p>
             </div>
           </div>
         </div>
       )}
 
-      {/* Quick Statistics */}
-      <div className="mt-10 bg-white rounded-3xl shadow-lg p-5 sm:p-7 md:p-8 max-w-7xl mx-auto">
-        <h2 className="text-xl sm:text-2xl font-bold text-green-700 mb-6 text-center sm:text-left">
-          Quick Statistics
+      {/* Quick Stats */}
+      <div className="mt-10 bg-white rounded-3xl shadow-lg p-7 max-w-7xl mx-auto">
+        <h2 className="text-2xl font-bold text-green-700 mb-6">
+          {t("quick_statistics")}
         </h2>
 
         <div className="space-y-6">
@@ -142,31 +154,28 @@ export default function AdminDashboard() {
       </div>
 
       {/* Recent Attendance */}
-      <div className="mt-10 bg-white rounded-3xl shadow-lg p-5 sm:p-7 md:p-8 overflow-x-auto w-full max-w-7xl mx-auto">
-        <h2 className="text-xl sm:text-2xl font-bold text-green-700 mb-4 text-center sm:text-left">
-          Recent Attendance
+      <div className="mt-10 bg-white rounded-3xl shadow-lg p-7 overflow-x-auto max-w-7xl mx-auto">
+        <h2 className="text-2xl font-bold text-green-700 mb-4">
+          {t("recent_attendance")}
         </h2>
 
         {attendances.length === 0 ? (
           <p className="text-gray-500 text-lg text-center">
-            No attendance records yet.
+            {t("no_attendance")}
           </p>
         ) : (
-          <table className="w-full min-w-[650px] border-collapse text-sm md:text-base">
+          <table className="w-full min-w-[650px] border-collapse">
             <thead>
               <tr className="text-left border-b bg-gray-100">
-                <th className="p-3 font-semibold">User</th>
-                <th className="p-3 font-semibold">Session</th>
-                <th className="p-3 font-semibold">Date</th>
+                <th className="p-3">{t("user")}</th>
+                <th className="p-3">{t("session")}</th>
+                <th className="p-3">{t("date")}</th>
               </tr>
             </thead>
 
             <tbody>
               {attendances.map((item, index) => (
-                <tr
-                  key={index}
-                  className="border-b hover:bg-gray-50 transition-colors"
-                >
+                <tr key={index} className="border-b hover:bg-gray-50">
                   <td className="p-3">{item.user_name}</td>
                   <td className="p-3">{item.session_name}</td>
                   <td className="p-3">{item.time?.split("T")[0]}</td>
@@ -176,29 +185,20 @@ export default function AdminDashboard() {
           </table>
         )}
       </div>
+
     </div>
   );
 }
 
-/* Stat Box Component */
-function StatCard({ title, value, small }) {
+function StatCard({ title, value }) {
   return (
-    <div
-      className={`
-        bg-white rounded-3xl shadow-lg p-6 border border-gray-200
-        hover:shadow-xl transition-transform hover:-translate-y-1 
-        ${small ? "py-5" : "py-7"}
-      `}
-    >
+    <div className="bg-white rounded-3xl shadow-lg p-6 border hover:shadow-xl">
       <h3 className="text-gray-600 font-semibold">{title}</h3>
-      <p className="text-3xl font-extrabold text-green-600 mt-2">
-        {value}
-      </p>
+      <p className="text-3xl font-extrabold text-green-600 mt-2">{value}</p>
     </div>
   );
 }
 
-/* Progress Row Component */
 function ProgressRow({ label, percent, barColor }) {
   return (
     <div className="mb-6">

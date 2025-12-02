@@ -5,10 +5,12 @@ import { useNavigate } from "react-router-dom";
 
 // Lucide Icons
 import { Pencil, Trash2, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function BannerManagement() {
   const navigate = useNavigate();
   const { token } = useContext(AuthContext);
+  const { t } = useTranslation();
 
   const [banners, setBanners] = useState([]);
   const [filteredBanners, setFilteredBanners] = useState([]);
@@ -30,7 +32,7 @@ export default function BannerManagement() {
   // Fetch banners
   useEffect(() => {
     if (!token) {
-      setError("Authorization token is required");
+      setError(t("auth_token_required"));
       setLoading(false);
       return;
     }
@@ -47,12 +49,12 @@ export default function BannerManagement() {
           setBanners(res.data.banners);
           setFilteredBanners(res.data.banners);
         } else {
-          setError("Failed to load banners");
+          setError(t("failed_load_banners"));
         }
       })
-      .catch(() => setError("Failed to load banners"))
+      .catch(() => setError(t("failed_load_banners")))
       .finally(() => setLoading(false));
-  }, [token]);
+  }, [token, t]);
 
   // Search filter
   useEffect(() => {
@@ -68,7 +70,7 @@ export default function BannerManagement() {
 
   // دالة حذف البنر
   const handleDelete = async (bannerId) => {
-    if (!window.confirm("Are you sure you want to delete this banner?")) return;
+    if (!window.confirm(t("confirm_delete_banner"))) return;
 
     setDeletingId(bannerId);
     setError(null);
@@ -91,10 +93,10 @@ export default function BannerManagement() {
           setSelectedBanner(null);
         }
       } else {
-        setError("Failed to delete the banner");
+        setError(t("failed_delete_banner"));
       }
     } catch (err) {
-      setError("An error occurred while deleting the banner");
+      setError(t("error_delete_banner"));
     } finally {
       setDeletingId(null);
     }
@@ -138,10 +140,10 @@ export default function BannerManagement() {
         setFilteredBanners(updatedBanners);
         setEditingBanner(null);
       } else {
-        setError("Failed to update the banner");
+        setError(t("failed_update_banner"));
       }
     } catch {
-      setError("An error occurred while updating the banner");
+      setError(t("error_update_banner"));
     } finally {
       setSaving(false);
     }
@@ -151,7 +153,7 @@ export default function BannerManagement() {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-50">
         <p className="text-green-600 text-lg font-semibold animate-pulse">
-          Loading banners...
+          {t("loading_banners")}
         </p>
       </div>
     );
@@ -170,10 +172,8 @@ export default function BannerManagement() {
       <div className="max-w-7xl mx-auto p-6">
         {/* HEADER */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900">Banner Management</h1>
-          <p className="text-gray-600 mt-1">
-            View and manage all advertising banners
-          </p>
+          <h1 className="text-4xl font-bold text-gray-900">{t("banner_management")}</h1>
+          <p className="text-gray-600 mt-1">{t("view_manage_banners")}</p>
         </div>
 
         {/* CONTROLS */}
@@ -182,12 +182,12 @@ export default function BannerManagement() {
             onClick={() => navigate("/admin/banners/add")}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md font-semibold transition"
           >
-            + Add Banner
+            + {t("add_banner")}
           </button>
 
           <input
             type="search"
-            placeholder="Search banners..."
+            placeholder={t("search_banners")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full sm:w-72 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -198,7 +198,7 @@ export default function BannerManagement() {
         <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {filteredBanners.length === 0 ? (
             <p className="text-center text-gray-600 col-span-full">
-              No banners found.
+              {t("no_banners_found")}
             </p>
           ) : (
             filteredBanners.map((banner) => (
@@ -223,7 +223,7 @@ export default function BannerManagement() {
                         : "bg-red-100 text-red-600"
                     }`}
                   >
-                    {banner.is_active ? "Active" : "Inactive"}
+                    {banner.is_active ? t("active") : t("inactive")}
                   </span>
 
                   {/* TITLE */}
@@ -238,7 +238,7 @@ export default function BannerManagement() {
 
                   {/* ORDER */}
                   <p className="text-gray-500 text-xs mt-2">
-                    Order: {banner.order || 0}
+                    {t("order")}: {banner.order || 0}
                   </p>
 
                   {/* ACTION BUTTONS */}
@@ -249,10 +249,10 @@ export default function BannerManagement() {
                         handleDelete(banner.id);
                       }}
                       className="text-red-500 hover:text-red-700 transition disabled:opacity-50"
-                      title="Delete"
+                      title={t("delete")}
                       disabled={deletingId === banner.id}
                     >
-                      {deletingId === banner.id ? "Deleting..." : <Trash2 size={20} />}
+                      {deletingId === banner.id ? t("deleting") : <Trash2 size={20} />}
                     </button>
 
                     <button
@@ -261,7 +261,7 @@ export default function BannerManagement() {
                         openEditModal(banner);
                       }}
                       className="text-blue-500 hover:text-blue-700 transition"
-                      title="Edit"
+                      title={t("edit")}
                     >
                       <Pencil size={20} />
                     </button>
@@ -287,6 +287,7 @@ export default function BannerManagement() {
             <button
               onClick={() => setSelectedBanner(null)}
               className="absolute top-3 right-3 text-gray-600 hover:text-black transition"
+              aria-label={t("close")}
             >
               <X size={28} />
             </button>
@@ -311,15 +312,15 @@ export default function BannerManagement() {
                   rel="noopener noreferrer"
                   className="inline-block bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg"
                 >
-                  Visit Link →
+                  {t("visit_link")} →
                 </a>
               ) : (
-                <p className="text-gray-500 italic">No link available</p>
+                <p className="text-gray-500 italic">{t("no_link_available")}</p>
               )}
 
               {!selectedBanner.is_active && (
                 <p className="mt-4 text-sm font-semibold text-red-600 bg-red-100 px-3 py-1 rounded-md inline-block">
-                  Inactive
+                  {t("inactive")}
                 </p>
               )}
             </div>
@@ -337,10 +338,10 @@ export default function BannerManagement() {
             className="relative bg-white rounded-xl max-w-lg w-full p-6 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-2xl font-bold mb-4">Edit Banner</h2>
+            <h2 className="text-2xl font-bold mb-4">{t("edit_banner")}</h2>
 
             <label className="block mb-2">
-              Title:
+              {t("title")}:
               <input
                 type="text"
                 value={editData.title}
@@ -352,7 +353,7 @@ export default function BannerManagement() {
             </label>
 
             <label className="block mb-2">
-              Description:
+              {t("description")}:
               <textarea
                 value={editData.description}
                 onChange={(e) =>
@@ -372,7 +373,7 @@ export default function BannerManagement() {
                 }
                 className="mr-2"
               />
-              Active
+              {t("active")}
             </label>
 
             <div className="flex justify-end gap-4">
@@ -381,20 +382,18 @@ export default function BannerManagement() {
                 className="px-4 py-2 border rounded"
                 disabled={saving}
               >
-                Cancel
+                {t("cancel")}
               </button>
               <button
                 onClick={saveEdit}
                 className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
                 disabled={saving}
               >
-                {saving ? "Saving..." : "Save"}
+                {saving ? t("saving") : t("save")}
               </button>
             </div>
 
-            {error && (
-              <p className="text-red-600 mt-3 font-semibold">{error}</p>
-            )}
+            {error && <p className="text-red-600 mt-3 font-semibold">{error}</p>}
           </div>
         </div>
       )}

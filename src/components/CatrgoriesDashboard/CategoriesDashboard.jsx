@@ -2,16 +2,18 @@ import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext";
 import { Pencil, Trash2, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function CategoriesManager() {
   const { token } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const [searchTerm, setSearchTerm] = useState(""); // <-- search term state
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editCategory, setEditCategory] = useState(null);
@@ -41,16 +43,15 @@ export default function CategoriesManager() {
       if (data.success) {
         setCategories(data.categories);
       } else {
-        setError("Failed to fetch categories.");
+        setError(t("failed_to_fetch_categories"));
       }
     } catch (err) {
-      setError("Something went wrong while fetching data.");
+      setError(t("something_went_wrong_while_fetching_data"));
     } finally {
       setLoading(false);
     }
   }
 
-  // Filter categories by searchTerm (case-insensitive, search in name & description)
   const filteredCategories = categories.filter((cat) => {
     const term = searchTerm.toLowerCase();
     return (
@@ -60,7 +61,7 @@ export default function CategoriesManager() {
   });
 
   async function handleDelete(id) {
-    if (!window.confirm("Are you sure you want to delete this category?")) return;
+    if (!window.confirm(t("confirm_delete_category"))) return;
 
     try {
       const res = await fetch(
@@ -76,13 +77,13 @@ export default function CategoriesManager() {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        alert("Category deleted successfully.");
+        alert(t("category_deleted_successfully"));
         fetchCategories();
       } else {
-        alert("Failed to delete category: " + (data.message || JSON.stringify(data)));
+        alert(t("failed_to_delete_category") + ": " + (data.message || JSON.stringify(data)));
       }
     } catch (error) {
-      alert("An error occurred while deleting.");
+      alert(t("an_error_occurred_while_deleting"));
     }
   }
 
@@ -128,14 +129,14 @@ export default function CategoriesManager() {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        alert("Category updated successfully.");
+        alert(t("category_updated_successfully"));
         setEditModalOpen(false);
         fetchCategories();
       } else {
-        setSaveError(data.message || "Failed to update category.");
+        setSaveError(data.message || t("failed_to_update_category"));
       }
     } catch {
-      setSaveError("An error occurred while updating.");
+      setSaveError(t("an_error_occurred_while_updating"));
     } finally {
       setSaving(false);
     }
@@ -144,7 +145,7 @@ export default function CategoriesManager() {
   if (loading)
     return (
       <p className="text-center p-8 text-lg text-gray-600 font-medium">
-        Loading...
+        {t("loading")}
       </p>
     );
   if (error)
@@ -154,31 +155,29 @@ export default function CategoriesManager() {
 
   return (
     <div className="p-6 md:p-10 bg-white rounded-xl shadow-lg max-w-7xl mx-auto relative">
-      {/* Header with Add Category Button and Search */}
+      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
         <h1 className="text-3xl font-extrabold text-gray-900">
-          Categories Management
+          {t("categories_management")}
         </h1>
-
-      
       </div>
 
-      {/* Search input */}
+      {/* Search and Add */}
       <div className="mb-6 flex flex-col md:flex-row gap-4 justify-end">
-          <button
+        <button
           onClick={() => navigate("/admin/categories/add")}
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg shadow-md transition font-medium"
         >
           <span className="text-lg font-bold">+</span>
-          Add Category
+          {t("add_category")}
         </button>
         <input
           type="text"
-          placeholder="Search categories by name or description..."
+          placeholder={t("search_categories_placeholder")}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full md:max-w-md border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition"
-          aria-label="Search categories"
+          aria-label={t("search_categories_aria")}
         />
       </div>
 
@@ -203,13 +202,13 @@ export default function CategoriesManager() {
               </div>
 
               <div className="flex justify-between text-sm text-gray-700 font-semibold">
-                <div>Offers: {cat.offers?.length || 0}</div>
-                <div>Sessions: {cat.training_sessions?.length || 0}</div>
+                <div>{t("offers")}: {cat.offers?.length || 0}</div>
+                <div>{t("sessions")}: {cat.training_sessions?.length || 0}</div>
                 <div>
                   {cat.is_active ? (
-                    <span className="text-green-600">Active</span>
+                    <span className="text-green-600">{t("active")}</span>
                   ) : (
-                    <span className="text-red-600">Inactive</span>
+                    <span className="text-red-600">{t("inactive")}</span>
                   )}
                 </div>
               </div>
@@ -218,8 +217,8 @@ export default function CategoriesManager() {
                 <button
                   onClick={() => handleDelete(cat.id)}
                   className="text-red-600 hover:text-red-800 transition"
-                  aria-label={`Delete category ${cat.name}`}
-                  title="Delete"
+                  aria-label={`${t("delete_category")} ${cat.name}`}
+                  title={t("delete")}
                 >
                   <Trash2 size={20} />
                 </button>
@@ -227,8 +226,8 @@ export default function CategoriesManager() {
                 <button
                   onClick={() => openEditModal(cat)}
                   className="text-blue-600 hover:text-blue-800 transition"
-                  aria-label={`Edit category ${cat.name}`}
-                  title="Edit"
+                  aria-label={`${t("edit_category")} ${cat.name}`}
+                  title={t("edit")}
                 >
                   <Pencil size={20} />
                 </button>
@@ -237,7 +236,7 @@ export default function CategoriesManager() {
           ))
         ) : (
           <p className="text-center col-span-full text-gray-500 font-medium">
-            No categories found.
+            {t("no_categories_found")}
           </p>
         )}
       </div>
@@ -251,37 +250,37 @@ export default function CategoriesManager() {
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
               >
-                Category
+                {t("category")}
               </th>
               <th
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
               >
-                Description
+                {t("description")}
               </th>
               <th
                 scope="col"
                 className="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider"
               >
-                Offers
+                {t("offers")}
               </th>
               <th
                 scope="col"
                 className="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider"
               >
-                Sessions
+                {t("sessions")}
               </th>
               <th
                 scope="col"
                 className="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider"
               >
-                Status
+                {t("status")}
               </th>
               <th
                 scope="col"
                 className="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider"
               >
-                Actions
+                {t("actions")}
               </th>
             </tr>
           </thead>
@@ -313,11 +312,11 @@ export default function CategoriesManager() {
                   <td className="px-6 py-4 text-center">
                     {cat.is_active ? (
                       <span className="inline-block bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">
-                        Active
+                        {t("active")}
                       </span>
                     ) : (
                       <span className="inline-block bg-red-100 text-red-800 text-xs font-semibold px-3 py-1 rounded-full">
-                        Inactive
+                        {t("inactive")}
                       </span>
                     )}
                   </td>
@@ -325,8 +324,8 @@ export default function CategoriesManager() {
                     <button
                       onClick={() => handleDelete(cat.id)}
                       className="text-red-600 hover:text-red-800 transition"
-                      title="Delete category"
-                      aria-label={`Delete category ${cat.name}`}
+                      title={t("delete_category")}
+                      aria-label={`${t("delete_category")} ${cat.name}`}
                     >
                       <Trash2 size={22} />
                     </button>
@@ -334,8 +333,8 @@ export default function CategoriesManager() {
                     <button
                       onClick={() => openEditModal(cat)}
                       className="text-blue-600 hover:text-blue-800 transition"
-                      title="Edit category"
-                      aria-label={`Edit category ${cat.name}`}
+                      title={t("edit_category")}
+                      aria-label={`${t("edit_category")} ${cat.name}`}
                     >
                       <Pencil size={22} />
                     </button>
@@ -345,7 +344,7 @@ export default function CategoriesManager() {
             ) : (
               <tr>
                 <td colSpan={6} className="text-center py-8 text-gray-500 font-medium">
-                  No categories found.
+                  {t("no_categories_found")}
                 </td>
               </tr>
             )}
@@ -366,13 +365,13 @@ export default function CategoriesManager() {
             <button
               className="absolute top-4 right-4 text-gray-600 hover:text-gray-900 transition"
               onClick={() => setEditModalOpen(false)}
-              title="Close modal"
+              title={t("close_modal")}
             >
               <X size={28} />
             </button>
 
             <h2 className="text-2xl font-bold mb-6 text-gray-900">
-              Edit Category
+              {t("edit_category")}
             </h2>
 
             {saveError && (
@@ -383,7 +382,7 @@ export default function CategoriesManager() {
               htmlFor="name"
               className="block text-sm font-semibold text-gray-700 mb-1"
             >
-              Category Name
+              {t("category_name")}
             </label>
             <input
               id="name"
@@ -398,7 +397,7 @@ export default function CategoriesManager() {
               htmlFor="description"
               className="block text-sm font-semibold text-gray-700 mb-1"
             >
-              Description
+              {t("description")}
             </label>
             <textarea
               id="description"
@@ -417,7 +416,7 @@ export default function CategoriesManager() {
                 onChange={handleInputChange}
                 className="form-checkbox h-5 w-5 text-blue-600"
               />
-              <span className="ml-3 text-gray-800 font-medium">Active</span>
+              <span className="ml-3 text-gray-800 font-medium">{t("active")}</span>
             </label>
 
             <button
@@ -429,7 +428,7 @@ export default function CategoriesManager() {
                   : "bg-blue-600 hover:bg-blue-700"
               }`}
             >
-              {saving ? "Saving..." : "Save Changes"}
+              {saving ? t("saving") : t("save_changes")}
             </button>
           </div>
         </div>

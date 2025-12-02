@@ -2,17 +2,19 @@ import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const subscriptionStatusOptions = [
-  { label: "All", value: "" },
-  { label: "Active", value: "active" },
-  { label: "Expired", value: "expired" },
-  { label: "No Sessions", value: "no_sessions" },
+  { labelKey: "filter_all", value: "" },
+  { labelKey: "filter_active", value: "active" },
+  { labelKey: "filter_expired", value: "expired" },
+  { labelKey: "filter_no_sessions", value: "no_sessions" },
 ];
 
 export default function Subscribers() {
   const { token } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [subscribers, setSubscribers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,10 +36,10 @@ export default function Subscribers() {
       if (res.data.success) {
         setSubscribers(res.data.data.data);
       } else {
-        setError("Failed to load subscribers");
+        setError(t("error_loading"));
       }
     } catch {
-      setError("An error occurred while fetching subscribers");
+      setError(t("error_fetching"));
     } finally {
       setLoading(false);
     }
@@ -47,7 +49,6 @@ export default function Subscribers() {
     fetchSubscribers();
   }, []);
 
-  // ---------- Filtering ----------
   const checkSubscriptionStatus = (subscriber) => {
     const today = new Date();
     const expiresAt = subscriber.subscription_expires_at
@@ -62,7 +63,6 @@ export default function Subscribers() {
     return true;
   };
 
-  // ---------- Search By Name or Email ----------
   const matchesSearch = (subscriber) => {
     const s = search.toLowerCase();
     return (
@@ -79,22 +79,20 @@ export default function Subscribers() {
     <div className="min-h-screen p-6 bg-green-50">
       <div className="max-w-7xl mx-auto p-6 bg-white rounded-2xl shadow-xl">
         <h1 className="text-3xl font-bold text-center mb-8 text-green-800">
-          Subscribers List
+          {t("subscribers_list")}
         </h1>
 
-        {/* Search & Filter Row */}
+        {/* Search & Filter */}
         <div className="flex flex-col md:flex-row gap-4 mb-6 justify-between">
-          {/* Search Input */}
           <input
             type="text"
-            placeholder="Search by name or email..."
+            placeholder={t("search_placeholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full md:w-1/2 border border-green-400 rounded-md px-4 py-2
             text-green-700 focus:outline-none focus:ring-2 focus:ring-green-600"
           />
 
-          {/* Filter */}
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
@@ -103,21 +101,21 @@ export default function Subscribers() {
           >
             {subscriptionStatusOptions.map((opt) => (
               <option key={opt.value} value={opt.value}>
-                {opt.label}
+                {t(opt.labelKey)}
               </option>
             ))}
           </select>
         </div>
 
-        {/* Status */}
+        {/* Status Messages */}
         {loading && (
           <p className="text-center text-green-600 font-semibold">
-            Loading subscribers...
+            {t("loading")}
           </p>
         )}
         {error && <p className="text-center text-red-600 font-semibold">{error}</p>}
         {!loading && !error && filteredSubscribers.length === 0 && (
-          <p className="text-center text-green-700">No subscribers found.</p>
+          <p className="text-center text-green-700">{t("no_subscribers")}</p>
         )}
 
         {/* Cards */}
@@ -130,31 +128,28 @@ export default function Subscribers() {
                 ? new Date(sub.subscription_expires_at)
                 : null;
 
-              let statusText = "No Expiry";
+              let statusText = t("no_expiry");
               let statusColor = "text-gray-600";
 
               if (expiresAt) {
                 if (expiresAt >= today) {
-                  statusText = "Active";
+                  statusText = t("active");
                   statusColor = "text-green-700 font-semibold";
                 } else {
-                  statusText = "Expired";
+                  statusText = t("expired");
                   statusColor = "text-red-600 font-semibold";
                 }
               }
 
-              const onCardClick = () =>
-                navigate(`/admin/subscribers/${sub.id}`);
-
               return (
                 <div
                   key={sub.id}
-                  onClick={onCardClick}
+                  onClick={() => navigate(`/admin/subscribers/${sub.id}`)}
                   className="bg-white border border-green-300 rounded-xl shadow-md p-6
                   flex flex-col items-center text-center cursor-pointer hover:shadow-2xl
                   transition transform hover:-translate-y-1 relative"
                 >
-                  {/* Profile image */}
+                  {/* Image */}
                   <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-green-500 mb-4">
                     {sub.profile_image ? (
                       <img
@@ -173,13 +168,12 @@ export default function Subscribers() {
                   <p className="text-green-600">{sub.email}</p>
                   <p className="text-green-600 mb-3">{sub.phone}</p>
 
-                  {/* Status Bar */}
                   <div className="w-full bg-green-100 rounded-full h-4 mb-2">
                     <div
                       className={`h-4 rounded-full transition-all duration-500 ${
-                        statusText === "Active"
+                        statusText === t("active")
                           ? "bg-green-500"
-                          : statusText === "Expired"
+                          : statusText === t("expired")
                           ? "bg-red-500"
                           : "bg-gray-400"
                       }`}
@@ -190,11 +184,11 @@ export default function Subscribers() {
                   <p className={`${statusColor} mb-2`}>{statusText}</p>
 
                   <p className="text-green-700 font-medium">
-                    Remaining Sessions: {sub.remaining_sessions}
+                    {t("remaining_sessions")}: {sub.remaining_sessions}
                   </p>
 
                   <p className="text-green-700 text-sm mt-2">
-                    Subscription Expires:{" "}
+                    {t("expires_at")}:{" "}
                     {expiresAt ? expiresAt.toISOString().split("T")[0] : "N/A"}
                   </p>
 
@@ -203,10 +197,9 @@ export default function Subscribers() {
                       sub.is_active ? "text-green-600" : "text-red-600"
                     }`}
                   >
-                    {sub.is_active ? "Active" : "Inactive"}
+                    {sub.is_active ? t("active") : t("inactive")}
                   </p>
 
-                  {/* Update Button */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -215,10 +208,9 @@ export default function Subscribers() {
                     className="mt-4 text-green-700 border border-green-700 hover:bg-green-700 hover:text-white 
                     transition font-semibold px-4 py-2 rounded-md w-full"
                   >
-                    Update Subscriber
+                    {t("update_subscriber")}
                   </button>
 
-                  {/* Renew ALWAYS Visible for All */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -229,7 +221,7 @@ export default function Subscribers() {
                     className="mt-2 text-green-700 border border-green-700 hover:bg-green-700 hover:text-white 
                     transition font-semibold px-4 py-2 rounded-md w-full"
                   >
-                    Renew Subscription
+                    {t("renew_subscription")}
                   </button>
                 </div>
               );
