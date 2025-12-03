@@ -1,7 +1,7 @@
 // src/components/SetInitialPassword/SetInitialPassword.jsx
 import { useState } from "react";
 import axios from "axios";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 export default function SetInitialPassword() {
@@ -12,9 +12,10 @@ export default function SetInitialPassword() {
   const [successMsg, setSuccessMsg] = useState("");
   const [params] = useSearchParams();
   const navigate = useNavigate();
+  const { token: paramToken } = useParams();
   const { t } = useTranslation();
 
-  const token = params.get("token"); // جاي من الرابط
+  const token = paramToken || params.get("token"); // جاي من الرابط
 
   const handleSubmit = async (e) => {
     e.preventDefault();
