@@ -10,6 +10,7 @@
   "reset_password_title": "Reset Password",
   "email": "Email",
   "token": "Token",
+  "profile_qr_code":"profile qr code",
   "new_password": "New Password",
   "confirm_password": "Confirm Password",
   "send_reset_link": "Send Reset Link",
@@ -399,7 +400,16 @@
   "no_offers_currently": "No offers available currently",
   "My_sessions": "My Sessions",
   "no_sessions_booked": "No sessions booked",
-  "subscription_expired":"subscription_expired"
+  "subscription_expired":"subscription_expired",
+  "payment_method": "Payment Method",
+  "cash": "Cash",
+  "visa": "Visa",
+  "subscriptions": "Subscriptions",
+  "subscription_starts_at": "Subscription Starts At",
+  "subscription_expires_at": "Subscription Expires At",
+  "remaining_sessions": "Remaining Sessions",
+  "add_subscription": "Add Subscription",
+  "remove_subscription": "Remove"
   
 
 
@@ -417,7 +427,3 @@
 
 
 }
-
-
-
-

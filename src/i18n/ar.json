@@ -10,6 +10,7 @@
   "reset_password_title": "تغيير كلمة المرور",
   "email": "البريد الإلكتروني",
   "token": "الكود",
+  "profile_qr_code":"رمز الاستجابة السريعة للملف الشخصي",
   "new_password": "كلمة المرور الجديدة",
   "confirm_password": "تأكيد كلمة المرور",
   "send_reset_link": "إرسال رابط الاستعادة",
@@ -398,7 +399,16 @@
   "no_offers_currently": "لا توجد عروض حالياً",
   "My_sessions": "جلساتي",
   "no_sessions_booked": "لم يتم حجز أي جلسات",
-  "subscription_expired": "انتهاء الاشتراك"
+  "subscription_expired": "انتهاء الاشتراك",
+  "payment_method": "طريقة الدفع",
+  "cash": "نقدي",
+  "visa": "فيزا",
+  "subscriptions": "الاشتراكات",
+  "subscription_starts_at": "تاريخ بدء الاشتراك",
+  "subscription_expires_at": "تاريخ انتهاء الاشتراك",
+  "remaining_sessions": "الجلسات المتبقية",
+  "add_subscription": "إضافة اشتراك",
+  "remove_subscription": "إزالة"
 
  
 
@@ -414,10 +424,3 @@
 
 
 }
-
-
-
-
-
-
-

@@ -19,16 +19,100 @@ export default function EditUser() {
     phone: "",
     national_id: "",
     role: "subscriber",
-    remaining_sessions: 0,
-    subscription_expires_at: "",
-    is_active: true,
+    subscriptions: [
+      {
+        category_id: "",
+        offer_id: "",
+        payment_method: "cash",
+        subscription_starts_at: "",
+        subscription_expires_at: "",
+        remaining_sessions: "",
+      },
+    ],
   });
 
+  const [offers, setOffers] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
   const roles = ["subscriber", "admin", "super_admin"];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [offersRes, categoriesRes] = await Promise.all([
+          axios.get("https://generous-optimism-production-4492.up.railway.app/api/admin/offers?per_page=15&status=active", {
+            headers: { Authorization: `Bearer ${token}` }
+          }),
+          axios.get("https://generous-optimism-production-4492.up.railway.app/api/content/categories")
+        ]);
+
+        if (offersRes.data.success) {
+          setOffers(offersRes.data.data.offers.data || []);
+        } else {
+          setOffers([]);
+        }
+
+        // Handle categories response
+        if (categoriesRes.data.success) {
+          setCategories(categoriesRes.data.categories || []);
+        } else {
+          setCategories([]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch data", error);
+      }
+    };
+    fetchData();
+  }, [token]);
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      if (!id) return;
+
+      try {
+        const response = await axios.get(
+          `https://generous-optimism-production-4492.up.railway.app/api/admin/users/${id}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (response.data.success) {
+          const userData = response.data.data;
+          setFormData({
+            name: userData.name || "",
+            email: userData.email || "",
+            phone: userData.phone || "",
+            national_id: userData.national_id || "",
+            role: userData.role || "subscriber",
+            subscriptions: userData.subscriptions && userData.subscriptions.length > 0 ? userData.subscriptions.map(sub => ({
+              category_id: sub.category_id || "",
+              offer_id: sub.offer_id || "",
+              payment_method: sub.payment_method || "cash",
+              subscription_starts_at: sub.subscription_starts_at ? sub.subscription_starts_at.split("T")[0] : "",
+              subscription_expires_at: sub.subscription_expires_at ? sub.subscription_expires_at.split("T")[0] : "",
+              remaining_sessions: sub.remaining_sessions || "",
+            })) : [
+              {
+                category_id: "",
+                offer_id: "",
+                payment_method: "cash",
+                subscription_starts_at: "",
+                subscription_expires_at: "",
+                remaining_sessions: "",
+              }
+            ],
+            is_active: userData.is_active ?? true,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch user details", error);
+      }
+    };
+
+    fetchUserDetails();
+  }, [id, token]);
 
   useEffect(() => {
     if (!user) {
@@ -42,10 +126,23 @@ export default function EditUser() {
       phone: user.phone || "",
       national_id: user.national_id || "",
       role: user.role || "subscriber",
-      remaining_sessions: user.remaining_sessions || 0,
-      subscription_expires_at: user.subscription_expires_at
-        ? user.subscription_expires_at.split("T")[0]
-        : "",
+      subscriptions: user.subscriptions && user.subscriptions.length > 0 ? user.subscriptions.map(sub => ({
+        category_id: sub.category_id || "",
+        offer_id: sub.offer_id || "",
+        payment_method: sub.payment_method || "cash",
+        subscription_starts_at: sub.subscription_starts_at ? sub.subscription_starts_at.split("T")[0] : "",
+        subscription_expires_at: sub.subscription_expires_at ? sub.subscription_expires_at.split("T")[0] : "",
+        remaining_sessions: sub.remaining_sessions || "",
+      })) : [
+        {
+          category_id: "",
+          offer_id: "",
+          payment_method: "cash",
+          subscription_starts_at: "",
+          subscription_expires_at: "",
+          remaining_sessions: "",
+        }
+      ],
       is_active: user.is_active ?? true,
     });
   }, [user, navigate]);
@@ -55,6 +152,39 @@ export default function EditUser() {
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const addSubscription = () => {
+    setFormData((prev) => ({
+      ...prev,
+      subscriptions: [
+        ...prev.subscriptions,
+        {
+          category_id: "",
+          offer_id: "",
+          payment_method: "cash",
+          subscription_starts_at: "",
+          subscription_expires_at: "",
+          remaining_sessions: "",
+        },
+      ],
+    }));
+  };
+
+  const removeSubscription = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      subscriptions: prev.subscriptions.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleSubscriptionChange = (index, field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      subscriptions: prev.subscriptions.map((sub, i) =>
+        i === index ? { ...sub, [field]: value } : sub
+      ),
     }));
   };
 
@@ -185,40 +315,104 @@ export default function EditUser() {
             </select>
           </div>
 
-          <div>
-            <label
-              htmlFor="remaining_sessions"
-              className="block mb-1 font-medium text-gray-800 text-base"
-            >
-              {t("remaining_sessions")}
-            </label>
-            <input
-              id="remaining_sessions"
-              name="remaining_sessions"
-              type="number"
-              min="0"
-              value={formData.remaining_sessions}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg text-base bg-gray-50 focus:bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="subscription_expires_at"
-              className="block mb-1 font-medium text-gray-800 text-base"
-            >
-              {t("subscription_expires_at")}
-            </label>
-            <input
-              id="subscription_expires_at"
-              name="subscription_expires_at"
-              type="date"
-              value={formData.subscription_expires_at}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg text-base bg-gray-50 focus:bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
-            />
-          </div>
+          {formData.role === "subscriber" && (
+            <div>
+              <label className="block mb-2 font-medium text-gray-800 text-base">{t("subscriptions")}</label>
+              {formData.subscriptions.map((sub, index) => (
+                <div key={index} className="border border-gray-300 rounded-lg p-4 mb-4 bg-gray-50">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block mb-1 font-medium text-gray-700 text-sm">{t("category")}</label>
+                      <select
+                        value={sub.category_id}
+                        onChange={(e) => handleSubscriptionChange(index, "category_id", e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
+                      >
+                        <option value="">{t("select_category")}</option>
+                        {Array.isArray(categories) && categories.map((category) => (
+                          <option key={category.id} value={category.id}>
+                            {category.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block mb-1 font-medium text-gray-700 text-sm">{t("offer")}</label>
+                      <select
+                        value={sub.offer_id}
+                        onChange={(e) => handleSubscriptionChange(index, "offer_id", e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
+                      >
+                        <option value="">{t("select_offer")}</option>
+                        {Array.isArray(offers) && offers.map((offer) => (
+                          <option key={offer.id} value={offer.id}>
+                            {offer.title}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block mb-1 font-medium text-gray-700 text-sm">{t("payment_method")}</label>
+                      <select
+                        value={sub.payment_method}
+                        onChange={(e) => handleSubscriptionChange(index, "payment_method", e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
+                        required
+                      >
+                        <option value="cash">{t("cash")}</option>
+                        <option value="visa">{t("visa")}</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block mb-1 font-medium text-gray-700 text-sm">{t("subscription_starts_at")}</label>
+                      <input
+                        type="date"
+                        value={sub.subscription_starts_at}
+                        onChange={(e) => handleSubscriptionChange(index, "subscription_starts_at", e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block mb-1 font-medium text-gray-700 text-sm">{t("subscription_expires_at")}</label>
+                      <input
+                        type="date"
+                        value={sub.subscription_expires_at}
+                        onChange={(e) => handleSubscriptionChange(index, "subscription_expires_at", e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
+                        required
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block mb-1 font-medium text-gray-700 text-sm">{t("remaining_sessions")}</label>
+                      <input
+                        type="number"
+                        value={sub.remaining_sessions}
+                        onChange={(e) => handleSubscriptionChange(index, "remaining_sessions", e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-green-400 outline-none transition"
+                        placeholder="0"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeSubscription(index)}
+                    className="mt-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium py-1 px-3 rounded-lg transition"
+                  >
+                    {t("remove_subscription")}
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={addSubscription}
+                className="bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium py-2 px-4 rounded-lg transition"
+              >
+                {t("add_subscription")}
+              </button>
+            </div>
+          )}
 
           <label className="inline-flex items-center mb-6 cursor-pointer select-none">
             <input

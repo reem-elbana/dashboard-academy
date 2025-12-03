@@ -2,7 +2,7 @@ import { useEffect, useState, useContext, useRef } from "react";
 import axios from "axios";
 import { AuthContext } from "../../Context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import { Pencil, Trash2, Plus, QrCode } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export default function UsersList() {
@@ -16,9 +16,13 @@ export default function UsersList() {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [deletingIds, setDeletingIds] = useState({});
+  const [qrGeneratingIds, setQrGeneratingIds] = useState({});
+  const [qrError, setQrError] = useState("");
+  const [qrModalData, setQrModalData] = useState(null);
   const [roleFilter, setRoleFilter] = useState("");
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [totalUsers, setTotalUsers] = useState(0);
   const pageRef = useRef(1);
 
   // ضبط الاتجاه تلقائيًا حسب اللغة (RTL للعربية)
@@ -60,6 +64,7 @@ export default function UsersList() {
       setFilteredUsers((prev) => (append ? [...prev, ...result] : result));
 
       setHasMore(result.length === 5);
+      setTotalUsers(data.data.total || 0);
       setLoading(false);
       setLoadingMore(false);
     } catch {
@@ -142,6 +147,34 @@ export default function UsersList() {
     }
   };
 
+  const handleGenerateQR = async (userId) => {
+    setQrError("");
+    setQrGeneratingIds((prev) => ({ ...prev, [userId]: true }));
+
+    try {
+      const response = await axios.post(
+        `https://generous-optimism-production-4492.up.railway.app/api/admin/generate-profile-qr/${userId}`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        setQrModalData(response.data.data);
+      } else {
+        setQrError(t("failed_generate_profile_qr"));
+      }
+    } catch (err) {
+      setQrError(t("error_occurred") + ": " + err.message);
+    } finally {
+      setQrGeneratingIds((prev) => ({ ...prev, [userId]: false }));
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6 md:p-10">
       <div className="max-w-7xl mx-auto bg-white rounded-3xl shadow-lg p-6 sm:p-8">
@@ -150,6 +183,11 @@ export default function UsersList() {
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">{t("usersManagement")}</h2>
             <p className="text-gray-500 text-sm sm:text-base">{t("viewManageUsers")}</p>
+            {!loading && (
+              <p className="text-blue-600 text-lg font-semibold mt-2">
+                {t("total_users")}: {totalUsers}
+              </p>
+            )}
           </div>
         </div>
 
@@ -187,6 +225,7 @@ export default function UsersList() {
 
         {loading && <p className="text-center text-gray-600">{t("loading")}</p>}
         {error && <p className="text-center text-red-500">{error}</p>}
+        {qrError && <p className="text-center text-red-500">{qrError}</p>}
 
         {/* TABLE - Desktop */}
         <div className="hidden md:block overflow-x-auto">
@@ -230,6 +269,16 @@ export default function UsersList() {
 
                   <td className="p-3 flex items-center justify-center gap-4">
                     {(userRole === "super-admin" || user.role !== "super-admin") && (
+                      <button
+                        onClick={() => handleGenerateQR(user.id)}
+                        disabled={qrGeneratingIds[user.id]}
+                        className="text-green-600 hover:text-green-800 transition"
+                      >
+                        {qrGeneratingIds[user.id] ? "..." : <QrCode className="w-5 h-5" />}
+                      </button>
+                    )}
+
+                    {(userRole === "super-admin" || user.role !== "super-admin") && (
                       <Link
                         to={`/admin/users/edit/${user.id}`}
                         state={{ user }}
@@ -272,6 +321,13 @@ export default function UsersList() {
                     <h3 className="text-lg font-semibold text-gray-800">{user.name}</h3>
                     {(userRole === "super-admin" || user.role !== "super-admin") && (
                       <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => handleGenerateQR(user.id)}
+                          disabled={qrGeneratingIds[user.id]}
+                          className="text-green-600 hover:text-green-800 transition"
+                        >
+                          {qrGeneratingIds[user.id] ? "..." : <QrCode className="w-5 h-5" />}
+                        </button>
                         <Link
                           to={`/admin/users/edit/${user.id}`}
                           state={{ user }}
@@ -313,8 +369,35 @@ export default function UsersList() {
           )}
         </div>
 
-        {loadingMore && <p className="text-center text-gray-600 mt-4">{t("loadingMore")}</p>}
       </div>
+
+      {/* QR Modal */}
+      {qrModalData && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50"
+          onClick={() => setQrModalData(null)}
+        >
+          <div
+            className="bg-white p-6 rounded-lg shadow-lg max-w-md mx-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-semibold text-center mb-4">{t("profile_qr_code")}</h3>
+            <div className="flex justify-center mb-4">
+              <img
+                src={qrModalData.qr_code_url}
+                alt="Profile QR Code"
+                className="w-100 h-100"
+              />
+            </div>
+            <div className="text-center">
+              <p className="font-semibold text-gray-800 mb-2">{t("profile_of")} {qrModalData.user?.name}</p>
+              <p className="text-gray-500 text-sm">
+                {t("expires_at")}: {new Date(qrModalData.expires_at).toLocaleDateString()}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
