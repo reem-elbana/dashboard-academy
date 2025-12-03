@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useContext, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Context/AuthContext";
@@ -189,6 +186,16 @@ export default function Navbar() {
               {i18n.language === "en" ? "عربي" : "EN"}
             </button>
 
+{/* Login Button (only when not logged in) */}
+{!token && (
+  <button
+    onClick={() => navigate("/login")}
+    className="px-4 py-1.5 bg-green-600 text-white text-sm rounded-lg shadow hover:bg-green-700 transition"
+  >
+    {t("login")}
+  </button>
+)}
+
             {/* Logout */}
             {token && (
               <button
@@ -279,6 +286,18 @@ export default function Navbar() {
             >
               {t("QR")}
             </NavLink>
+{/* Login for mobile */}
+{!token && (
+  <button
+    onClick={() => {
+      navigate("/login");
+      setIsOpen(false);
+    }}
+    className="block w-full bg-green-600 text-white py-2 rounded-lg text-sm font-semibold hover:bg-green-700"
+  >
+    {t("login")}
+  </button>
+)}
 
             {token && (
               <button
