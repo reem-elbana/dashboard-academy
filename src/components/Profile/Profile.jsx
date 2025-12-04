@@ -51,6 +51,12 @@ export default function Profile() {
             });
             setProfileImagePreview(data.data.user.profile_image || null);
 
+            // Check if first login
+            if (data.data.user.is_first_login) {
+              navigate('/set-initial-password');
+              return; // Don't show success message if redirecting
+            }
+
             setQrLoginSuccess("تم تسجيل الدخول بنجاح عبر QR Code!");
             setTimeout(() => setQrLoginSuccess(null), 5000);
           } else {
