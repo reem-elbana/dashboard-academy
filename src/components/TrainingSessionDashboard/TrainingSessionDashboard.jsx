@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../../Context/AuthContext";
-import { Pencil, Trash2, X } from "lucide-react";
+import { Pencil, Trash2, X, QrCode } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -32,6 +32,8 @@ export default function TrainingSessions() {
   });
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState(null);
+
+  const [currentQR, setCurrentQR] = useState(null);
 
   // Check if current language direction is RTL
   const isRTL = i18n.dir() === "rtl";
@@ -67,7 +69,7 @@ export default function TrainingSessions() {
       } else {
         setError(t("failed_to_load_sessions"));
       }
-    } catch (err) {
+    } catch {
       setError(t("error_loading_sessions"));
     }
     setLoading(false);
@@ -140,7 +142,7 @@ export default function TrainingSessions() {
       } else {
         setEditError(t("failed_to_update_session"));
       }
-    } catch (err) {
+    } catch {
       setEditError(t("error_updating_session"));
     }
     setEditLoading(false);
@@ -164,10 +166,42 @@ export default function TrainingSessions() {
       } else {
         alert(t("failed_to_delete_session"));
       }
-    } catch (err) {
+    } catch {
       alert(t("error_deleting_session"));
     }
     setLoading(false);
+  };
+
+  const handleGenerateAttendanceQR = async (sessionId, duration) => {
+    if (!sessionId) {
+      setError(t("please_enter_session_id"));
+      return;
+    }
+    setError(null);
+    setLoading(true);
+
+    try {
+      const response = await axios.post(
+        `https://generous-optimism-production-4492.up.railway.app/api/admin/generate-attendance-qr/${sessionId}`,
+        { duration_minutes: duration },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        setCurrentQR(response.data.data);
+      } else {
+        setError(t("failed_generate_attendance_qr"));
+      }
+    } catch (err) {
+      setError(t("error_occurred") + ": " + err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -271,6 +305,13 @@ export default function TrainingSessions() {
                 className="text-blue-600 hover:text-blue-800"
               >
                 <Pencil size={20} />
+              </button>
+              <button
+                onClick={() => handleGenerateAttendanceQR(session.id, session.duration_minutes)}
+                title={t("generate_attendance_qr")}
+                className="text-green-600 hover:text-green-800"
+              >
+                <QrCode size={20} />
               </button>
               <button
                 onClick={() => handleDelete(session.id)}
@@ -379,7 +420,38 @@ export default function TrainingSessions() {
           </div>
         </div>
       )}
+
+      {/* QR Modal */}
+      {currentQR && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-6 relative" dir={isRTL ? "rtl" : "ltr"}>
+            <button
+              onClick={() => setCurrentQR(null)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              aria-label={t("close_qr_modal")}
+            >
+              <X size={24} />
+            </button>
+            <h2 className="text-2xl font-semibold mb-4">{t("attendance_qr_code")}</h2>
+
+            <div className="text-center">
+              <img
+                src={currentQR.qr_code_url}
+                className="w-48 h-48 mx-auto mb-4"
+                alt={t("qr_code")}
+              />
+
+              <div className="text-gray-800 font-semibold mb-2">
+                {currentQR.session_name || `${t("session")} ${currentQR.session_id}`}
+              </div>
+
+              <div className="text-gray-500 text-sm">
+                {t("expires_at")}: {new Date(currentQR.expires_at).toLocaleDateString()}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-
