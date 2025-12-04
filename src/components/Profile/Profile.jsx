@@ -193,13 +193,11 @@ export default function Profile() {
     }
   };
 
-  if (loading) return <div className="text-center mt-20 text-lg">{t("loading") || "جاري التحميل..."}</div>;
+  // if (loading) return <div className="text-center mt-20 text-lg">{t("loading") || "جاري التحميل..."}</div>;
 
   return (
-    
-    
-      
     <div className="min-h-screen py-6 px-4">
+      {loading && <div className="text-center text-lg mb-4">جاري التحميل...</div>}
 
 {qrLoginSuccess && (
         <div className="max-w-6xl mx-auto mb-4">
