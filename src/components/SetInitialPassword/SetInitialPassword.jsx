@@ -18,6 +18,7 @@ export default function SetInitialPassword() {
   const { saveToken } = useContext(AuthContext);
 
   const token = paramToken || params.get("token"); // جاي من الرابط
+  const authToken = localStorage.getItem("token");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,7 +35,10 @@ export default function SetInitialPassword() {
         {
           password: password,
           password_confirmation: confirm,
-          token: token,
+          ...(token && { token }),
+        },
+        {
+          headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
         }
       );
 console.log(res);

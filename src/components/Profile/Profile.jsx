@@ -76,6 +76,11 @@ export default function Profile() {
             national_id: result.data.national_id || "",
           });
           setProfileImagePreview(result.data.profile_image || null);
+
+          // Check if first login
+          if (result.data.is_first_login) {
+            navigate('/set-initial-password');
+          }
         }
       } catch (err) {
         console.log(err);
