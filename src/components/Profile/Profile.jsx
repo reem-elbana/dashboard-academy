@@ -82,6 +82,7 @@ export default function Profile() {
             navigate('/set-initial-password');
           }
         }
+        setLoading(false);
       } catch (err) {
         console.log(err);
       }
