@@ -29,33 +29,18 @@ export default function Profile() {
     const login = urlParams.get('login');
 
     if (qrToken && login === 'qr') {
-      fetch("https://generous-optimism-production-4492.up.railway.app/api/verify-qr-token?token=" + qrToken)
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            localStorage.setItem("token", data.data.token);
-            localStorage.setItem("user", JSON.stringify(data.data.user));
-            localStorage.setItem("role", data.data.user.role || "subscriber");
+      // Directly use the qrToken as the auth token
+      localStorage.setItem("token", qrToken);
+      localStorage.removeItem("user"); // Clear previous user data
+      localStorage.removeItem("role");
 
-            // Dispatch custom event to update AuthContext
-            window.dispatchEvent(new Event("authChange"));
+      // Dispatch custom event to update AuthContext
+      window.dispatchEvent(new Event("authChange"));
 
-            window.history.replaceState({}, document.title, window.location.pathname);
-            
-            setUser(data.data.user);
-            setFormData({
-              name: data.data.user.name || "",
-              email: data.data.user.email || "",
-              phone: data.data.user.phone || "",
-              national_id: data.data.user.national_id || "",
-            });
-            setProfileImagePreview(data.data.user.profile_image || null);
-            
-            setQrLoginSuccess("تم تسجيل الدخول بنجاح عبر QR Code!");
-            setTimeout(() => setQrLoginSuccess(null), 5000);
-          }
-        })
-        .catch(error => console.error('QR login error:', error));
+      window.history.replaceState({}, document.title, window.location.pathname);
+
+      setQrLoginSuccess("تم تسجيل الدخول بنجاح عبر QR Code!");
+      setTimeout(() => setQrLoginSuccess(null), 5000);
     }
   }, []);
 
@@ -306,8 +291,8 @@ export default function Profile() {
               </div>
             )}
 
-            {/* Dashboard */}
-            {/* {dashboardData && (
+            {/* Dashboard */} 
+         {dashboardData && (
               <div className="mt-10">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
                   <div className="bg-white rounded-xl shadow-md border border-gray-200 p-4">
@@ -328,7 +313,7 @@ export default function Profile() {
                   </div>
                 </div>
               </div>
-            )} */}
+            )}
  {dashboardData && (
           <div className="mt-12">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
