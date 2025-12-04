@@ -1,8 +1,9 @@
 // src/components/SetInitialPassword/SetInitialPassword.jsx
-import { useState } from "react";
+import { useState, useContext } from "react";
 import axios from "axios";
 import { useSearchParams, useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { AuthContext } from "../../Context/AuthContext";
 
 export default function SetInitialPassword() {
   const [password, setPassword] = useState("");
@@ -14,6 +15,7 @@ export default function SetInitialPassword() {
   const navigate = useNavigate();
   const { token: paramToken } = useParams();
   const { t } = useTranslation();
+  const { saveToken } = useContext(AuthContext);
 
   const token = paramToken || params.get("token"); // جاي من الرابط
 
@@ -36,9 +38,12 @@ export default function SetInitialPassword() {
         }
       );
 console.log(res);
+      if (res.data.token) {
+        saveToken(res.data.token, res.data.user?.role || 'user');
+      }
       setSuccessMsg(t("password_set_successfully"));
       setTimeout(() => {
-        navigate("/login");
+        navigate("/user/profile");
       }, 1500);
     } catch (err) {
       setServerError(err.response?.data?.message || err.message || t("error_occurred"));
