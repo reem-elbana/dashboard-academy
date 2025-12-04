@@ -62,11 +62,13 @@ export default function Profile() {
   // جلب بيانات المستخدم
   useEffect(() => {
     const fetchUser = async () => {
+      console.log("fetchUser called", token);
       try {
         const res = await fetch("https://generous-optimism-production-4492.up.railway.app/api/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const result = await res.json();
+        console.log("fetchUser result", result);
         if (result.data) {
           setUser(result.data);
           setFormData({
@@ -84,7 +86,8 @@ export default function Profile() {
         }
         setLoading(false);
       } catch (err) {
-        console.log(err);
+        console.log("fetchUser error", err);
+        setLoading(false); // set loading false even on error
       }
     };
     if (token) fetchUser();
