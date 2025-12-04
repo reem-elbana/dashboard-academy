@@ -29,18 +29,35 @@ export default function Profile() {
     const login = urlParams.get('login');
 
     if (qrToken && login === 'qr') {
-      // Directly use the qrToken as the auth token
-      localStorage.setItem("token", qrToken);
-      localStorage.removeItem("user"); // Clear previous user data
-      localStorage.removeItem("role");
+      fetch("https://generous-optimism-production-4492.up.railway.app/api/verify-profile-token?token=" + qrToken)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            localStorage.setItem("token", data.data.token);
+            localStorage.setItem("user", JSON.stringify(data.data.user));
+            localStorage.setItem("role", data.data.user.role || "subscriber");
 
-      // Dispatch custom event to update AuthContext
-      window.dispatchEvent(new Event("authChange"));
+            // Dispatch custom event to update AuthContext
+            window.dispatchEvent(new Event("authChange"));
 
-      window.history.replaceState({}, document.title, window.location.pathname);
+            window.history.replaceState({}, document.title, window.location.pathname);
 
-      setQrLoginSuccess("تم تسجيل الدخول بنجاح عبر QR Code!");
-      setTimeout(() => setQrLoginSuccess(null), 5000);
+            setUser(data.data.user);
+            setFormData({
+              name: data.data.user.name || "",
+              email: data.data.user.email || "",
+              phone: data.data.user.phone || "",
+              national_id: data.data.user.national_id || "",
+            });
+            setProfileImagePreview(data.data.user.profile_image || null);
+
+            setQrLoginSuccess("تم تسجيل الدخول بنجاح عبر QR Code!");
+            setTimeout(() => setQrLoginSuccess(null), 5000);
+          } else {
+            console.error('Profile token verification failed:', data.message);
+          }
+        })
+        .catch(error => console.error('Profile token verification error:', error));
     }
   }, []);
 
