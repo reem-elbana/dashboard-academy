@@ -406,10 +406,17 @@
   "visa": "Visa",
   "subscriptions": "Subscriptions",
   "subscription_starts_at": "Subscription Starts At",
-  "subscription_expires_at": "Subscription Expires At",
-  "remaining_sessions": "Remaining Sessions",
   "add_subscription": "Add Subscription",
-  "remove_subscription": "Remove"
+  "remove_subscription": "Remove",
+
+   "adminsManagement": "Admins Management",
+  "viewAndManageAdmins": "View and manage Admin and Super Admin users",
+  "searchByNameOrEmail": "Search by name or email",
+  "search": "Search",
+  "profileQrCode": "Profile QR Code",
+
+  "profileOf": "Profile of",
+  "expiresAt": "Expires at"
   
 
 

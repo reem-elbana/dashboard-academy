@@ -50,15 +50,15 @@ export default function AdminSidebar() {
   const menuItems = [
     { to: "/admin/dashboard", label: t("dashboard"), icon: <FaTachometerAlt /> },
     { to: "/admin/users", label: t("users"), icon: <FaUsers /> },
-    { to: "/admin/subscribers", label: t("subscribers"), icon: <FaUserPlus /> },
+    // { to: "/admin/subscribers", label: t("subscribers"), icon: <FaUserPlus /> },
     { to: "/admin/banners", label: t("banners"), icon: <FaImage /> },
     { to: "/admin/categories", label: t("categories"), icon: <FaTags /> },
     { to: "/admin/offers", label: t("offers"), icon: <FaGift /> },
     { to: "/admin/training-sessions", label: t("trainingSessions"), icon: <FaChalkboardTeacher /> },
     { to: "/admin/reports/subscribers", label: t("subscribersReport"), icon: <FaChartBar /> },
     { to: "/admin/reports/attendance", label: t("attendanceReport"), icon: <FaClipboardList /> },
-    { to: "/admin/create-admin", label: t("createAdmin"), icon: <FaUserPlus /> },
-    { to: "/admin/qr-dashboard", label: t("QR"), icon: <FaQrcode /> }
+    { to: "/admin/admin-manage", label: t("AdminManage"), icon: <FaUserPlus /> },
+    // { to: "/admin/qr-dashboard", label: t("QR"), icon: <FaQrcode /> }
   ];
 
   return (

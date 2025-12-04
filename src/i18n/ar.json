@@ -405,10 +405,17 @@
   "visa": "فيزا",
   "subscriptions": "الاشتراكات",
   "subscription_starts_at": "تاريخ بدء الاشتراك",
-  "subscription_expires_at": "تاريخ انتهاء الاشتراك",
-  "remaining_sessions": "الجلسات المتبقية",
   "add_subscription": "إضافة اشتراك",
-  "remove_subscription": "إزالة"
+  "remove_subscription": "إزالة",
+
+  "adminsManagement": "إدارة المسؤولين",
+  "viewAndManageAdmins": "عرض وإدارة المستخدمين من المسؤولين والمدراء الرئيسيين",
+
+  "searchByNameOrEmail": "ابحث بالاسم أو البريد الإلكتروني",
+  "search": "بحث",
+  "profileQrCode": "رمز الاستجابة السريعة للملف الشخصي",
+  "profileOf": "الملف الشخصي لـ",
+  "expiresAt": "تنتهي الصلاحية في"
 
  
 

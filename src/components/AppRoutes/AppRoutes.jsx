@@ -36,11 +36,12 @@ const TrainingSessionDashboard = lazy(() => import("../../components/TrainingSes
 const CreateTrainingSession = lazy(() => import("../../components/TrainingSessionDashboard/CreateTrainingSession.jsx"));
 const SubscribersReport = lazy(() => import("../../components/SubscribersReport/SubscribersReport.jsx"));
 const AttendenceReport = lazy(() => import("../../components/AttendenceReport/AttendenceReport.jsx"));
-const CreateAdmin = lazy(() => import("../../components/CreateAdmin/CreateAdmin.jsx"));
+const AdminManage = lazy(() => import("../../components/AdminManage/AdminManage.jsx"));
 const QRDashboard = lazy(() => import("../../components/QRDashboard/QRDashboard.jsx"));
 const SetInitialPassword = lazy(() => import("../../components/SetInitialPassword/SetInitialPassword.jsx"));
 const LoginRedirect = lazy(() => import("../../components/LoginRedirect.jsx"));
 const Sessions = lazy(() => import("../../components/Sessions/Sessions.jsx"));
+const CreateAdmin = lazy(() => import("../../components/CreateAdmin/CreateAdmin.jsx"));
 
 
 export default function AppRoutes() {
@@ -107,6 +108,7 @@ export default function AppRoutes() {
           <Route path="/admin/training-sessions/add" element={<CreateTrainingSession />} />
           <Route path="/admin/reports/subscribers" element={<SubscribersReport />} />
           <Route path="/admin/reports/attendance" element={<AttendenceReport />} />
+          <Route path="/admin/admin-manage" element={<AdminManage />} />
           <Route path="/admin/create-admin" element={<CreateAdmin />} />
           <Route path="/admin/qr-dashboard" element={<QRDashboard />} />
           
