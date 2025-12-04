@@ -39,6 +39,7 @@ const AttendenceReport = lazy(() => import("../../components/AttendenceReport/At
 const CreateAdmin = lazy(() => import("../../components/CreateAdmin/CreateAdmin.jsx"));
 const QRDashboard = lazy(() => import("../../components/QRDashboard/QRDashboard.jsx"));
 const SetInitialPassword = lazy(() => import("../../components/SetInitialPassword/SetInitialPassword.jsx"));
+const LoginRedirect = lazy(() => import("../../components/LoginRedirect.jsx"));
 const Sessions = lazy(() => import("../../components/Sessions/Sessions.jsx"));
 
 
@@ -57,7 +58,7 @@ export default function AppRoutes() {
         {/* ---- Auth Pages ---- */}
         <Route path="/login" element={<Login />} />
         <Route path="/login/admin" element={<AdminLogin />} />
-        <Route path="/login/:token" element={<SetInitialPassword />} />
+        <Route path="/login/:token" element={<LoginRedirect />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/set-initial-password" element={<SetInitialPassword />} />
