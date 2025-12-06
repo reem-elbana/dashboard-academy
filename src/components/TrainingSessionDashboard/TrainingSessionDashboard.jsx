@@ -4,11 +4,15 @@ import { AuthContext } from "../../Context/AuthContext";
 import { Pencil, Trash2, X, QrCode } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { hasPermission } from "../../Context/permissions";
+
 
 
 
 export default function TrainingSessions() {
   const { token } = useContext(AuthContext);
+  const { permissions } = useContext(AuthContext);
+
     const navigate = useNavigate();
   
   const { t, i18n } = useTranslation();
@@ -22,6 +26,19 @@ export default function TrainingSessions() {
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(null);
+
+
+
+  if (!hasPermission(permissions, "training_sessions.view")) {
+    return (
+      <div className="text-center text-red-500 text-xl mt-10">
+        {t("you do not have permission to view this page")}
+      </div>
+    );
+  }
+
+
+
 
   // For edit popup
   const [editingSession, setEditingSession] = useState(null);
@@ -37,6 +54,9 @@ export default function TrainingSessions() {
 
   // Check if current language direction is RTL
   const isRTL = i18n.dir() === "rtl";
+
+
+
 
   // Fetch sessions from API with pagination
   const fetchSessions = async (page = 1) => {
@@ -208,12 +228,14 @@ export default function TrainingSessions() {
     <div className="max-w-5xl mx-auto p-6" dir={isRTL ? "rtl" : "ltr"}>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-semibold text-gray-800">{t("training_sessions")}</h1>
+         {hasPermission(permissions, "training_sessions.create") && (
         <button
           onClick={() => navigate("/admin/training-sessions/add")}
           className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-5 rounded"
         >
           {t("create_training_session")}
         </button>
+         )}
       </div>
 
       <div className="mb-6 relative">
@@ -299,6 +321,8 @@ export default function TrainingSessions() {
               } flex space-x-3`}
               style={{ flexDirection: isRTL ? "row-reverse" : "row" }}
             >
+
+              {hasPermission(permissions, "training_sessions.edit") && (
               <button
                 onClick={() => handleUpdate(session)}
                 title={t("update_session")}
@@ -306,6 +330,9 @@ export default function TrainingSessions() {
               >
                 <Pencil size={20} />
               </button>
+               )}
+
+                {hasPermission(permissions, "attendance.generate_qr") && (
               <button
                 onClick={() => handleGenerateAttendanceQR(session.id, session.duration_minutes)}
                 title={t("generate_attendance_qr")}
@@ -313,6 +340,10 @@ export default function TrainingSessions() {
               >
                 <QrCode size={20} />
               </button>
+                )}
+
+
+              {hasPermission(permissions, "training_sessions.delete") && (
               <button
                 onClick={() => handleDelete(session.id)}
                 title={t("delete_session")}
@@ -320,6 +351,7 @@ export default function TrainingSessions() {
               >
                 <Trash2 size={20} />
               </button>
+              )}
             </div>
           </div>
         ))}

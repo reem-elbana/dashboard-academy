@@ -3,9 +3,11 @@ import { AuthContext } from "../../Context/AuthContext";
 import { Pencil, Trash2, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { hasPermission } from "../../Context/permissions";
 
 export default function CategoriesManager() {
   const { token } = useContext(AuthContext);
+  const { permissions } = useContext(AuthContext);
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -19,6 +21,9 @@ export default function CategoriesManager() {
   const [editCategory, setEditCategory] = useState(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
+
+   
+  
 
   useEffect(() => {
     fetchCategories();

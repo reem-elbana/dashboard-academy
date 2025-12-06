@@ -6,6 +6,8 @@ import { AuthContext } from "../../Context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { Pencil, Trash2, Plus, QrCode } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { hasPermission } from "../../Context/permissions";
+
 
 export default function UsersList() {
   const { t, i18n } = useTranslation();
@@ -24,7 +26,16 @@ export default function UsersList() {
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [totalSubscribers, setTotalSubscribers] = useState(0);
+  const { permissions } = useContext(AuthContext);
 
+
+    if (!hasPermission(permissions, "users.view")) {
+    return (
+      <div className="text-center text-red-500 text-xl mt-10">
+        {t("you do not have permission to view this page")}
+      </div>
+    );
+  }
 
   const pageRef = useRef(1);
 
@@ -159,6 +170,7 @@ export default function UsersList() {
       <div className="max-w-7xl mx-auto bg-white rounded-3xl shadow-lg p-6 sm:p-8">
         
         {/* Header */}
+
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
@@ -186,13 +198,19 @@ export default function UsersList() {
             className="w-full px-4 py-2 border rounded-lg"
           />
 
-          <button
-            onClick={() => navigate("/admin/create-user")}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto px-5 py-2.5 rounded-lg shadow"
-          >
-            <Plus className="w-5 h-5" />
-            {t("createUser")}
-          </button>
+
+          {/* hena  */}
+
+      {hasPermission(permissions, "users.create") && (
+  <button
+    onClick={() => navigate("/admin/create-user")}
+    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto px-5 py-2.5 rounded-lg shadow"
+  >
+    <Plus className="w-5 h-5" />
+    {t("createUser")}
+  </button>
+)}
+
         </div>
 
         {loading && <p className="text-center text-gray-600">{t("loading")}</p>}
@@ -200,6 +218,7 @@ export default function UsersList() {
         {qrError && <p className="text-center text-red-500">{qrError}</p>}
 
         {/* TABLE */}
+
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-right border-collapse">
             <thead>
@@ -248,14 +267,17 @@ export default function UsersList() {
                       {qrGeneratingIds[user.id] ? "..." : <QrCode className="w-5 h-5" />}
                     </button>
 
-                    <Link
-                      to={`/admin/users/edit/${user.id}`}
-                      state={{ user }}
-                      className="text-blue-600 hover:text-blue-800 transition"
-                    >
-                      <Pencil className="w-5 h-5" />
-                    </Link>
+                {hasPermission(permissions, "users.edit") && (
+  <Link
+    to={`/admin/users/edit/${user.id}`}
+    state={{ user }}
+    className="text-blue-600 hover:text-blue-800 transition"
+  >
+    <Pencil className="w-5 h-5" />
+  </Link>
+)}
 
+                     {hasPermission(permissions, "users.delete") && (
                     <button
                       onClick={() => handleDelete(user.id)}
                       disabled={deletingIds[user.id]}
@@ -263,6 +285,7 @@ export default function UsersList() {
                     >
                       {deletingIds[user.id] ? "..." : <Trash2 className="w-5 h-5" />}
                     </button>
+                     )}
                   </td>
                 </tr>
               ))}

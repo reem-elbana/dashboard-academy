@@ -5,6 +5,8 @@ import axios from "axios";
 import { AuthContext } from "../../Context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { Pencil, Trash2, Plus, QrCode } from "lucide-react";
+import { hasPermission } from "../../Context/permissions";
+
 
 export default function AdminList() {
   const { token } = useContext(AuthContext);
@@ -27,6 +29,8 @@ export default function AdminList() {
   const perPage = 15;
   const [hasMore, setHasMore] = useState(true);
   const pageRef = useRef(1);
+  const { permissions } = useContext(AuthContext);
+
 
   // axios instance with auth header
   const axiosInstance = axios.create({
@@ -168,10 +172,13 @@ export default function AdminList() {
           </div>
 
           <div className="flex items-center gap-3">
+            {hasPermission(permissions, "admins.create") && (
             <button onClick={handleCreate} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow">
               <Plus className="w-4 h-4" />
               {t("createAdmin")}
             </button>
+)}
+
           </div>
         </div>
 

@@ -3,14 +3,22 @@ import axios from "axios";
 import { AuthContext } from "../../Context/AuthContext";
 import { useTranslation } from "react-i18next";
 
+
+
 export default function Offers() {
   const { token } = useContext(AuthContext);
+
+
   const { t } = useTranslation();
 
   const [sessions, setSessions] = useState([]);
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+
+  
+
 
   useEffect(() => {
     const fetchData = async () => {

@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 // Lucide Icons
 import { Pencil, Trash2, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { hasPermission } from "../../Context/permissions";
+
 
 export default function BannerManagement() {
   const navigate = useNavigate();
@@ -28,6 +30,18 @@ export default function BannerManagement() {
     is_active: true,
   });
   const [saving, setSaving] = useState(false);
+
+  const { permissions } = useContext(AuthContext);
+
+
+    if (!hasPermission(permissions, "banners.view")) {
+    return (
+      <div className="text-center text-red-500 text-xl mt-10">
+        {t("you do not have permission to view this page")}
+      </div>
+    );
+  }
+
 
   // Fetch banners
   useEffect(() => {
@@ -178,12 +192,14 @@ export default function BannerManagement() {
 
         {/* CONTROLS */}
         <div className="flex flex-col sm:flex-row  items-center mb-10 gap-4 justify-end">
+          {hasPermission(permissions, "banners.create") && (
           <button
             onClick={() => navigate("/admin/banners/add")}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md font-semibold transition"
           >
             + {t("add_banner")}
           </button>
+          )}
 
           <input
             type="search"
@@ -243,6 +259,7 @@ export default function BannerManagement() {
 
                   {/* ACTION BUTTONS */}
                   <div className="flex gap-4 text-xl mt-3 justify-end">
+                     {hasPermission(permissions, "banners.delete") && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -254,7 +271,8 @@ export default function BannerManagement() {
                     >
                       {deletingId === banner.id ? t("deleting") : <Trash2 size={20} />}
                     </button>
-
+                     )}
+                    {hasPermission(permissions, "banners.edit") && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -265,6 +283,7 @@ export default function BannerManagement() {
                     >
                       <Pencil size={20} />
                     </button>
+                    )}
                   </div>
                 </div>
               </div>

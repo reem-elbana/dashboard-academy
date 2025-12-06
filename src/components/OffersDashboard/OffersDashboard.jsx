@@ -7,6 +7,8 @@ import { Pencil, Trash2, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "../../i18n"; // تأكد من استيراد إعداد i18n في مكان مناسب
+import { hasPermission } from "../../Context/permissions";
+
 
 export default function OffersList() {
   const { token } = useContext(AuthContext);
@@ -23,6 +25,18 @@ export default function OffersList() {
   const [editingOffer, setEditingOffer] = useState(null);
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState(null);
+  const { permissions } = useContext(AuthContext);
+
+    if (!hasPermission(permissions, "offers.view")) {
+      return (
+        <div className="text-center text-red-500 text-xl mt-10">
+          {t("you do not have permission to view this page")}
+        </div>
+      );
+    }
+  
+
+
 
   const fetchOffers = async () => {
     setLoading(true);
@@ -138,12 +152,14 @@ export default function OffersList() {
         <h1 className="text-3xl font-bold text-gray-900">{t("offers")}</h1>
 
         <div className="flex gap-3 w-full sm:w-auto">
+          {hasPermission(permissions, "offers.create") && (
           <button
             className="px-5 py-2 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 transition"
             onClick={() => navigate("/admin/offers/add")}
           >
             {t("add_offer")}
           </button>
+          )}
           <input
             type="text"
             placeholder={t("search_offers")}
@@ -213,6 +229,7 @@ export default function OffersList() {
 
               {/* Icons */}
               <div className="flex gap-4">
+                {hasPermission(permissions, "offers.edit") && (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -230,6 +247,8 @@ export default function OffersList() {
                 >
                   <Pencil size={20} />
                 </button>
+                )}
+                {hasPermission(permissions, "offers.delete") && (
                 <button
                   onClick={async (e) => {
                     e.stopPropagation();
@@ -245,6 +264,7 @@ export default function OffersList() {
                 >
                   <Trash2 size={20} />
                 </button>
+                )}
               </div>
             </div>
           </div>
