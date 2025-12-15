@@ -1,126 +1,14 @@
-// import React, { useEffect, useState, useContext } from "react";
-// import axios from "axios";
-// import { AuthContext } from "../../Context/AuthContext";
-// import { useTranslation } from "react-i18next";
-// import CategorySlider from "../CategorySlider/CategorySlider";
-// import BannerSlider from "../BannerSlider/BannerSlider";
-
-// export default function UserHome() {
-//   const { token } = useContext(AuthContext);
-//   const [data, setData] = useState(null);
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState("");
-//   const { t } = useTranslation();
-
-//   const formatTime = (dateString) => {
-//     const date = new Date(dateString);
-//     return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
-//   };
-
-//   useEffect(() => {
-//     if (!token) return; // لو مش عامل login ما نعملش fetch
-
-//     const fetchDashboard = async () => {
-//       try {
-//         setLoading(true);
-//         const res = await axios.get(
-//             "https://generous-optimism-production-4492.up.railway.app/api/subscriber/dashboard",
-//           {
-//             headers: { Authorization: `Bearer ${token}` },
-//           }
-//         );
-//         setData(res.data.data);
-//       } catch (err) {
-//         setError(err.response?.data?.message || err.message);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchDashboard();
-//   }, [token]);
-
-//   return (
-//     <div className="min-h-screen bg-gray-50">
-//       <main className="pt-10 pb-16 max-w-7xl mx-auto px-6">
-//         {/* <div className="mb-8">
-//           <h2 className="text-3xl font-bold text-gray-900">
-//             {t("welcome_back")}
-//           </h2>
-//           {token ? (
-//             <p className="text-gray-600 mt-1">{t("account_summary")}</p>
-//           ) : (
-//             <p className="text-gray-600 mt-1">
-//               سجل الدخول لعرض تفاصيل حسابك.
-//             </p>
-//           )}
-//         </div> */}
-// <div className="space-y-12">
-//        {/* Banner */}
-//        <BannerSlider />
-//  </div>
-//         {/* لو في توكن نعرض البيانات */}
-//         {token && (
-//           <>
-//             {loading && <p className="text-center mt-10">{t("loading")}...</p>}
-//             {error && <p className="text-center mt-10 text-red-500">{error}</p>}
-
-//             {data && (
-//               <>
-
-//                 {/* إحصائيات سريعة */}
-//                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 mb-12">
-//                   <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
-//                     <p className="text-sm font-medium text-gray-600">{t("remaining_sessions")}</p>
-//                     <p className="text-3xl font-bold text-gray-900 mt-2">{data.stats?.remaining_sessions || 0}</p>
-//                   </div>
-//                   <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
-//                     <p className="text-sm font-medium text-gray-600">{t("total_attendances")}</p>
-//                     <p className="text-3xl font-bold text-gray-900 mt-2">{data.recent_attendances?.length || 0}</p>
-//                   </div>
-//                   <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
-//                     <p className="text-sm font-medium text-gray-600">{t("profile_completion")}</p>
-//                     <p className="text-3xl font-bold text-gray-900 mt-2">{data.stats?.profile_completion || 0}%</p>
-//                     <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
-//                       <div
-//                         className="bg-green-600 h-2 rounded-full transition-all duration-700"
-//                         style={{ width: `${data.stats?.profile_completion || 0}%` }}
-//                       />
-//                     </div>
-//                   </div>
-//                   <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
-//                     <p className="text-sm font-medium text-gray-600">{t("subscription_status")}</p>
-//                     <p className="text-3xl font-bold text-green-600 mt-2">
-//                       {data.stats?.has_valid_subscription ? t("active") : t("inactive")}
-//                     </p>
-//                     <p className="text-xs text-gray-500 mt-2">
-//                       Expires: {data.stats?.subscription_expires_at ? new Date(data.stats.subscription_expires_at).toLocaleDateString("en-GB") : "--"}
-//                     </p>
-//                   </div>
-//                 </div>
-
-//                 {/* جلسات الأسبوع والحضور */}
-//                 {/* نفس الكود اللي عندك داخل grid lg:grid-cols-2 */}
-//               </>
-//             )}
-//           </>
-//         )}
-
-//         {/* Categories */}
-//         <div className="space-y-12">
-//           <CategorySlider />
-//         </div>
-//       </main>
-//     </div>
-//   );
-// }
-
-
 
 import React, { useEffect, useState } from "react";
 import BannerSlider from "../BannerSlider/BannerSlider";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination  , Autoplay} from "swiper/modules";
+
+import "swiper/css";
+import "swiper/css/pagination";
+
 
 export default function HomePage() {
   const [categories, setCategories] = useState([]);
@@ -168,83 +56,120 @@ export default function HomePage() {
       <main className="max-w-8xl mx-auto px-6 py-16 space-y-16">
         {/* أقسام مميزة - Top Categories */}
         {topCategories.length > 0 && (
-          <section>
-            <h2 className="text-3xl font-bold text-green-600 mb-6">{t("Top_categories")}</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 lg:gap-8">
-              {topCategories.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat)} // افتح مودال التفاصيل
-                  className="group relative block bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-500 hover:-translate-y-1 overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                >
-                  <div className="aspect-square relative overflow-hidden bg-gradient-to-br from-indigo-50 to-purple-50">
-                    <img
-                      src={cat.icon_url || placeholder}
-                      alt={cat.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                      onError={(e) => (e.target.src = placeholder)}
-                    />
-                    {cat.has_active_offers && (
-                      <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-pulse">
-                        {t("active_offers", { count: cat.active_offers_count })}
-                      </div>
-                    )}
-                    {cat.has_upcoming_sessions && !cat.has_active_offers && (
-                      <div className="absolute top-2 left-2 bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                        {t("upcoming_sessions")}
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-6 text-center">
-                    <h3 className="text-lg font-bold text-gray-800 group-hover:text-indigo-600 transition-colors">
-                      {cat.name}
-                    </h3>
-                  </div>
-                </button>
-              ))}
+         <section>
+  <h2 className="text-3xl font-bold text-forsan-green mb-8">
+    {t("Top_categories")}
+  </h2>
+
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    {topCategories.map((cat) => (
+      <button
+        key={cat.id}
+        onClick={() => setSelectedCategory(cat)}
+        className="group relative bg-white rounded-3xl border border-gray-100 shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden cursor-pointer focus:outline-none focus:ring-2 focus:ring-forsan-green/40"
+      >
+        {/* الصورة */}
+        <div className="aspect-[4/3] relative overflow-hidden bg-gray-50">
+          <img
+            src={cat.icon_url || placeholder}
+            alt={cat.name}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            loading="lazy"
+            onError={(e) => (e.target.src = placeholder)}
+          />
+
+          {cat.has_active_offers && (
+            <div className="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">
+              {t("active_offers", { count: cat.active_offers_count })}
             </div>
-          </section>
+          )}
+
+          {cat.has_upcoming_sessions && !cat.has_active_offers && (
+            <div className="absolute top-4 left-4 bg-forsan-green text-white text-xs font-bold px-3 py-1 rounded-full">
+              {t("upcoming_sessions")}
+            </div>
+          )}
+        </div>
+
+        {/* المحتوى */}
+        <div className="p-6 text-center">
+          <h3 className="text-xl font-bold text-gray-800 group-hover:text-forsan-green transition-colors">
+            {cat.name}
+          </h3>
+        </div>
+      </button>
+    ))}
+  </div>
+</section>
+
         )}
 
         {/* كل الفئات */}
-        <section>
-          <h2 className="text-3xl font-bold text-green-600 mb-6">{t("All_categories")}</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 lg:gap-8">
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat)}
-                className="group relative block bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden cursor-pointer focus:outline-none focus:ring-4 focus:ring-indigo-300"
-              >
-                <div className="aspect-square relative overflow-hidden bg-gradient-to-br from-indigo-50 to-purple-50">
-                  <img
-                    src={cat.icon_url || placeholder}
-                    alt={cat.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                    onError={(e) => (e.target.src = placeholder)}
-                  />
-                  {cat.has_active_offers && (
-                    <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">
-                      {t("active_offers", { count: cat.active_offers_count })}
-                    </div>
-                  )}
-                  {cat.has_upcoming_sessions && !cat.has_active_offers && (
-                    <div className="absolute top-3 left-3 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                      {t("upcoming_sessions")}
-                    </div>
-                  )}
+       <section className="category-section">
+  <h2 className="text-3xl font-bold text-forsan-green mb-8">
+    {t("All_categories")}
+  </h2>
+
+<Swiper
+  modules={[Pagination, Autoplay]}
+  pagination={{ clickable: true }}
+  spaceBetween={24}
+  slidesPerView={1}
+  autoplay={{
+    delay: 2000,
+    disableOnInteraction: false,
+    pauseOnMouseEnter: true,
+  }}
+  breakpoints={{
+    640: { slidesPerView: 2 },
+    1024: { slidesPerView: 3 },
+  }}
+  className="pb-12"
+>
+    {categories.map((cat) => (
+      <SwiperSlide key={cat.id} className="h-auto">
+        {/* wrapper يوحّد المقاسات */}
+        <div className="h-full">
+          <button
+            onClick={() => setSelectedCategory(cat)}
+            className="group relative h-full w-full bg-white rounded-2xl border border-gray-100 shadow-md hover:shadow-xl transition-all duration-500 hover:-translate-y-1 overflow-hidden cursor-pointer focus:outline-none"
+          >
+            {/* الصورة */}
+            <div className="aspect-[4/3] relative overflow-hidden bg-gray-50">
+              <img
+                src={cat.icon_url || placeholder}
+                alt={cat.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                loading="lazy"
+                onError={(e) => (e.target.src = placeholder)}
+              />
+
+              {cat.has_active_offers && (
+                <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">
+                  {t("active_offers", { count: cat.active_offers_count })}
                 </div>
-                <div className="p-5 text-center">
-                  <h3 className="text-lg font-bold text-gray-800 group-hover:text-indigo-600 transition-colors">
-                    {cat.name}
-                  </h3>
+              )}
+
+              {cat.has_upcoming_sessions && !cat.has_active_offers && (
+                <div className="absolute top-3 left-3 bg-forsan-green text-white text-xs font-bold px-3 py-1 rounded-full">
+                  {t("upcoming_sessions")}
                 </div>
-              </button>
-            ))}
-          </div>
-        </section>
+              )}
+            </div>
+
+            {/* المحتوى */}
+            <div className="p-5 text-center">
+              <h3 className="text-lg font-bold text-gray-800 group-hover:text-forsan-green transition-colors">
+                {cat.name}
+              </h3>
+            </div>
+          </button>
+        </div>
+      </SwiperSlide>
+    ))}
+  </Swiper>
+</section>
+
       </main>
 
       {/* مودال التفاصيل */}
@@ -312,7 +237,26 @@ export default function HomePage() {
         .animate-scaleIn {
           animation: scaleIn 0.4s ease-out;
         }
+
+        .category-section .swiper-pagination {
+  position: static !important;
+  margin-top: 12px;
+  text-align: center;
+}
+
+.swiper-pagination-bullet {
+  background: #88a74d;
+  opacity: 0.4;
+}
+
+.swiper-pagination-bullet-active {
+  opacity: 1;
+}
+
+          
       `}</style>
+
+      
     </div>
   );
 }

@@ -221,104 +221,120 @@ export default function Profile() {
             {/* Profile + Form */}
             <div className="grid lg:grid-cols-3 gap-6">
               <div className="text-center lg:text-left relative inline-block">
-              <div className="w-36 h-36 rounded-full p-1 mx-auto lg:mx-0 bg-gradient-to-tr from-green-400 to-green-600 animate-pulse-slow shadow-xl">
+              <div className="w-36 h-36 rounded-full p-1 mx-auto lg:mx-0 bg-gradient-to-tr from-forsan-green to-forsan-green-dark animate-pulse-slow shadow-xl">
 
                   <img
                     src={profileImagePreview || "https://via.placeholder.com/100"}
                   className="w-full h-full rounded-full object-cover shadow-lg"
                   />
               {/* <div className="absolute inset-0 rounded-full shadow-xl blur-2xl opacity-40 bg-green-400 -z-10 animate-ping-slow"></div> */}
+              <p className="mt-5">{t("your profile image")}</p>
                 </div>
             <div className="mt-6 space-y-3">
-                  <input
+                  {/* <input
                     ref={fileInputRef}
                     type="file"
                     accept="image/*"
                     onChange={handleImageSelect}
                 className="block w-full text-xs text-gray-600 file:mr-2 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-gradient-to-r file:from-green-500 file:to-green-700 file:text-white hover:file:from-green-600 hover:file:to-green-800 cursor-pointer transition"
-                  />
-                  <button
+                  /> */}
+                  {/* <button
                     onClick={handleUploadImage}
                     disabled={imageSaving}
                 className="w-[50%] py-2 text-sm font-semibold bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white rounded-full shadow-md hover:shadow-xl disabled:opacity-50 transition transform hover:scale-105"
                   >
                     {imageSaving ? t("uploading") : t("upload_image")}
-                  </button>
+                  </button> */}
                   
                   {imageSuccess && <p className="text-sm text-gray-600 text-start">{imageSuccess}</p>}
                 </div>
               </div>
 
               {/* Form Fields */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="grid sm:grid-cols-2 gap-5">
-                  {["name", "email", "phone", "national_id"].map((field) => (
-                    <div key={field} className="space-y-1">
-                      <label className="block text-sm font-semibold text-gray-700">{t(field)}</label>
-                      <input
-                        type={field === "email" ? "email" : "text"}
-                        name={field}
-                        value={formData[field] || ""}
-                        onChange={handleChange}
-                    className="w-full px-4 py-2 text-sm bg-white/80 border border-gray-300 rounded-2xl shadow-inner focus:outline-none focus:ring-2 focus:ring-green-400 transition"
-                        placeholder={t(field)}
-                      />
-                    </div>
-                  ))}
-                </div>
-                <div className="flex flex-wrap items-center gap-3">
-                  <button
-                    onClick={handleSaveData}
-                    disabled={saving}
-                className="px-6 py-2 text-sm font-semibold bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white rounded-2xl shadow-md hover:shadow-xl disabled:opacity-50 transition transform hover:scale-105"
-                  >
-                    {saving ? t("saving") : t("save_changes")}
-                  </button>
-                  {success && <span className="text-xs text-gray-600">{success}</span>}
-                  {error && <span className="text-xs text-red-600">{error}</span>}
-                </div>
-              </div>
+         <div className="lg:col-span-2 space-y-6 p-6 bg-white rounded-3xl shadow-lg">
+  <div className="grid sm:grid-cols-2 gap-6">
+{["name", "email", "phone", "national_id"].map((field) => (
+  <div key={field} className="space-y-2">
+    <label className="block text-sm font-medium text-gray-800">
+      {t(field)}
+    </label>
+
+    <input
+      type={field === "email" ? "email" : "text"}
+      name={field}
+      value={formData[field] || ""}
+      readOnly
+      disabled
+      className="w-full px-4 py-3 text-sm bg-gray-100 border border-gray-200 rounded-2xl
+                 text-gray-600 cursor-not-allowed shadow-sm"
+    />
+  </div>
+))}
+
+  </div>
+
+  {/* <div className="flex flex-wrap items-center gap-3 mt-4">
+    <button
+      onClick={handleSaveData}
+      disabled={saving}
+      className="px-6 py-3 text-sm font-semibold bg-forsan-green hover:bg-forsan-green-dark text-white rounded-2xl shadow-md hover:shadow-xl disabled:opacity-50 transition transform hover:scale-105"
+    >
+      {saving ? t("saving") : t("save_changes")}
+    </button>
+    {success && <span className="text-xs text-green-600">{success}</span>}
+    {error && <span className="text-xs text-red-600">{error}</span>}
+  </div> */}
+
+</div>
+
             </div>
 
-            {/* Account Info */}
-            {user && (
-              <div className="mt-7 pt-6 border-t border-gray-200">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">{t("Account_info")}</h2>
-            <div className="grid grid-col-3 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                  <div
-                    onClick={() => navigate('/user/student-id')}
-                    className="p-4 bg-blue-50 rounded-lg border shadow-md border-blue-200 hover:bg-blue-100 transition cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2">
-                      <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
-                      </svg>
-                      <p className="text-xs font-medium text-blue-600">{t("student_id")}</p>
-                    </div>
-                    <p className="text-sm font-semibold mt-0.5 text-blue-900">{t("view_card")}</p>
-                  </div>
-                  {[
-                    { label: t("subscription_expires"), value: user.stats?.subscription_expires_at ? new Date(user.stats.subscription_expires_at).toLocaleDateString("en-US") : "-" },
-                    { label: t("account_status"), value: user.is_active ? t("active") : t("inactive") },
-                    { label: t("last_login"), value: user.last_login_at ? new Date(user.last_login_at).toLocaleString("en-US") : "-" },
-                    { label: t("valid_subscription"), value: user.stats?.has_valid_subscription ? t("yes") : t("no") },
-                  ].map((item, idx) => (
-                <div key={idx} className="p-6 bg-white/60 backdrop-blur-lg rounded-2xl border border-gray-200 shadow-md hover:shadow-xl transition transform hover:scale-105">
-                      <p className="text-xs font-medium text-gray-500">{item.label}</p>
-                      <p className="text-sm font-semibold mt-0.5 text-gray-900">{item.value}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+{/* Account Info */}
+{user && (
+  <div className="mt-7 pt-6 border-t border-gray-200">
+    <h2 className="text-2xl font-bold text-forsan-green mb-6">{t("Account info")}</h2>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
+      {/* Student ID Card */}
+      <div
+        onClick={() => navigate('/user/student-id')}
+        className="p-5 bg-gradient-to-tr from-blue-50 to-blue-100 rounded-3xl border border-blue-200 shadow-lg hover:shadow-xl transition transform hover:scale-105 cursor-pointer"
+      >
+        <div className="flex items-center gap-3">
+          <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+          </svg>
+          <p className="text-sm font-semibold text-blue-700">{t("student_id")}</p>
+        </div>
+        <p className="text-sm font-bold mt-2 text-blue-900">{t("view_card")}</p>
+      </div>
+
+      {/* Other Account Info Cards */}
+      {[
+        { label: t("subscription_expires"), value: user.stats?.subscription_expires_at ? new Date(user.stats.subscription_expires_at).toLocaleDateString("en-US") : "-" },
+        { label: t("account_status"), value: user.is_active ? t("active") : t("inactive") },
+        { label: t("last_login"), value: user.last_login_at ? new Date(user.last_login_at).toLocaleString("en-US") : "-" },
+        { label: t("valid_subscription"), value: user.stats?.has_valid_subscription ? t("yes") : t("no") },
+      ].map((item, idx) => (
+        <div
+          key={idx}
+          className="p-5 bg-white/70 backdrop-blur-md rounded-3xl border border-gray-200 shadow-md hover:shadow-lg transition transform hover:scale-105"
+        >
+          <p className="text-xs font-medium text-gray-500">{item.label}</p>
+          <p className="text-sm font-semibold mt-1 text-gray-900">{item.value}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
 
             {/* Dashboard */} 
          {dashboardData && (
               <div className="mt-10">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
                   <div className="bg-white rounded-xl shadow-md border border-gray-200 p-4">
-                    <p className="text-sm font-medium text-red-500">{t("remaining_sessions")}</p>
-                    <p className="text-2xl font-bold text-red-500 mt-2">{dashboardData.stats.remaining_sessions}</p>
+                    <p className="text-sm font-medium text-red-700">{t("remaining_sessions")}</p>
+                    <p className="text-2xl font-bold text-red-600 mt-2">{dashboardData.stats.remaining_sessions}</p>
                   </div>
                   <div className="bg-white rounded-xl shadow-md border border-gray-200 p-4">
                     <p className="text-sm font-medium text-gray-600">{t("total_attendances")}</p>

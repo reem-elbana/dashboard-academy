@@ -105,7 +105,7 @@
   "failed_to_update_user": "فشل تحديث المستخدم",
   "name": "الاسم",
   "phone": "رقم الهاتف",
-  "national_id": "الرقم القومي",
+  "national_id": "رقم الهويه",
   "role": "الدور",
 
   "super_admin": "مسؤول أعلى",
@@ -122,7 +122,7 @@
   "enter_name": "أدخل الاسم",
   "enter_email": "أدخل البريد الإلكتروني",
   "enter_phone": "أدخل رقم الهاتف",
-  "enter_national_id": "أدخل الرقم القومي",
+  "enter_national_id": "أدخل رقم الهويه ",
 
   "creating": "جاري الإنشاء...",
   "create_user": "إنشاء مستخدم",
@@ -138,6 +138,7 @@
   "error_fetching": "حدث خطأ أثناء جلب البيانات",
   "no_subscribers": "لا يوجد مشتركين.",
   "no_expiry": "بدون تاريخ انتهاء",
+  
 
   "expired": "منتهي",
 
@@ -231,7 +232,7 @@
   "search_categories_placeholder": "ابحث في الأقسام بالاسم أو الوصف...",
   "search_categories_aria": "البحث في الأقسام",
   "no_categories_found": "لم يتم العثور على أقسام.",
-  "sessions": "الجلسات",
+  "sessions": "الحصص",
   "delete_category": "حذف القسم",
   "edit_category": "تعديل القسم",
   "category": "القسم",
@@ -376,7 +377,7 @@
   "qr_validity_minutes": "صلاحية رمز QR (بالدقائق)",
   "qr_code": "رمز QR",
   "profile_of": "الملف الشخصي لـ",
-    "Sessions": "الجلسات",
+    "Sessions": "الحصص",
     "Top_categories": "أهم الفئات",
     "All_categories": "جميع الفئات",
 
@@ -432,7 +433,8 @@
     "date_from": "من تاريخ",
     "date_to": "إلى تاريخ",
     "show_report": "عرض التقرير",
-    "report_period": "فترة التقرير"
+    "report_period": "فترة التقرير",
+    "your profile image":"صورة ملفك الشخصي"
   
 
 

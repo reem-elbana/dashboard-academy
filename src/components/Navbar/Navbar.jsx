@@ -80,7 +80,7 @@ export default function Navbar() {
           <p className="text-green-600 font-extrabold text-2xl">ALforsan Academy</p> */}
             <div className="flex items-center gap-3">
         <img src={img1} alt="Logo" className="w-16 h-16 object-contain"/>
-        <p className="text-green-600 font-extrabold text-2xl">ALforsan Academy</p>
+        <p className="text-forsan-green font-extrabold text-2xl">ALforsan Academy</p>
       </div>
 
           {/* Desktop Links */}
@@ -92,35 +92,35 @@ export default function Navbar() {
             <NavLink
               to={token ? "/user/home" : "#"}
               onClick={handleProtectedLink}
-              className="text-gray-700 hover:text-lime-600 font-medium transition"
+              className="text-gray-700 hover:text-forsan-green-dark font-medium transition"
             >
               {t("home")}
             </NavLink>
             <NavLink
               to={token ? "/user/profile" : "#"}
               onClick={handleProtectedLink}
-              className="text-gray-700 hover:text-lime-600 font-medium transition"
+              className="text-gray-700 hover:text-forsan-green-dark font-medium transition"
             >
               {t("profile")}
             </NavLink>
             <NavLink
               to={token ? "/user/sessions" : "#"}
               onClick={handleProtectedLink}
-              className="text-gray-700 hover:text-lime-600 font-medium transition"
+              className="text-gray-700 hover:text-forsan-green-dark font-medium transition"
             >
               {t("Sessions")}
             </NavLink>
             {/* <NavLink
               to={token ? "/user/offers" : "#"}
               onClick={handleProtectedLink}
-              className="text-gray-700 hover:text-lime-600 font-medium transition"
+              className="text-gray-700 hover:text-forsan-green-dark font-medium transition"
             >
               {t("My Sessions & Offers")}
             </NavLink> */}
             <NavLink
               to={token ? "/user/Qrscanner" : "#"}
               onClick={handleProtectedLink}
-              className="text-gray-700 hover:text-lime-600 font-medium transition"
+              className="text-gray-700 hover:text-forsan-green-dark font-medium transition"
             >
               {t("QR")}
             </NavLink>
@@ -143,7 +143,7 @@ export default function Navbar() {
                   />
                 </svg>
                 {hasNew && (
-                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse ring-2 ring-white"></span>
+                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-600 rounded-full animate-pulse ring-2 ring-white"></span>
                 )}
               </button>
 
@@ -181,7 +181,7 @@ export default function Navbar() {
             {/* Language */}
             <button
               onClick={switchLang}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition"
+              className="px-3 py-1.5 border border-forsan-green rounded-lg text-sm font-medium hover:bg-gray-50 transition"
             >
               {i18n.language === "en" ? "عربي" : "EN"}
             </button>
@@ -200,7 +200,7 @@ export default function Navbar() {
             {token && (
               <button
                 onClick={handleLogout}
-                className="text-red-600 font-medium hover:text-red-700 transition"
+                className="text-red-500 font-medium hover:text-red-700 transition"
               >
                 {t("logout")}
               </button>
