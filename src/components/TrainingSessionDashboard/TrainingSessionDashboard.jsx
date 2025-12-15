@@ -29,13 +29,13 @@ export default function TrainingSessions() {
 
 
 
-  if (!hasPermission(permissions, "training_sessions.view")) {
-    return (
-      <div className="text-center text-red-500 text-xl mt-10">
-        {t("you do not have permission to view this page")}
-      </div>
-    );
-  }
+  // if (!hasPermission(permissions, "training_sessions.view")) {
+  //   return (
+  //     <div className="text-center text-red-500 text-xl mt-10">
+  //       {t("you do not have permission to view this page")}
+  //     </div>
+  //   );
+  // }
 
 
 
