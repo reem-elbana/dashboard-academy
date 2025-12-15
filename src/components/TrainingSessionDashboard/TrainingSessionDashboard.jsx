@@ -226,25 +226,27 @@ export default function TrainingSessions() {
 
   return (
     <div className="max-w-5xl mx-auto p-6" dir={isRTL ? "rtl" : "ltr"}>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-semibold text-gray-800">{t("training_sessions")}</h1>
-         {hasPermission(permissions, "training_sessions.create") && (
+      <div className="mb-6">
+        <h1 className="text-4xl font-semibold text-forsan-green">{t("training_sessions")}</h1>
+        <p className="text-gray-600 mt-1">{t("view and manage training-session")}</p>
+      </div>
+
+      <div className="flex flex-col sm:flex-row  items-center mb-10 gap-4 justify-end">
+           {hasPermission(permissions, "training_sessions.create") && (
         <button
           onClick={() => navigate("/admin/training-sessions/add")}
-          className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-5 rounded"
+          className="bg-forsan-dark hover:bg-blue-900 text-white font-semibold py-2 px-5 rounded"
         >
           {t("create_training_session")}
         </button>
          )}
-      </div>
-
-      <div className="mb-6 relative">
+         
         <input
           type="text"
           placeholder={t("search_sessions_placeholder")}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+          className="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-900"
         />
         {searchTerm && (
           <button
@@ -291,15 +293,15 @@ export default function TrainingSessions() {
                   <span className="font-semibold">{t("time")}:</span>{" "}
                   {session.start_time} - {session.end_time}
                 </p>
-                <p>
+                {/* <p>
                   <span className="font-semibold">{t("duration")}:</span>{" "}
                   {session.duration_minutes} {t("minutes")}
-                </p>
-                <p>
+                </p> */}
+                {/* <p>
                   <span className="font-semibold">{t("participants")}:</span>{" "}
                   {session.current_participants}{" "}
                   {session.max_participants ? ` / ${session.max_participants}` : ""}
-                </p>
+                </p> */}
                 <p>
                   <span className="font-semibold">{t("category")}:</span>{" "}
                   {session.category?.name || t("no_category")}

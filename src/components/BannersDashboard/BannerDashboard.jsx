@@ -186,7 +186,7 @@ export default function BannerManagement() {
       <div className="max-w-7xl mx-auto p-6">
         {/* HEADER */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900">{t("banner_management")}</h1>
+          <h1 className="text-4xl font-bold text-forsan-green">{t("banner_management")}</h1>
           <p className="text-gray-600 mt-1">{t("view_manage_banners")}</p>
         </div>
 
@@ -195,7 +195,7 @@ export default function BannerManagement() {
           {hasPermission(permissions, "banners.create") && (
           <button
             onClick={() => navigate("/admin/banners/add")}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md font-semibold transition"
+            className="bg-forsan-dark hover:bg-blue-900 text-white px-6 py-2 rounded-lg shadow-md font-semibold transition"
           >
             + {t("add_banner")}
           </button>
@@ -329,7 +329,7 @@ export default function BannerManagement() {
                   href={selectedBanner.link_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg"
+                  className="inline-block bg-forsan-green hover:bg-forsan-green-darka text-white px-5 py-2 rounded-lg"
                 >
                   {t("visit_link")} →
                 </a>

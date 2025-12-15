@@ -146,18 +146,22 @@ export default function OffersList() {
   if (error) return <p className="text-center mt-6 text-red-500">{error}</p>;
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
+    <div className="p-4 max-w-7xl mx-auto mt-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-        <h1 className="text-3xl font-bold text-gray-900">{t("offers")}</h1>
 
-        <div className="flex gap-3 w-full sm:w-auto">
+          <div className="mb-8">
+          <h1 className="text-4xl font-bold text-forsan-green">{t("Offers Manage")}</h1>
+          <p className="text-gray-600 mt-1">{t("view manage Offers")}</p>
+        </div>
+
+        <div className="flex gap-3 w-full sm:w-auto mt-10">
           {hasPermission(permissions, "offers.create") && (
           <button
-            className="px-5 py-2 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700 transition"
+            className="px-5 py-2 bg-forsan-dark hover:bg-blue-900 text-white rounded-xl shadow  transition"
             onClick={() => navigate("/admin/offers/add")}
           >
-            {t("add_offer")}
+             + {t("add_offer")}
           </button>
           )}
           <input
@@ -179,7 +183,7 @@ export default function OffersList() {
             className="bg-white shadow-md rounded-2xl p-6 border border-gray-200 hover:shadow-xl transition cursor-pointer group relative flex flex-col justify-between"
           >
             <div>
-              <h2 className="text-xl font-semibold text-gray-800 mb-2 group-hover:text-blue-600 transition">
+              <h2 className="text-xl font-semibold text-gray-800 mb-2 group-hover:text-blue-900 transition">
                 {offer.title}
               </h2>
 
@@ -288,7 +292,7 @@ export default function OffersList() {
               <X size={26} />
             </button>
 
-            <h2 className="text-3xl font-bold mb-4 text-blue-700">
+            <h2 className="text-3xl font-bold mb-4 text-blue-900">
               {selectedOffer.title}
             </h2>
 

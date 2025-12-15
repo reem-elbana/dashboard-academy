@@ -285,7 +285,7 @@
   "failed_delete": "حدث خطأ أثناء الحذف. حاول مرة أخرى.",
 
   "training_sessions": "جلسات التدريب",
-  "create_training_session": "إنشاء جلسة تدريب",
+  "create_training_session": "انشاء حصة تدريبية",
   "search_sessions_placeholder": "ابحث عن جلسات بالعنوان...",
   "clear_search": "مسح البحث",
   "loading_sessions": "جاري تحميل الجلسات...",
@@ -399,7 +399,7 @@
   "no_offers_currently": "لا توجد عروض حالياً",
   "My_sessions": "جلساتي",
   "no_sessions_booked": "لم يتم حجز أي جلسات",
-  "subscription_expired": "انتهاء الاشتراك",
+  "subscription_expired": " الاشتراك منتهي",
   "payment_method": "طريقة الدفع",
   "cash": "نقدي",
   "visa": "فيزا",
@@ -415,7 +415,26 @@
   "search": "بحث",
   "profileQrCode": "رمز الاستجابة السريعة للملف الشخصي",
   "profileOf": "الملف الشخصي لـ",
-  "expiresAt": "تنتهي الصلاحية في"
+  "expiresAt": "تنتهي الصلاحية في",
+  "AdminManage": "إدارة المسؤولين",
+  "all_status": "كل الحالات",
+  "all_subscriptions": "كل الاشتراكات",
+  "subscription_valid": "الاشتراك صالح",
+  "near_expiry": "قريب من الانتهاء",
+  "Email": "البريد الإلكتروني",
+  "subscriptionExpiresAt": "تاريخ انتهاء الاشتراك",
+  "View and manage Categories": "عرض وإدارة الأقسام",
+  "view and manage training-sessions": "عرض وإدارة جلسات التدريب",
+
+
+    "please_select_both_dates": "يرجى اختيار التاريخين معاً",
+    "please_select_dates_and_show_report": "يرجى اختيار التواريخ ثم الضغط على عرض التقرير",
+    "date_from": "من تاريخ",
+    "date_to": "إلى تاريخ",
+    "show_report": "عرض التقرير",
+    "report_period": "فترة التقرير"
+  
+
 
  
 

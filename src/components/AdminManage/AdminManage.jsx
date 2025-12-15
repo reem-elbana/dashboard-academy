@@ -32,6 +32,15 @@ export default function AdminList() {
   const { permissions } = useContext(AuthContext);
 
 
+     if (!hasPermission(permissions, "admins.view")) {
+    return (
+      <div className="text-center text-red-500 text-xl mt-10">
+        {t("you do not have permission to view this page")}
+      </div>
+    );
+  }
+
+
   // axios instance with auth header
   const axiosInstance = axios.create({
     baseURL: BASE_URL,
@@ -167,13 +176,13 @@ export default function AdminList() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">{t("adminsManagement")}</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-forsan-green">{t("adminsManagement")}</h2>
             <p className="text-gray-500 text-sm sm:text-base">{t("viewAndManageAdmins")}</p>
           </div>
 
           <div className="flex items-center gap-3">
             {hasPermission(permissions, "admins.create") && (
-            <button onClick={handleCreate} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow">
+            <button onClick={handleCreate} className="flex items-center gap-2 bg-forsan-dark hover:bg-blue-900 text-white px-4 py-2 rounded-lg shadow">
               <Plus className="w-4 h-4" />
               {t("createAdmin")}
             </button>
@@ -279,10 +288,14 @@ export default function AdminList() {
                         {qrGeneratingIds[user.id] ? "..." : <QrCode className="w-5 h-5" />}
                       </button>
 
+                       {hasPermission(permissions, "admins.edit") && (
                       <Link to={`/admin/users/edit/${user.id}`} state={{ user }} className="text-blue-600 hover:text-blue-800 transition" title={t("edit")}>
                         <Pencil className="w-5 h-5" />
                       </Link>
+                       )}
 
+                       
+ {hasPermission(permissions, "admins.delete") && (
                       <button
                         onClick={() => handleDelete(user.id)}
                         disabled={deletingIds[user.id]}
@@ -291,6 +304,7 @@ export default function AdminList() {
                       >
                         {deletingIds[user.id] ? "..." : <Trash2 className="w-5 h-5" />}
                       </button>
+ )}
                     </td>
                   </tr>
                 ))

@@ -133,7 +133,7 @@ export default function CreateAdmin() {
 
         <button
           type="submit"
-          className="mt-2 bg-green-600 hover:bg-green-700 transition-colors text-white font-semibold py-3 rounded-md shadow"
+          className="mt-2 bg-forsan-green hover:bg-forsan-green-dark transition-colors text-white font-semibold py-3 rounded-md shadow"
         >
           {t("create_admin")}
         </button>

@@ -4,7 +4,18 @@ import { AuthContext } from "../../Context/AuthContext";
 import { useTranslation } from "react-i18next";
 
 // أيقونات بسيطة من react-icons (تقدر تغيرها حسب اللينكات)
-import { FaTachometerAlt, FaUsers, FaUserPlus, FaImage, FaTags, FaGift, FaChalkboardTeacher, FaChartBar, FaClipboardList, FaSignOutAlt } from "react-icons/fa";
+import {
+  FaTachometerAlt,
+  FaUsers,
+  FaUserPlus,
+  FaImage,
+  FaTags,
+  FaGift,
+  FaChalkboardTeacher,
+  FaChartBar,
+  FaClipboardList,
+  FaSignOutAlt,
+} from "react-icons/fa";
 import { FaQrcode } from "react-icons/fa";
 
 export default function AdminSidebar() {
@@ -67,8 +78,8 @@ export default function AdminSidebar() {
       {isMobile && (
         <button
           onClick={() => setIsOpen((prev) => !prev)}
-          className="fixed top-4 left-4 z-[9999] p-3 rounded-xl bg-green-600 text-white shadow-lg 
-          hover:bg-green-700 active:scale-95 transition"
+          className="fixed top-4 left-4 z-[9999] p-3 rounded-xl bg-forsan-green text-white shadow-lg 
+          hover:bg-forsan-dark active:scale-95 transition"
           aria-label={isOpen ? "Close menu" : "Open menu"}
         >
           <svg
@@ -90,20 +101,19 @@ export default function AdminSidebar() {
       )}
 
       {/* Sidebar */}
-    <aside
-  className={`fixed top-0 h-full bg-white p-6
-    flex flex-col justify-between z-50 border-r border-gray-300
-    transition-transform duration-300 w-64
-    ${lang === "ar" ? "right-0 border-l" : "left-0 border-r"}
-    ${isMobile ? (isOpen ? "translate-x-0" : lang === "ar" ? "translate-x-full" : "-translate-x-full") : "translate-x-0"}
-    overflow-y-auto max-h-screen
-  `}
->
-
+      <aside
+        className={`fixed top-0 h-full bg-white p-6
+          flex flex-col justify-between z-50 border-gray-300
+          transition-transform duration-300 w-64
+          ${lang === "ar" ? "right-0 border-l" : "left-0 border-r"}
+          ${isMobile ? (isOpen ? "translate-x-0" : lang === "ar" ? "translate-x-full" : "-translate-x-full") : "translate-x-0"}
+          overflow-y-auto max-h-screen
+        `}
+      >
         <div>
           {/* Admin Panel title + language toggle */}
           <div className="mb-8 flex flex-col items-start">
-            <h2 className="text-2xl font-extrabold text-green-700 select-none mb-3 tracking-wide">
+            <h2 className="text-2xl font-extrabold text-forsan-green select-none mb-3 tracking-wide">
               {t("adminPanel")}
             </h2>
 
@@ -129,8 +139,8 @@ export default function AdminSidebar() {
                   transition-colors duration-200
                   ${
                     isActive
-                      ? "bg-green-600 text-white shadow-lg"
-                      : "text-gray-700 hover:bg-green-100 hover:text-green-700"
+                      ? "bg-forsan-green text-white shadow-lg"
+                      : "text-forsan-dark hover:bg-forsan-green hover:text-white"
                   }
                   ${isMobile ? "justify-center" : ""}
                   `
@@ -147,8 +157,8 @@ export default function AdminSidebar() {
         {/* Logout button */}
         <button
           onClick={handleLogout}
-          className="mt-6 w-full bg-red-600 text-white py-3 rounded-xl
-            font-semibold shadow hover:bg-red-700 active:scale-95 transition-transform flex items-center justify-center gap-2"
+          className="mt-6 w-full bg-forsan-dark text-white py-3 rounded-xl
+            font-semibold shadow hover:bg-forsan-green-dark active:scale-95 transition-transform flex items-center justify-center gap-2"
         >
           <FaSignOutAlt className="text-lg" />
           {t("logout")}

@@ -217,7 +217,7 @@ export default function CreateBanner() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full mt-4 bg-green-600 text-white py-3 rounded-md font-semibold hover:bg-green-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="w-full mt-4 bg-forsan-dark hover:bg-blue-900 text-white py-3 rounded-md font-semibold  transition disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           {loading ? t("creating") : t("createBanner")}
         </button>

@@ -4,8 +4,17 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+         'forsan-green': '#88a74dff',
+         'forsan-green-dark': '#5f7635ff',
+          'forsan-dark': '#263a64ff',
+      },
+
+
+    },
   },
   plugins: [],
 }

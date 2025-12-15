@@ -416,7 +416,28 @@
   "profileQrCode": "Profile QR Code",
 
   "profileOf": "Profile of",
-  "expiresAt": "Expires at"
+  "expiresAt": "Expires at",
+  "AdminManage":"Admin Manage",
+  "all_status":"All Status",
+  "all_subscriptions":"All Subscriptions",
+  "subscription_valid":"Subscription Valid",
+  "near_expiry":"Near Expiry",
+  "Email": "Email",
+  "subscriptionExpiresAt":"Subscription Expires At",
+  "View and manage Categories": "View and manage Categories",
+  "view and manage training-session": "view and manage training-session",
+
+    "please_select_both_dates": "Please select both dates",
+    "please_select_dates_and_show_report": "Please select dates and click Show Report",
+    "date_from": "Date From",
+    "date_to": "Date To",
+    "show_report": "Show Report",
+    "report_period": "Report Period"
+
+
+  
+  
+
   
 
 

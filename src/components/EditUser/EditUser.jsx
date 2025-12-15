@@ -216,7 +216,7 @@ export default function EditUser() {
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center items-center p-6">
       <div className="bg-white w-full max-w-xl p-6 rounded-2xl shadow-md border border-gray-200">
-        <h2 className="text-2xl font-semibold mb-6 text-center text-green-700 tracking-tight">
+        <h2 className="text-2xl font-semibold mb-6 text-center text-forsan-green tracking-tight">
           {t("update_user")}
         </h2>
 
@@ -407,7 +407,7 @@ export default function EditUser() {
               <button
                 type="button"
                 onClick={addSubscription}
-                className="bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium py-2 px-4 rounded-lg transition"
+                className="bg-forsan-dark hover:bg-blue-900 text-white text-sm font-medium py-2 px-4 rounded-lg transition"
               >
                 {t("add_subscription")}
               </button>
@@ -428,7 +428,7 @@ export default function EditUser() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition disabled:opacity-50 shadow"
+            className="w-full bg-forsan-dark hover:bg-blue-900 text-white font-semibold py-3 rounded-lg transition disabled:opacity-50 shadow"
           >
             {loading ? t("updating") : t("update_user")}
           </button>
