@@ -27,6 +27,9 @@ export default function OffersList() {
   const [editError, setEditError] = useState(null);
   const { permissions } = useContext(AuthContext);
 
+  const BASE_URL = "https://generous-optimism-production-4492.up.railway.app";
+
+
     if (!hasPermission(permissions, "offers.view")) {
       return (
         <div className="text-center text-red-500 text-xl mt-10">
@@ -182,6 +185,37 @@ export default function OffersList() {
             onClick={() => setSelectedOffer(offer)}
             className="bg-white shadow-md rounded-2xl p-6 border border-gray-200 hover:shadow-xl transition cursor-pointer group relative flex flex-col justify-between"
           >
+
+{/* IMAGE / PLACEHOLDER */}
+<div className="h-32 mb-3 overflow-hidden rounded-xl bg-gray-100 flex items-center justify-center">
+  {offer.image ? (
+    <img
+      src={`${BASE_URL}${offer.image}`}
+      alt={offer.title}
+      className="w-full h-full object-cover"
+    />
+  ) : (
+    <div className="flex flex-col items-center text-gray-400 text-sm">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-8 h-8 mb-1"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+          d="M3 5h18M3 5v14h18V5M3 15l4-4a2 2 0 012.828 0L13 14l2-2a2 2 0 012.828 0L21 15"
+        />
+      </svg>
+      {t("no_image")}
+    </div>
+  )}
+</div>
+
+
             <div>
               <h2 className="text-xl font-semibold text-gray-800 mb-2 group-hover:text-blue-900 transition">
                 {offer.title}
@@ -281,20 +315,59 @@ export default function OffersList() {
           className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center p-6 z-50"
           onClick={() => setSelectedOffer(null)}
         >
-          <div
-            className="bg-white max-w-lg w-full rounded-3xl p-8 shadow-2xl relative animate-[fadeIn_0.25s_ease]"
-            onClick={(e) => e.stopPropagation()}
-          >
+       <div
+  className="bg-white max-w-md w-full rounded-3xl p-6 shadow-2xl relative animate-[fadeIn_0.25s_ease] overflow-auto max-h-[80vh]"
+  onClick={(e) => e.stopPropagation()}
+>
+
             <button
-              className="absolute top-5 right-5 text-gray-600 hover:text-gray-900"
+              className="absolute top-3 right-1 text-gray-600 hover:text-gray-900"
               onClick={() => setSelectedOffer(null)}
             >
               <X size={26} />
             </button>
 
-            <h2 className="text-3xl font-bold mb-4 text-blue-900">
-              {selectedOffer.title}
-            </h2>
+
+
+
+         {/* IMAGE / PLACEHOLDER */}
+<div className="h-56 mb-6 overflow-hidden rounded-2xl bg-gray-100 flex items-center justify-center">
+  {selectedOffer.image ? (
+    <img
+      src={`${BASE_URL}${selectedOffer.image}`}
+      alt={selectedOffer.title}
+      className="w-full h-full object-cover"
+    />
+  ) : (
+    <div className="flex flex-col items-center text-gray-400 text-sm">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-10 h-10 mb-2"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+          d="M3 5h18M3 5v14h18V5M3 15l4-4a2 2 0 012.828 0L13 14l2-2a2 2 0 012.828 0L21 15"
+        />
+      </svg>
+      {t("no_image")}
+    </div>
+  )}
+</div>
+
+<h2 className="text-3xl font-bold mb-4 text-blue-900">
+  {selectedOffer.title}
+</h2>
+
+
+
+
+
+
 
             <p className="text-gray-700 mb-6">{selectedOffer.description}</p>
 
@@ -343,7 +416,7 @@ export default function OffersList() {
               <X size={26} />
             </button>
 
-            <h2 className="text-2xl font-bold mb-6 text-blue-700">{t("edit_offer")}</h2>
+            <h2 className="text-2xl font-bold mb-6 text-forsan-dark">{t("edit_offer")}</h2>
 
             {editError && (
               <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
@@ -403,7 +476,7 @@ export default function OffersList() {
             <button
               type="submit"
               disabled={editLoading}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold py-3 rounded-lg transition-colors duration-300"
+              className="w-full bg-forsan-dark hover:bg-blue-900 disabled:opacity-50 text-white font-semibold py-3 rounded-lg transition-colors duration-300"
             >
               {editLoading ? t("saving") : t("save_changes")}
             </button>
@@ -413,3 +486,8 @@ export default function OffersList() {
     </div>
   );
 }
+
+
+
+
+

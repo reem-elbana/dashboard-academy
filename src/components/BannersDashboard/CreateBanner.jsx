@@ -226,7 +226,7 @@ export default function CreateBanner() {
       <button
         type="button"
         onClick={() => navigate("/admin/banners")}
-        className="mb-6 px-4 py-2  text-green-700 rounded-md transition mt-4 text-right"
+        className="mb-6 px-4 py-2  text-forsan-green-dark rounded-md transition mt-4 text-right"
       >
         &larr; {t("backToBanners")}
       </button>

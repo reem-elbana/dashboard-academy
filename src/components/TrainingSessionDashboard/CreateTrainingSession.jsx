@@ -233,7 +233,7 @@ export default function CreateTrainingSession() {
           type="submit"
           disabled={loading}
           className={`w-full mt-4 py-2 font-semibold rounded ${
-            loading ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700 text-white"
+            loading ? "bg-forsan-green cursor-not-allowed" : "bg-forsan-green hover:bg-forsan-green-dark text-white"
           }`}
         >
           {loading ? t("creating") : t("create_session")}

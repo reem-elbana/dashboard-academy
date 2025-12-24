@@ -244,7 +244,7 @@ export default function CreateOffer() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
+          className="w-full bg-forsan-green text-white py-2 rounded hover:bg-forsan-green-dark transition"
         >
           {loading ? t("submitting") : t("create_offer")}
         </button>

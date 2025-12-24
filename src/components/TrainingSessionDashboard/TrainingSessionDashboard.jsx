@@ -445,7 +445,7 @@ export default function TrainingSessions() {
                 <button
                   type="submit"
                   disabled={editLoading}
-                  className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded"
+                  className="bg-forsan-green hover:bg-forsan-green-dark text-white font-semibold px-4 py-2 rounded"
                 >
                   {editLoading ? t("saving") : t("save_changes")}
                 </button>

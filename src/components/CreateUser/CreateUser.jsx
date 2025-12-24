@@ -152,7 +152,7 @@ export default function CreateUser() {
     <div className="min-h-screen bg-gray-20 p-6 flex justify-center items-center">
       <div className="bg-white w-full max-w-xl p-6 rounded-2xl shadow-md border border-gray-200">
 
-        <h2 className="text-2xl font-semibold mb-6 text-center text-green-700 tracking-tight">
+        <h2 className="text-2xl font-semibold mb-6 text-center text-forsan-green tracking-tight">
           {t("create_new_user")}
         </h2>
 
@@ -340,7 +340,7 @@ export default function CreateUser() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-green-600 hover:bg-green-700 text-white text-base font-semibold py-3 rounded-lg transition disabled:opacity-50 shadow"
+            className="w-full bg-forsan-green hover:bg-forsan-green-dark text-white text-base font-semibold py-3 rounded-lg transition disabled:opacity-50 shadow"
           >
             {loading ? t("creating") : t("create_user")}
           </button>

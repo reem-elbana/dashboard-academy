@@ -160,13 +160,34 @@ export default function CategoriesManager() {
             className="cursor-pointer bg-white rounded-2xl border shadow-sm hover:shadow-xl transition overflow-hidden"
           >
             {/* IMAGE */}
-            <div className="h-36 bg-gray-50 flex items-center justify-center">
-              <img
-                src={cat.icon_url || "/default-category.png"}
-                alt={cat.name}
-                className="h-full w-full object-cover p-4 "
-              />
-            </div>
+         <div className="h-36 bg-gray-50 flex items-center justify-center">
+  {cat.icon_url ? (
+    <img
+      src={cat.icon_url}
+      alt={cat.name}
+      className="h-full w-full object-cover p-4"
+    />
+  ) : (
+    <div className="flex flex-col items-center text-gray-400 text-sm">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-8 h-8 mb-1"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={1.5}
+          d="M3 5h18M3 5v14h18V5M3 15l4-4a2 2 0 012.828 0L13 14l2-2a2 2 0 012.828 0L21 15"
+        />
+      </svg>
+      {t("no_image")}
+    </div>
+  )}
+</div>
+
 
             <div className="p-4">
               <span
@@ -264,7 +285,7 @@ export default function CategoriesManager() {
 
             <button
               onClick={handleSave}
-              className="bg-blue-600 text-white w-full py-3 rounded-xl"
+              className="bg-forsan-dark hover:bg-blue-900 text-white w-full py-3 rounded-xl"
             >
               {saving ? t("saving") : t("save_changes")}
             </button>

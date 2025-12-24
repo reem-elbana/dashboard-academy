@@ -166,7 +166,7 @@ export default function BannerManagement() {
   if (loading)
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-50">
-        <p className="text-green-600 text-lg font-semibold animate-pulse">
+        <p className="text-forsan-green text-lg font-semibold animate-pulse">
           {t("loading_banners")}
         </p>
       </div>
@@ -405,7 +405,7 @@ export default function BannerManagement() {
               </button>
               <button
                 onClick={saveEdit}
-                className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
+                className="bg-forsan-dark text-white px-4 py-2 rounded disabled:opacity-50"
                 disabled={saving}
               >
                 {saving ? t("saving") : t("save")}

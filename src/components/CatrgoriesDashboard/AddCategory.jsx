@@ -105,7 +105,7 @@ export default function AddCategory() {
         <button
           type="submit"
           disabled={loading}
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+          className="bg-forsan-green text-white px-4 py-2 rounded hover:bg-forsan-green-dark transition"
         >
           {loading ? t("adding") : t("add_category")}
         </button>
